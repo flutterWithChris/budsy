@@ -135,8 +135,10 @@ class JournalEntryList extends StatelessWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
-                            Text(Jiffy.parseFromDateTime(journalEntry.createdAt)
-                                .fromNow()),
+                            Text(
+                                Jiffy.parseFromDateTime(journalEntry.createdAt)
+                                    .fromNow(),
+                                style: Theme.of(context).textTheme.bodySmall),
                           ],
                         ),
                       ),
@@ -169,7 +171,7 @@ class JournalEntryList extends StatelessWidget {
             ),
           );
         },
-        childCount: mockProducts.length,
+        childCount: mockJournalEntries.length,
       ),
     );
   }

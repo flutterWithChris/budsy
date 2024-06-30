@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:budsy/app/system/bottom_nav.dart';
 import 'package:budsy/consts.dart';
 import 'package:budsy/entries/mock/mock_products.dart';
 import 'package:budsy/entries/model/cannabinoid.dart';
@@ -115,44 +116,15 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
   Widget build(BuildContext context) {
     print('selectedCannabinoids: $selectedCannabinoids');
     return Scaffold(
-        bottomNavigationBar: BottomNavigationBar(
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.add),
-              label: 'Add',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: 'Profile',
-            ),
-          ],
-          onTap: (index) {
-            switch (index) {
-              case 0:
-                context.go('/home');
-                break;
-              case 1:
-                context.go('/add');
-                break;
-              case 2:
-                context.go('/profile');
-                break;
-              default:
-                context.go('/home');
-            }
-          },
-        ),
+        bottomNavigationBar: const BottomNavBar(),
         appBar: AppBar(
           title: const Text('Add To Stash'),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: CustomScrollView(slivers: [
-            SliverToBoxAdapter(
+        body: CustomScrollView(slivers: [
+          SliverToBoxAdapter(
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
               child: Column(
                 children: [
                   Row(
@@ -655,7 +627,7 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                     label: const Text('Add Cannabinoid'),
                   ),
                   const Gap(size: 8),
-// Terpene entry fields
+                  // Terpene entry fields
                   for (Terpene terpene in selectedTerpenes)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 4.0, top: 4.0),
@@ -770,50 +742,49 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                   _isProcessing
                       ? const CircularProgressIndicator.adaptive()
                       : Text(labReport?.toString() ?? ''),
-                ],
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: FilledButton.tonalIcon(
-                      onPressed: () async {
-                        Product product = Product(
-                          id: null,
-                          name: _nameController.value.text,
-                          images: _imageFile != null
-                              ? [_imageFile!.path]
-                              : _product.images,
-                          description: null,
-                          category: _product.category,
-                          type: _product.type,
-                          price: double.tryParse(_costController.text),
-                          weight: null,
-                          unit: _flowerUnit,
-                          dispensary: _dispensaryController.text,
-                          brand: _brandController.text,
-                          cannabinoids: [
-                            ...requiredCannabinoids,
-                            ...selectedCannabinoids
-                          ],
-                          terpenes: selectedTerpenes,
-                        );
-                        setState(() {
-                          mockProducts.add(product);
-                        });
-                      },
-                      icon: PhosphorIcon(
-                        PhosphorIcons.plusCircle(PhosphorIconsStyle.regular),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: FilledButton.tonalIcon(
+                          onPressed: () async {
+                            Product product = Product(
+                              id: null,
+                              name: _nameController.value.text,
+                              images: _imageFile != null
+                                  ? [_imageFile!.path]
+                                  : _product.images,
+                              description: null,
+                              category: _product.category,
+                              type: _product.type,
+                              price: double.tryParse(_costController.text),
+                              weight: null,
+                              unit: _flowerUnit,
+                              dispensary: _dispensaryController.text,
+                              brand: _brandController.text,
+                              cannabinoids: [
+                                ...requiredCannabinoids,
+                                ...selectedCannabinoids
+                              ],
+                              terpenes: selectedTerpenes,
+                            );
+                            setState(() {
+                              mockProducts.add(product);
+                            });
+                          },
+                          icon: PhosphorIcon(
+                            PhosphorIcons.plusCircle(
+                                PhosphorIconsStyle.regular),
+                          ),
+                          label: const Text('Add To Stash'),
+                        ),
                       ),
-                      label: const Text('Add To Stash'),
-                    ),
+                    ],
                   ),
                 ],
               ),
             ),
-          ]),
-        ));
+          ),
+        ]));
   }
 
   Future<dynamic> showImagePicker(BuildContext context) async {
