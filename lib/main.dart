@@ -1,4 +1,9 @@
+import 'package:budsy/app/router.dart';
+import 'package:budsy/consts.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,28 +15,165 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
+      routeInformationParser: goRouter.routeInformationParser,
+      routerDelegate: goRouter.routerDelegate,
+      routeInformationProvider: goRouter.routeInformationProvider,
       title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+      key: scaffoldKey,
+// Theme config for FlexColorScheme version 7.3.x. Make sure you use
+// same or higher package version, but still same major version. If you
+// use a lower package version, some properties may not be supported.
+// In that case remove them after copying this theme to your app.
+      theme: FlexThemeData.light(
+        scheme: FlexScheme.gold,
+        surfaceMode: FlexSurfaceMode.highScaffoldLowSurface,
+        blendLevel: 22,
+        appBarStyle: FlexAppBarStyle.background,
+        bottomAppBarElevation: 1.0,
+        lightIsWhite: true,
+        subThemesData: const FlexSubThemesData(
+          blendOnLevel: 10,
+          blendOnColors: false,
+          useTextTheme: true,
+          useM2StyleDividerInM3: true,
+          splashType: FlexSplashType.inkRipple,
+          defaultRadius: 16.0,
+          elevatedButtonSchemeColor: SchemeColor.onPrimaryContainer,
+          elevatedButtonSecondarySchemeColor: SchemeColor.primaryContainer,
+          segmentedButtonSchemeColor: SchemeColor.primary,
+          inputDecoratorUnfocusedHasBorder: false,
+          fabSchemeColor: SchemeColor.tertiary,
+          popupMenuRadius: 6.0,
+          popupMenuElevation: 4.0,
+          alignedDropdown: true,
+          dialogElevation: 3.0,
+          dialogRadius: 20.0,
+          useInputDecoratorThemeInDialogs: true,
+          snackBarBackgroundSchemeColor: SchemeColor.inverseSurface,
+          drawerIndicatorSchemeColor: SchemeColor.primary,
+          bottomSheetRadius: 20.0,
+          bottomSheetElevation: 2.0,
+          bottomSheetModalElevation: 3.0,
+          bottomNavigationBarMutedUnselectedLabel: false,
+          bottomNavigationBarMutedUnselectedIcon: false,
+          bottomNavigationBarBackgroundSchemeColor: SchemeColor.surfaceVariant,
+          menuRadius: 6.0,
+          menuElevation: 4.0,
+          menuBarRadius: 0.0,
+          menuBarElevation: 1.0,
+          navigationBarSelectedLabelSchemeColor: SchemeColor.primary,
+          navigationBarMutedUnselectedLabel: false,
+          navigationBarSelectedIconSchemeColor: SchemeColor.background,
+          navigationBarMutedUnselectedIcon: false,
+          navigationBarIndicatorSchemeColor: SchemeColor.primary,
+          navigationBarIndicatorOpacity: 1.00,
+          navigationBarBackgroundSchemeColor: SchemeColor.background,
+          navigationBarElevation: 1.0,
+          navigationRailSelectedLabelSchemeColor: SchemeColor.primary,
+          navigationRailMutedUnselectedLabel: false,
+          navigationRailSelectedIconSchemeColor: SchemeColor.background,
+          navigationRailMutedUnselectedIcon: false,
+          navigationRailIndicatorSchemeColor: SchemeColor.primary,
+          navigationRailIndicatorOpacity: 1.00,
+        ),
+        keyColors: const FlexKeyColors(
+          useTertiary: true,
+          keepPrimary: true,
+          keepSecondary: true,
+          keepTertiary: true,
+        ),
+        tones: FlexTones.highContrast(Brightness.light)
+            .onMainsUseBW()
+            .onSurfacesUseBW()
+            .surfacesUseBW(),
+        visualDensity: FlexColorScheme.comfortablePlatformDensity,
         useMaterial3: true,
+        swapLegacyOnMaterial3: true,
+        // To use the Playground font, add GoogleFonts package and uncomment
+        fontFamily: GoogleFonts.notoSans().fontFamily,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      darkTheme: FlexThemeData.dark(
+        scheme: FlexScheme.gold,
+        surfaceMode: FlexSurfaceMode.highScaffoldLowSurface,
+        blendLevel: 18,
+        appBarStyle: FlexAppBarStyle.background,
+        bottomAppBarElevation: 2.0,
+        darkIsTrueBlack: true,
+        subThemesData: const FlexSubThemesData(
+          blendOnLevel: 20,
+          useTextTheme: true,
+          useM2StyleDividerInM3: true,
+          splashType: FlexSplashType.inkRipple,
+          defaultRadius: 16.0,
+          elevatedButtonSchemeColor: SchemeColor.onPrimaryContainer,
+          elevatedButtonSecondarySchemeColor: SchemeColor.primaryContainer,
+          segmentedButtonSchemeColor: SchemeColor.primary,
+          inputDecoratorSchemeColor: SchemeColor.primary,
+          inputDecoratorBackgroundAlpha: 28,
+          inputDecoratorUnfocusedHasBorder: false,
+          fabSchemeColor: SchemeColor.tertiary,
+          popupMenuRadius: 6.0,
+          popupMenuElevation: 4.0,
+          alignedDropdown: true,
+          dialogElevation: 3.0,
+          dialogRadius: 20.0,
+          useInputDecoratorThemeInDialogs: true,
+          snackBarBackgroundSchemeColor: SchemeColor.inverseSurface,
+          drawerIndicatorSchemeColor: SchemeColor.primary,
+          bottomSheetRadius: 20.0,
+          bottomSheetElevation: 2.0,
+          bottomSheetModalElevation: 3.0,
+          bottomNavigationBarMutedUnselectedLabel: false,
+          bottomNavigationBarMutedUnselectedIcon: false,
+          bottomNavigationBarBackgroundSchemeColor: SchemeColor.surfaceVariant,
+          menuRadius: 6.0,
+          menuElevation: 4.0,
+          menuBarRadius: 0.0,
+          menuBarElevation: 1.0,
+          navigationBarSelectedLabelSchemeColor: SchemeColor.primary,
+          navigationBarMutedUnselectedLabel: false,
+          navigationBarSelectedIconSchemeColor: SchemeColor.background,
+          navigationBarMutedUnselectedIcon: false,
+          navigationBarIndicatorSchemeColor: SchemeColor.primary,
+          navigationBarIndicatorOpacity: 1.00,
+          navigationBarBackgroundSchemeColor: SchemeColor.background,
+          navigationBarElevation: 1.0,
+          navigationRailSelectedLabelSchemeColor: SchemeColor.primary,
+          navigationRailMutedUnselectedLabel: false,
+          navigationRailSelectedIconSchemeColor: SchemeColor.background,
+          navigationRailMutedUnselectedIcon: false,
+          navigationRailIndicatorSchemeColor: SchemeColor.primary,
+          navigationRailIndicatorOpacity: 1.00,
+        ),
+        keyColors: const FlexKeyColors(
+          useTertiary: true,
+          keepPrimary: true,
+          keepTertiary: true,
+          keepPrimaryContainer: true,
+          keepSecondaryContainer: true,
+        ),
+        tones: FlexTones.highContrast(Brightness.dark)
+            .onMainsUseBW()
+            .onSurfacesUseBW(),
+        visualDensity: FlexColorScheme.comfortablePlatformDensity,
+        useMaterial3: true,
+        swapLegacyOnMaterial3: true,
+        // To use the Playground font, add GoogleFonts package and uncomment
+        fontFamily: GoogleFonts.notoSans().fontFamily,
+      ),
+// If you do not have a themeMode switch, uncomment this line
+// to let the device system mode control the theme mode:
+// themeMode: ThemeMode.system,
+
+// If you do not have a themeMode switch, uncomment this line
+// to let the device system mode control the theme mode:
+// themeMode: ThemeMode.system,
+
+// If you do not have a themeMode switch, uncomment this line
+// to let the device system mode control the theme mode:
+      debugShowCheckedModeBanner: false,
+      themeMode: ThemeMode.system,
     );
   }
 }
@@ -81,7 +223,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // TRY THIS: Try changing the color here to a specific color (to
         // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
         // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        //  backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
@@ -116,7 +258,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: () async => await context.push('/new-entry'),
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
