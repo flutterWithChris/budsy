@@ -30,7 +30,6 @@ IconData getDuotoneIconForCategory(ProductCategory category) {
 Map<Feeling, IconData> feelingIcons = {
   Feeling.happy: PhosphorIcons.smiley(),
   Feeling.creative: PhosphorIcons.paintBrush(),
-  Feeling.relaxed: PhosphorIcons.personArmsSpread(),
   Feeling.sleepy: PhosphorIcons.moon(),
   Feeling.anxious: PhosphorIcons.smileyNervous(),
   Feeling.hungry: PhosphorIcons.bowlFood(),
@@ -47,7 +46,6 @@ IconData getIconForFeeling(Feeling feeling) {
 Map<Feeling, IconData> feelingDuotoneIcons = {
   Feeling.happy: PhosphorIcons.smiley(PhosphorIconsStyle.duotone),
   Feeling.creative: PhosphorIcons.paintBrush(PhosphorIconsStyle.duotone),
-  Feeling.relaxed: PhosphorIcons.personArmsSpread(PhosphorIconsStyle.duotone),
   Feeling.sleepy: PhosphorIcons.moon(PhosphorIconsStyle.duotone),
   Feeling.anxious: PhosphorIcons.smileyNervous(PhosphorIconsStyle.duotone),
   Feeling.hungry: PhosphorIcons.bowlFood(PhosphorIconsStyle.duotone),

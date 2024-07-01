@@ -1,5 +1,6 @@
 import 'package:budsy/entries/new_entry.dart';
 import 'package:budsy/entries/qr_scan_screen.dart';
+import 'package:budsy/journal/view/add_journal_page.dart';
 import 'package:budsy/journal/view/journal_page.dart';
 import 'package:budsy/stash/stash_page.dart';
 import 'package:go_router/go_router.dart';
@@ -10,6 +11,12 @@ GoRouter goRouter = GoRouter(
     GoRoute(
       path: '/',
       builder: (context, state) => const JournalPage(),
+      routes: [
+        GoRoute(
+          path: 'add',
+          builder: (context, state) => const AddJournalEntryPage(),
+        ),
+      ],
     ),
     // Define a route that handles '/second'
     GoRoute(

@@ -3,7 +3,6 @@ import 'package:budsy/entries/model/product.dart';
 enum Feeling {
   happy,
   creative,
-  relaxed,
   sleepy,
   anxious,
   hungry,
@@ -17,13 +16,13 @@ class JournalEntry {
   final String id;
   final DateTime createdAt;
   final Product product;
-  final Feeling feeling;
+  final List<Feeling> feelings;
 
   JournalEntry({
     required this.id,
     required this.createdAt,
     required this.product,
-    required this.feeling,
+    required this.feelings,
   });
 
   factory JournalEntry.fromJson(Map<String, dynamic> json) {
@@ -31,8 +30,11 @@ class JournalEntry {
       id: json['id'],
       createdAt: DateTime.parse(json['createdAt']),
       product: Product.fromJson(json['product']),
-      feeling: Feeling.values
-          .firstWhere((element) => element.toString() == json['feeling']),
+      feelings: (json['feelings'] as List<dynamic>)
+          .map((feeling) => Feeling.values.firstWhere(
+                (element) => element.toString() == 'Feeling.$feeling',
+              ))
+          .toList(),
     );
   }
 
@@ -41,12 +43,14 @@ class JournalEntry {
       'id': id,
       'createdAt': createdAt.toIso8601String(),
       'product': product.toJson(),
-      'feeling': feeling.toString(),
+      'feelings': feelings
+          .map((feeling) => feeling.toString().split('.').last)
+          .toList(),
     };
   }
 
   @override
   String toString() {
-    return 'JournalEntry{id: $id, createdAt: $createdAt, product: $product, feeling: $feeling}';
+    return 'JournalEntry{id: $id, createdAt: $createdAt, product: $product, feelings: $feelings}';
   }
 }

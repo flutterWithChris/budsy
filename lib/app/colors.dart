@@ -6,9 +6,7 @@ Color getColorForFeeling(Feeling feeling) {
     case Feeling.happy:
       return Colors.green;
     case Feeling.creative:
-      return Colors.blue;
-    case Feeling.relaxed:
-      return Colors.deepPurpleAccent;
+      return Colors.lightBlue;
     case Feeling.sleepy:
       return Colors.deepPurple;
     case Feeling.anxious:
@@ -16,7 +14,7 @@ Color getColorForFeeling(Feeling feeling) {
     case Feeling.hungry:
       return Colors.deepOrangeAccent;
     case Feeling.energetic:
-      return Colors.lightBlue;
+      return Colors.amber;
     case Feeling.focus:
       return Colors.purple;
     case Feeling.social:
