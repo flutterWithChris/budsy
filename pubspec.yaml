@@ -49,6 +49,8 @@ dependencies:
   googleapis: ^13.2.0
   fl_chart: ^0.68.0
   jiffy: ^6.3.1
+  flutter_slidable: ^3.1.0
+  flutter_expandable_fab: ^2.1.0
 
 dev_dependencies:
   flutter_test:

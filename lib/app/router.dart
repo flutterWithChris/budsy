@@ -3,6 +3,7 @@ import 'package:budsy/entries/qr_scan_screen.dart';
 import 'package:budsy/journal/view/add_journal_page.dart';
 import 'package:budsy/journal/view/journal_page.dart';
 import 'package:budsy/stash/stash_page.dart';
+import 'package:budsy/trends/trends_page.dart';
 import 'package:go_router/go_router.dart';
 
 GoRouter goRouter = GoRouter(
@@ -33,5 +34,9 @@ GoRouter goRouter = GoRouter(
       path: '/stash',
       builder: (context, state) => const StashPage(),
     ),
+    GoRoute(
+      path: '/trends',
+      builder: (context, state) => const TrendsPage(),
+    )
   ],
 );

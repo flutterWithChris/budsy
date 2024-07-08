@@ -1,5 +1,6 @@
 import 'package:budsy/entries/model/journal_entry.dart';
 import 'package:budsy/entries/model/product.dart';
+import 'package:budsy/entries/model/terpene.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
@@ -57,4 +58,54 @@ Map<Feeling, IconData> feelingDuotoneIcons = {
 
 IconData getDuotoneIconForFeeling(Feeling feeling) {
   return feelingDuotoneIcons[feeling]!;
+}
+
+IconData getIconForTerpene(Terpene terpene) {
+  switch (terpene.name) {
+    case 'Myrcene':
+      return PhosphorIcons.firstAid();
+    case 'Limonene':
+      return PhosphorIcons.leaf();
+    case 'Caryophyllene':
+      return PhosphorIcons.leaf();
+    case 'Pinene':
+      return PhosphorIcons.treeEvergreen();
+    case 'Linalool':
+      return PhosphorIcons.flowerLotus();
+    case 'Humulene':
+      return PhosphorIcons.leaf();
+    case 'Ocimene':
+      return PhosphorIcons.leaf();
+    case 'Terpinolene':
+      return PhosphorIcons.leaf();
+    case 'Terpineol':
+      return PhosphorIcons.leaf();
+    default:
+      return PhosphorIcons.leaf();
+  }
+}
+
+IconData getFilledIconForTerpene(Terpene terpene) {
+  switch (terpene.name) {
+    case 'Myrcene':
+      return PhosphorIcons.firstAid(PhosphorIconsStyle.fill);
+    case 'Limonene':
+      return PhosphorIcons.leaf(PhosphorIconsStyle.fill);
+    case 'Caryophyllene':
+      return PhosphorIcons.leaf(PhosphorIconsStyle.fill);
+    case 'Pinene':
+      return PhosphorIcons.treeEvergreen(PhosphorIconsStyle.fill);
+    case 'Linalool':
+      return PhosphorIcons.flowerLotus(PhosphorIconsStyle.fill);
+    case 'Humulene':
+      return PhosphorIcons.leaf(PhosphorIconsStyle.fill);
+    case 'Ocimene':
+      return PhosphorIcons.leaf(PhosphorIconsStyle.fill);
+    case 'Terpinolene':
+      return PhosphorIcons.leaf(PhosphorIconsStyle.fill);
+    case 'Terpineol':
+      return PhosphorIcons.leaf(PhosphorIconsStyle.fill);
+    default:
+      return PhosphorIcons.leaf(PhosphorIconsStyle.fill);
+  }
 }

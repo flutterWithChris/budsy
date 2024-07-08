@@ -6,7 +6,7 @@ import 'package:budsy/entries/model/terpene.dart';
 List<Product> mockProducts = [
   Product(
     id: '1',
-    name: 'Blue Dream',
+    name: 'Jah\'spresso',
     images: ['assets/images/products/blue_dream.jpg'],
     description:
         'Blue Dream is a sativa-dominant hybrid marijuana strain made by crossing Blueberry with Haze. Blue Dream produces a balancing high accompanied by full-body relaxation with gentle cerebral invigoration. Novice and veteran consumers alike enjoy the calming and euphoric effects that Blue Dream provides. Consumers also love the flavor - which smells and tastes just like sweet berries. Medical marijuana patients say Blue Dream delivers swift relief from symptoms associated with pain, depression, and nausea. Growers say this strain is best suited to the Sea of Green Method and has an average flowering time of 67 days. Fun fact: Blue Dream originated in California and has achieved legendary status among West Coast strains.',
@@ -29,7 +29,7 @@ List<Product> mockProducts = [
   ),
   Product(
     id: '2',
-    name: 'OG Kush',
+    name: 'White Durban',
     images: ['assets/images/products/og_kush.jpg'],
     description:
         'OG Kush was first cultivated in Florida, in the early ‘90s when a strain from Northern California was crossed with a Hindu Kush plant from Amsterdam. The result was a hybrid with a unique terpene profile that boasts a complex aroma with notes of fuel, skunk, and spice. OG Kush is known for its strength, potency, and powerful euphoria. It’s an indica-dominant hybrid that is great for patients who need strong medication. Most patients find that OG Kush is a good strain for pain relief and insomnia. It is also excellent for migraines and stress. OG Kush is also used to treat Alzheimer’s disease. Dry mouth and eyes are the most common negative effects, though headaches and paranoia are also possible.',

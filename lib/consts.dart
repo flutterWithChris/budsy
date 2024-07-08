@@ -1,6 +1,8 @@
 import 'package:budsy/entries/model/cannabinoid.dart';
+import 'package:budsy/entries/model/journal_entry.dart';
 import 'package:budsy/entries/model/product.dart';
 import 'package:budsy/entries/model/terpene.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
@@ -71,3 +73,34 @@ List<Terpene> _terpenes = [
 ];
 
 List<Terpene> get terpenes => _terpenes;
+
+double calculateCircleAvatarRadius(int feelingCount) {
+  if (feelingCount == 1) {
+    return 18;
+  } else {
+    return 14;
+  }
+}
+
+double calculateIconRadius(int feelingCount) {
+  if (feelingCount == 1) {
+    return 24;
+  } else {
+    return 18;
+  }
+}
+
+// Put together the feeling summary string using commas if longer than 2 and an '&' for the last feeling.
+String composeFeelingSummaryString(List<Feeling> feelings) {
+  String feelingSummaryString = '';
+  for (int i = 0; i < feelings.length; i++) {
+    if (i == 0) {
+      feelingSummaryString += feelings[i].name.capitalize;
+    } else if (i == feelings.length - 1) {
+      feelingSummaryString += ' & ${feelings[i].name.capitalize}';
+    } else {
+      feelingSummaryString += ', ${feelings[i].name.capitalize}';
+    }
+  }
+  return feelingSummaryString;
+}

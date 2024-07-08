@@ -29,6 +29,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
             context.go('/');
             break;
           case 2:
+            context.go('/trends');
+          case 3:
             context.go('/settings');
             break;
         }
@@ -41,6 +43,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
         NavigationDestination(
           icon: PhosphorIcon(PhosphorIcons.calendar()),
           label: 'Journal',
+        ),
+        NavigationDestination(
+          icon: PhosphorIcon(PhosphorIcons.chartDonut()),
+          label: 'Trends',
         ),
         NavigationDestination(
           icon: PhosphorIcon(PhosphorIcons.gear()),

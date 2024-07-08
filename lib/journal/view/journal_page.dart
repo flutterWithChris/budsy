@@ -6,10 +6,13 @@ import 'package:budsy/entries/mock/mock_products.dart';
 import 'package:budsy/entries/model/journal_entry.dart';
 import 'package:budsy/journal/mock/mock_journal_entries.dart';
 import 'package:budsy/journal/view/add_journal_page.dart';
+import 'package:budsy/journal/view/sheets/view_journal_entry_sheet.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jiffy/jiffy.dart';
@@ -21,12 +24,9 @@ class JournalPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          context.push('/add');
-        },
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButtonLocation: ExpandableFab.location,
+
+      floatingActionButton: const JournalPageFAB(),
       // appBar: AppBar(
       //   title: const Text('Journal'),
       // ),
@@ -90,43 +90,218 @@ class JournalPage extends StatelessWidget {
   }
 }
 
-class JournalEntryList extends StatelessWidget {
+class JournalPageFAB extends StatelessWidget {
+  const JournalPageFAB({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: ExpandableFab(
+        distance: 72,
+        duration: const Duration(milliseconds: 400),
+        overlayStyle: const ExpandableFabOverlayStyle(color: Colors.black54),
+        closeButtonBuilder: FloatingActionButtonBuilder(
+          size: 60,
+          builder: (context, onPressed, progress) => FloatingActionButton(
+            onPressed: onPressed,
+            child: PhosphorIcon(PhosphorIcons.xCircle(PhosphorIconsStyle.fill)),
+          ),
+        ),
+        openButtonBuilder: FloatingActionButtonBuilder(
+          size: 80,
+          builder: (context, onPressed, progress) => FloatingActionButton(
+            backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+            onPressed: onPressed,
+            child: PhosphorIcon(PhosphorIcons.plus(PhosphorIconsStyle.bold)),
+          ),
+        ),
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 4.0),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.secondaryContainer,
+                    borderRadius: BorderRadius.circular(4.0),
+                  ),
+                  child: Text(
+                    'Add Session',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              FloatingActionButton(
+                  backgroundColor:
+                      Theme.of(context).colorScheme.primaryContainer,
+                  onPressed: () {
+                    GoRouter.of(context).go('/journal/add');
+                  },
+                  child: PhosphorIcon(
+                      PhosphorIcons.notepad(PhosphorIconsStyle.fill))),
+            ],
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 4.0),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.secondaryContainer,
+                    borderRadius: BorderRadius.circular(4.0),
+                  ),
+                  child: Text(
+                    'Add Feeling',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              FloatingActionButton(
+                  backgroundColor:
+                      Theme.of(context).colorScheme.primaryContainer,
+                  onPressed: () => context.push('/add'),
+                  child: PhosphorIcon(
+                      PhosphorIcons.smiley(PhosphorIconsStyle.fill))),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class JournalEntryList extends StatefulWidget {
   const JournalEntryList({
     super.key,
   });
 
+  @override
+  State<JournalEntryList> createState() => _JournalEntryListState();
+}
+
+class _JournalEntryListState extends State<JournalEntryList> {
   @override
   Widget build(BuildContext context) {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index) {
           final journalEntry = mockJournalEntries[index];
-          int feelingCount = journalEntry.feelings.length;
-          bool overFeelingAvatarLimit = journalEntry.feelings.length > 3;
-          int feelingAvatarLimit =
-              overFeelingAvatarLimit ? 3 : journalEntry.feelings.length;
-          double circleAvatarRadius = calculateCircleAvatarRadius(feelingCount);
-          double iconSize = calculateIconRadius(feelingCount);
-          String feelingSummaryString =
-              composeFeelingSummaryString(journalEntry.feelings);
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2),
-            child: Card(
-              child: InkWell(
-                onTap: () {
-                  //  context.go('/product/${product.id}');
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 4.0, vertical: 16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        flex: 2,
+          if (journalEntry.type == EntryType.session) {
+            return SessionListTile(journalEntry: journalEntry);
+          } else {
+            return FeelingListTile(journalEntry: journalEntry);
+          }
+        },
+        childCount: mockJournalEntries.length,
+      ),
+    );
+  }
+}
+
+class FeelingListTile extends StatefulWidget {
+  final JournalEntry journalEntry;
+  const FeelingListTile({required this.journalEntry, super.key});
+
+  @override
+  State<FeelingListTile> createState() => _FeelingListTileState();
+}
+
+class _FeelingListTileState extends State<FeelingListTile>
+    with SingleTickerProviderStateMixin {
+  late var slidableController = SlidableController(this);
+
+  bool slidableOpen = false;
+  @override
+  Widget build(BuildContext context) {
+    JournalEntry journalEntry = widget.journalEntry;
+    int feelingCount = journalEntry.feelings.length;
+    bool overFeelingAvatarLimit = journalEntry.feelings.length > 3;
+    int feelingAvatarLimit =
+        overFeelingAvatarLimit ? 4 : journalEntry.feelings.length;
+    double circleAvatarRadius = calculateCircleAvatarRadius(feelingCount);
+    double iconSize = calculateIconRadius(feelingCount);
+    String feelingSummaryString =
+        composeFeelingSummaryString(journalEntry.feelings);
+    double listTilePadding = journalEntry.feelings.length > 2 ? 8.0 : 16.0;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Slidable(
+            controller: slidableController,
+            startActionPane: ActionPane(
+              motion: const DrawerMotion(),
+              children: [
+                SlidableAction(
+                  onPressed: (context) {},
+                  icon: PhosphorIcons.trashSimple(),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(8.0),
+                    bottomLeft: Radius.circular(8.0),
+                  ),
+                  backgroundColor: Colors.redAccent,
+                ),
+                SlidableAction(
+                  onPressed: (context) {},
+                  icon: PhosphorIcons.pencilSimple(),
+                  // borderRadius: const BorderRadius.only(
+                  //   topRight: Radius.circular(16.0),
+                  //   bottomRight: Radius.circular(16.0),
+                  // ),
+                  backgroundColor: Colors.blueAccent,
+                )
+              ],
+            ),
+            child: InkWell(
+              onTap: () async {
+                slidableOpen
+                    ? await slidableController.close().then((value) {
+                        setState(() {
+                          slidableOpen = !slidableOpen;
+                        });
+                      })
+                    : await slidableController.openStartActionPane().then(
+                        (value) {
+                          setState(() {
+                            slidableOpen = !slidableOpen;
+                          });
+                        },
+                      );
+
+                print('Slidable open: $slidableOpen');
+                print('Tapped');
+              },
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: 8.0, vertical: listTilePadding),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
                         child: Wrap(
                           alignment: WrapAlignment.center,
                           spacing: 4.0,
+                          runSpacing:
+                              journalEntry.feelings.length > 3 ? 4.0 : 0,
                           children: [
                             for (int i = 0; i < feelingAvatarLimit; i++)
                               CircleAvatar(
@@ -136,110 +311,251 @@ class JournalEntryList extends StatelessWidget {
                                 child: PhosphorIcon(
                                   getIconForFeeling(journalEntry.feelings[i]),
                                   size: iconSize,
+                                  color: Theme.of(context).brightness ==
+                                          Brightness.light
+                                      ? Colors.white
+                                      : null,
                                 ),
                               ),
                           ],
                         ),
                       ),
-                      Expanded(
-                        flex: 4,
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 4.0, left: 4.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                composeFeelingSummaryString(
-                                    journalEntry.feelings),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleSmall
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                              ),
-                              Text(
-                                  Jiffy.parseFromDateTime(
-                                          journalEntry.createdAt)
-                                      .fromNow(),
-                                  style: Theme.of(context).textTheme.bodySmall),
-                            ],
-                          ),
+                    ),
+                    Expanded(
+                      flex: 4,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 4.0, left: 4.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              feelingSummaryString,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                            Text(
+                                Jiffy.parseFromDateTime(journalEntry.createdAt)
+                                    .fromNow(),
+                                style: Theme.of(context).textTheme.bodySmall),
+                          ],
                         ),
                       ),
-                      Expanded(
-                        flex: 4,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Flexible(
-                                child: Chip(
-                                  visualDensity: VisualDensity.compact,
-                                  avatar: PhosphorIcon(
-                                    getIconForCategory(
-                                        journalEntry.product.category!),
-                                    size: 16,
-                                  ),
-                                  label: Text(
-                                    journalEntry.product.name!,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.fade,
-                                    softWrap: false,
-                                    style:
-                                        Theme.of(context).textTheme.bodySmall,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                    // Expanded(
+                    //   flex: 4,
+                    //   child: Padding(
+                    //     padding: const EdgeInsets.all(8.0),
+                    //     child: Row(
+                    //       mainAxisSize: MainAxisSize.min,
+                    //       mainAxisAlignment: MainAxisAlignment.end,
+                    //       children: [
+                    //         Flexible(
+                    //           child: Chip(
+                    //             visualDensity: VisualDensity.compact,
+                    //             avatar: PhosphorIcon(
+                    //               getIconForCategory(
+                    //                   journalEntry.product.category!),
+                    //               size: 16,
+                    //             ),
+                    //             label: Text(
+                    //               journalEntry.product.name!,
+                    //               maxLines: 1,
+                    //               overflow: TextOverflow.fade,
+                    //               softWrap: false,
+                    //               style: Theme.of(context).textTheme.bodySmall,
+                    //             ),
+                    //           ),
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
+                  ],
                 ),
               ),
             ),
-          );
-        },
-        childCount: mockJournalEntries.length,
+          ),
+          const Divider(),
+        ],
       ),
     );
   }
+}
 
-  double calculateCircleAvatarRadius(int feelingCount) {
-    if (feelingCount == 1) {
-      return 18;
-    } else {
-      return 14;
-    }
-  }
+class SessionListTile extends StatefulWidget {
+  final JournalEntry journalEntry;
+  const SessionListTile({required this.journalEntry, super.key});
 
-  double calculateIconRadius(int feelingCount) {
-    if (feelingCount == 1) {
-      return 24;
-    } else {
-      return 18;
-    }
-  }
+  @override
+  State<SessionListTile> createState() => _SessionListTileState();
+}
 
-// Put together the feeling summary string using commas if longer than 2 and an '&' for the last feeling.
-  String composeFeelingSummaryString(List<Feeling> feelings) {
-    String feelingSummaryString = '';
-    for (int i = 0; i < feelings.length; i++) {
-      if (i == 0) {
-        feelingSummaryString += feelings[i].name.capitalize;
-      } else if (i == feelings.length - 1) {
-        feelingSummaryString += ' & ${feelings[i].name.capitalize}';
-      } else {
-        feelingSummaryString += ', ${feelings[i].name.capitalize}';
-      }
-    }
-    return feelingSummaryString;
+class _SessionListTileState extends State<SessionListTile>
+    with SingleTickerProviderStateMixin {
+  late var slidableController = SlidableController(this);
+
+  bool slidableOpen = false;
+  @override
+  Widget build(BuildContext context) {
+    JournalEntry journalEntry = widget.journalEntry;
+    int feelingCount = journalEntry.feelings.length;
+    bool overFeelingAvatarLimit = journalEntry.feelings.length > 3;
+    int feelingAvatarLimit =
+        overFeelingAvatarLimit ? 4 : journalEntry.feelings.length;
+    double circleAvatarRadius = calculateCircleAvatarRadius(feelingCount);
+    double iconSize = calculateIconRadius(feelingCount);
+    String feelingSummaryString =
+        composeFeelingSummaryString(journalEntry.feelings);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Slidable(
+            controller: slidableController,
+            startActionPane: ActionPane(
+              motion: const DrawerMotion(),
+              children: [
+                SlidableAction(
+                  onPressed: (context) {},
+                  icon: PhosphorIcons.trashSimple(),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(8.0),
+                    bottomLeft: Radius.circular(8.0),
+                  ),
+                  backgroundColor: Colors.redAccent,
+                ),
+                SlidableAction(
+                  onPressed: (context) {},
+                  icon: PhosphorIcons.pencilSimple(),
+                  // borderRadius: const BorderRadius.only(
+                  //   topRight: Radius.circular(16.0),
+                  //   bottomRight: Radius.circular(16.0),
+                  // ),
+                  backgroundColor: Colors.blueAccent,
+                )
+              ],
+            ),
+            child: InkWell(
+              onTap: () async {
+                slidableOpen
+                    ? await slidableController.close().then((value) {
+                        setState(() {
+                          slidableOpen = !slidableOpen;
+                        });
+                      })
+                    : await slidableController.openStartActionPane().then(
+                        (value) {
+                          setState(() {
+                            slidableOpen = !slidableOpen;
+                          });
+                        },
+                      );
+
+                print('Slidable open: $slidableOpen');
+                print('Tapped');
+              },
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: Wrap(
+                        alignment: WrapAlignment.center,
+                        spacing: 4.0,
+                        runSpacing: journalEntry.feelings.length > 3 ? 4.0 : 0,
+                        children: [
+                          for (int i = 0; i < feelingAvatarLimit; i++)
+                            CircleAvatar(
+                              radius: circleAvatarRadius,
+                              backgroundColor:
+                                  getColorForFeeling(journalEntry.feelings[i]),
+                              child: PhosphorIcon(
+                                getIconForFeeling(journalEntry.feelings[i]),
+                                size: iconSize,
+                                color: Theme.of(context).brightness ==
+                                        Brightness.light
+                                    ? Colors.white
+                                    : null,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      flex: 4,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 4.0, left: 4.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              feelingSummaryString,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                            Text(
+                                Jiffy.parseFromDateTime(journalEntry.createdAt)
+                                    .fromNow(),
+                                style: Theme.of(context).textTheme.bodySmall),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 4,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Flexible(
+                              child: Chip(
+                                visualDensity: VisualDensity.compact,
+                                avatar: PhosphorIcon(
+                                  getIconForCategory(
+                                      journalEntry.product.category!),
+                                  size: 16,
+                                ),
+                                label: Text(
+                                  journalEntry.product.name!,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.fade,
+                                  softWrap: false,
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const Divider(),
+        ],
+      ),
+    );
   }
 }

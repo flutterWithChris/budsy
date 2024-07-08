@@ -21,17 +21,19 @@ class MyApp extends StatelessWidget {
       routeInformationProvider: goRouter.routeInformationProvider,
       title: 'Flutter Demo',
       key: scaffoldKey,
+
 // Theme config for FlexColorScheme version 7.3.x. Make sure you use
 // same or higher package version, but still same major version. If you
 // use a lower package version, some properties may not be supported.
 // In that case remove them after copying this theme to your app.
       theme: FlexThemeData.light(
-        scheme: FlexScheme.gold,
+        scheme: FlexScheme.amber,
         surfaceMode: FlexSurfaceMode.highScaffoldLowSurface,
         blendLevel: 22,
         appBarStyle: FlexAppBarStyle.background,
         bottomAppBarElevation: 1.0,
         lightIsWhite: true,
+
         subThemesData: const FlexSubThemesData(
           blendOnLevel: 10,
           blendOnColors: false,
@@ -91,10 +93,10 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         swapLegacyOnMaterial3: true,
         // To use the Playground font, add GoogleFonts package and uncomment
-        fontFamily: GoogleFonts.notoSans().fontFamily,
+        // fontFamily: GoogleFonts.notoSans().fontFamily,
       ),
       darkTheme: FlexThemeData.dark(
-        scheme: FlexScheme.gold,
+        scheme: FlexScheme.amber,
         surfaceMode: FlexSurfaceMode.highScaffoldLowSurface,
         blendLevel: 18,
         appBarStyle: FlexAppBarStyle.background,
@@ -160,8 +162,12 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         swapLegacyOnMaterial3: true,
         // To use the Playground font, add GoogleFonts package and uncomment
-        fontFamily: GoogleFonts.notoSans().fontFamily,
+        // fontFamily: GoogleFonts.notoSans().fontFamily,
       ),
+// If you do not have a themeMode switch, uncomment this line
+// to let the device system mode control the theme mode:
+// themeMode: ThemeMode.system,
+
 // If you do not have a themeMode switch, uncomment this line
 // to let the device system mode control the theme mode:
 // themeMode: ThemeMode.system,
