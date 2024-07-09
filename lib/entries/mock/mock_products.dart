@@ -72,5 +72,28 @@ List<Product> mockProducts = [
       terpenes[1].copyWith(amount: 0.09),
       terpenes[2].copyWith(amount: 0.02),
     ],
-  )
+  ),
+  Product(
+    id: '4',
+    name: 'Blue Dream Cartridge',
+    images: ['assets/images/products/blue_dream_cartridge.jpg'],
+    description:
+        'Blue Dream is a sativa-dominant hybrid marijuana strain made by crossing Blueberry with Haze. Blue Dream produces a balancing high accompanied by full-body relaxation with gentle cerebral invigoration. Novice and veteran consumers alike enjoy the calming and euphoric effects that Blue Dream provides. Consumers also love the flavor - which smells and tastes just like sweet berries. Medical marijuana patients say Blue Dream delivers swift relief from symptoms associated with pain, depression, and nausea. Growers say this strain is best suited to the Sea of Green Method and has an average flowering time of 67 days. Fun fact: Blue Dream originated in California and has achieved legendary status among West Coast strains.',
+    category: ProductCategory.cartridge,
+    price: 40.00,
+    weight: 1.0,
+    unit: FlowerUnit.gram,
+    dispensary: 'The Green Door',
+    brand: 'Budsy Farms',
+    type: FlowerType.hybrid,
+    cannabinoids: [
+      cannabinoids[0].copyWith(amount: 0.2),
+      cannabinoids[1].copyWith(amount: 0.1),
+    ],
+    terpenes: [
+      terpenes[0].copyWith(amount: 0.1),
+      terpenes[1].copyWith(amount: 0.05),
+      terpenes[2].copyWith(amount: 0.05),
+    ],
+  ),
 ];

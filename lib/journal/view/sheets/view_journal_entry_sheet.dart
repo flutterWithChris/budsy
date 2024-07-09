@@ -18,12 +18,12 @@ class ViewJournalEntrySheet extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                journalEntry.product.name!,
+                journalEntry.product!.name!,
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               const SizedBox(height: 8.0),
               Text(
-                journalEntry.product.category!.name,
+                journalEntry.product!.category!.name,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 16.0),
@@ -34,7 +34,7 @@ class ViewJournalEntrySheet extends StatelessWidget {
               const SizedBox(height: 8.0),
               Wrap(
                 spacing: 8.0,
-                children: journalEntry.feelings
+                children: journalEntry.feelings!
                     .map(
                       (feeling) => Chip(
                         label: Text(feeling.toString().split('.').last),

@@ -76,17 +76,22 @@ List<Terpene> get terpenes => _terpenes;
 
 double calculateCircleAvatarRadius(int feelingCount) {
   if (feelingCount == 1) {
-    return 18;
+    return 20;
+  }
+  if (feelingCount == 2) {
+    return 16;
   } else {
-    return 14;
+    return 12;
   }
 }
 
 double calculateIconRadius(int feelingCount) {
   if (feelingCount == 1) {
-    return 24;
+    return 26;
+  } else if (feelingCount == 2) {
+    return 20;
   } else {
-    return 18;
+    return 16;
   }
 }
 

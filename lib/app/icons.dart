@@ -28,6 +28,18 @@ IconData getDuotoneIconForCategory(ProductCategory category) {
   return categoryDuotoneIcons[category]!;
 }
 
+Map<ProductCategory, IconData> boldCategoryIcons = {
+  ProductCategory.flower: PhosphorIcons.plant(PhosphorIconsStyle.bold),
+  ProductCategory.edible: PhosphorIcons.cookie(PhosphorIconsStyle.bold),
+  ProductCategory.concentrate: PhosphorIcons.drop(PhosphorIconsStyle.bold),
+  ProductCategory.cartridge: PhosphorIcons.cloud(PhosphorIconsStyle.bold),
+  ProductCategory.topical: PhosphorIcons.jarLabel(PhosphorIconsStyle.bold),
+};
+
+IconData getBoldIconForCategory(ProductCategory category) {
+  return boldCategoryIcons[category]!;
+}
+
 Map<Feeling, IconData> feelingIcons = {
   Feeling.happy: PhosphorIcons.smiley(),
   Feeling.creative: PhosphorIcons.paintBrush(),

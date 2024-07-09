@@ -22,15 +22,15 @@ class JournalEntry {
   final String id;
   final DateTime createdAt;
   final EntryType type;
-  final Product product;
-  final List<Feeling> feelings;
+  final Product? product;
+  final List<Feeling>? feelings;
 
   JournalEntry({
     required this.id,
     required this.createdAt,
     required this.type,
-    required this.product,
-    required this.feelings,
+    this.product,
+    this.feelings,
   });
 
   factory JournalEntry.fromJson(Map<String, dynamic> json) {
@@ -54,9 +54,9 @@ class JournalEntry {
       'id': id,
       'createdAt': createdAt.toIso8601String(),
       'type': type.toString().split('.').last,
-      'product': product.toJson(),
+      'product': product?.toJson(),
       'feelings': feelings
-          .map((feeling) => feeling.toString().split('.').last)
+          ?.map((feeling) => feeling.toString().split('.').last)
           .toList(),
     };
   }

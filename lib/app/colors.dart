@@ -1,4 +1,5 @@
 import 'package:budsy/entries/model/journal_entry.dart';
+import 'package:budsy/entries/model/product.dart';
 import 'package:budsy/entries/model/terpene.dart';
 import 'package:flutter/material.dart';
 
@@ -47,6 +48,27 @@ Color getColorForTerpene(Terpene terpene) {
       return Colors.pink;
     case 'Terpineol':
       return Colors.teal;
+    default:
+      return Colors.grey;
+  }
+}
+
+Color getColorForProductCategory(ProductCategory category) {
+  switch (category) {
+    case ProductCategory.flower:
+      return const Color.fromARGB(255, 65, 161, 36);
+    case ProductCategory.concentrate:
+      return Colors.lightBlue;
+    case ProductCategory.edible:
+      return Colors.blueAccent;
+    case ProductCategory.cartridge:
+      return Colors.deepOrangeAccent;
+    // case ProductCategory.tincture:
+    //   return Colors.deepOrangeAccent;
+    case ProductCategory.topical:
+      return Colors.amber;
+    case ProductCategory.other:
+      return Colors.purple;
     default:
       return Colors.grey;
   }

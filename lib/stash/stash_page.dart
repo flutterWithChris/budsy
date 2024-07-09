@@ -1,3 +1,4 @@
+import 'package:budsy/app/colors.dart';
 import 'package:budsy/app/icons.dart';
 import 'package:budsy/app/system/bottom_nav.dart';
 import 'package:budsy/consts.dart';
@@ -112,6 +113,9 @@ class StashList extends StatelessWidget {
                 child: ListTile(
                   leading: IconButton.filledTonal(
                     onPressed: () {},
+                    style: IconButton.styleFrom(
+                        backgroundColor:
+                            getColorForProductCategory(product.category!)),
                     icon: PhosphorIcon(getIconForCategory(product.category!)),
                   ),
                   title: Text(

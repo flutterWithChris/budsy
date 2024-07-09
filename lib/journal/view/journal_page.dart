@@ -4,6 +4,7 @@ import 'package:budsy/app/system/bottom_nav.dart';
 import 'package:budsy/consts.dart';
 import 'package:budsy/entries/mock/mock_products.dart';
 import 'package:budsy/entries/model/journal_entry.dart';
+import 'package:budsy/entries/model/product.dart';
 import 'package:budsy/journal/mock/mock_journal_entries.dart';
 import 'package:budsy/journal/view/add_journal_page.dart';
 import 'package:budsy/journal/view/sheets/view_journal_entry_sheet.dart';
@@ -97,90 +98,85 @@ class JournalPageFAB extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: ExpandableFab(
-        distance: 72,
-        duration: const Duration(milliseconds: 400),
-        overlayStyle: const ExpandableFabOverlayStyle(color: Colors.black54),
-        closeButtonBuilder: FloatingActionButtonBuilder(
-          size: 60,
-          builder: (context, onPressed, progress) => FloatingActionButton(
-            onPressed: onPressed,
-            child: PhosphorIcon(PhosphorIcons.xCircle(PhosphorIconsStyle.fill)),
-          ),
+    return ExpandableFab(
+      distance: 72,
+      duration: const Duration(milliseconds: 400),
+      overlayStyle: const ExpandableFabOverlayStyle(color: Colors.black54),
+      closeButtonBuilder: FloatingActionButtonBuilder(
+        size: 60,
+        builder: (context, onPressed, progress) => FloatingActionButton(
+          onPressed: onPressed,
+          child: PhosphorIcon(PhosphorIcons.xCircle(PhosphorIconsStyle.fill)),
         ),
-        openButtonBuilder: FloatingActionButtonBuilder(
-          size: 80,
-          builder: (context, onPressed, progress) => FloatingActionButton(
-            backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-            onPressed: onPressed,
-            child: PhosphorIcon(PhosphorIcons.plus(PhosphorIconsStyle.bold)),
-          ),
-        ),
-        children: [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 4.0),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.secondaryContainer,
-                    borderRadius: BorderRadius.circular(4.0),
-                  ),
-                  child: Text(
-                    'Add Session',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall
-                        ?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-              FloatingActionButton(
-                  backgroundColor:
-                      Theme.of(context).colorScheme.primaryContainer,
-                  onPressed: () {
-                    GoRouter.of(context).go('/journal/add');
-                  },
-                  child: PhosphorIcon(
-                      PhosphorIcons.notepad(PhosphorIconsStyle.fill))),
-            ],
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 4.0),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.secondaryContainer,
-                    borderRadius: BorderRadius.circular(4.0),
-                  ),
-                  child: Text(
-                    'Add Feeling',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall
-                        ?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-              FloatingActionButton(
-                  backgroundColor:
-                      Theme.of(context).colorScheme.primaryContainer,
-                  onPressed: () => context.push('/add'),
-                  child: PhosphorIcon(
-                      PhosphorIcons.smiley(PhosphorIconsStyle.fill))),
-            ],
-          ),
-        ],
       ),
+      openButtonBuilder: FloatingActionButtonBuilder(
+        size: 80,
+        builder: (context, onPressed, progress) => FloatingActionButton(
+          backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+          onPressed: onPressed,
+          child: PhosphorIcon(PhosphorIcons.plus(PhosphorIconsStyle.bold)),
+        ),
+      ),
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.secondaryContainer,
+                  borderRadius: BorderRadius.circular(4.0),
+                ),
+                child: Text(
+                  'Add Session',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall
+                      ?.copyWith(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            FloatingActionButton(
+                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                onPressed: () {
+                  GoRouter.of(context).go('/journal/add');
+                },
+                child: PhosphorIcon(
+                    PhosphorIcons.notepad(PhosphorIconsStyle.fill))),
+          ],
+        ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.secondaryContainer,
+                  borderRadius: BorderRadius.circular(4.0),
+                ),
+                child: Text(
+                  'Add Feeling',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall
+                      ?.copyWith(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            FloatingActionButton(
+                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                onPressed: () => context.push('/add'),
+                child: PhosphorIcon(
+                    PhosphorIcons.smiley(PhosphorIconsStyle.fill))),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -200,11 +196,21 @@ class _JournalEntryListState extends State<JournalEntryList> {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index) {
-          final journalEntry = mockJournalEntries[index];
+          List<JournalEntry> journalEntries = mockJournalEntries;
+          journalEntries.sort(
+            (a, b) => b.createdAt.compareTo(a.createdAt),
+          );
+          JournalEntry journalEntry = journalEntries[index];
           if (journalEntry.type == EntryType.session) {
-            return SessionListTile(journalEntry: journalEntry);
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2.0),
+              child: SessionListTile(journalEntry: journalEntry),
+            );
           } else {
-            return FeelingListTile(journalEntry: journalEntry);
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2.0),
+              child: FeelingListTile(journalEntry: journalEntry),
+            );
           }
         },
         childCount: mockJournalEntries.length,
@@ -229,17 +235,17 @@ class _FeelingListTileState extends State<FeelingListTile>
   @override
   Widget build(BuildContext context) {
     JournalEntry journalEntry = widget.journalEntry;
-    int feelingCount = journalEntry.feelings.length;
-    bool overFeelingAvatarLimit = journalEntry.feelings.length > 3;
+    int feelingCount = journalEntry.feelings!.length;
+    bool overFeelingAvatarLimit = journalEntry.feelings!.length > 3;
     int feelingAvatarLimit =
-        overFeelingAvatarLimit ? 4 : journalEntry.feelings.length;
+        overFeelingAvatarLimit ? 4 : journalEntry.feelings!.length;
     double circleAvatarRadius = calculateCircleAvatarRadius(feelingCount);
     double iconSize = calculateIconRadius(feelingCount);
     String feelingSummaryString =
-        composeFeelingSummaryString(journalEntry.feelings);
-    double listTilePadding = journalEntry.feelings.length > 2 ? 8.0 : 16.0;
+        composeFeelingSummaryString(journalEntry.feelings!);
+    double listTilePadding = journalEntry.feelings!.length > 2 ? 8.0 : 16.0;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 4.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -268,121 +274,125 @@ class _FeelingListTileState extends State<FeelingListTile>
                 )
               ],
             ),
-            child: InkWell(
-              onTap: () async {
-                slidableOpen
-                    ? await slidableController.close().then((value) {
-                        setState(() {
-                          slidableOpen = !slidableOpen;
-                        });
-                      })
-                    : await slidableController.openStartActionPane().then(
-                        (value) {
+            child: Card(
+              child: InkWell(
+                onTap: () async {
+                  slidableOpen
+                      ? await slidableController.close().then((value) {
                           setState(() {
                             slidableOpen = !slidableOpen;
                           });
-                        },
-                      );
+                        })
+                      : await slidableController.openStartActionPane().then(
+                          (value) {
+                            setState(() {
+                              slidableOpen = !slidableOpen;
+                            });
+                          },
+                        );
 
-                print('Slidable open: $slidableOpen');
-                print('Tapped');
-              },
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: 8.0, vertical: listTilePadding),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: Wrap(
-                          alignment: WrapAlignment.center,
-                          spacing: 4.0,
-                          runSpacing:
-                              journalEntry.feelings.length > 3 ? 4.0 : 0,
-                          children: [
-                            for (int i = 0; i < feelingAvatarLimit; i++)
-                              CircleAvatar(
-                                radius: circleAvatarRadius,
-                                backgroundColor: getColorForFeeling(
-                                    journalEntry.feelings[i]),
-                                child: PhosphorIcon(
-                                  getIconForFeeling(journalEntry.feelings[i]),
-                                  size: iconSize,
-                                  color: Theme.of(context).brightness ==
-                                          Brightness.light
-                                      ? Colors.white
-                                      : null,
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 4,
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 4.0, left: 4.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              feelingSummaryString,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleSmall
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
+                  print('Slidable open: $slidableOpen');
+                  print('Tapped');
+                },
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 8.0, vertical: listTilePadding),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: Wrap(
+                            alignment: WrapAlignment.center,
+                            spacing: 4.0,
+                            direction: Axis.horizontal,
+                            runSpacing:
+                                journalEntry.feelings!.length > 3 ? 4.0 : 0,
+                            children: [
+                              for (int i = 0; i < feelingAvatarLimit; i++)
+                                CircleAvatar(
+                                  radius: circleAvatarRadius,
+                                  backgroundColor: getColorForFeeling(
+                                      journalEntry.feelings![i]),
+                                  child: PhosphorIcon(
+                                    getIconForFeeling(
+                                        journalEntry.feelings![i]),
+                                    size: iconSize,
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.light
+                                        ? Colors.white
+                                        : null,
                                   ),
-                            ),
-                            Text(
-                                Jiffy.parseFromDateTime(journalEntry.createdAt)
-                                    .fromNow(),
-                                style: Theme.of(context).textTheme.bodySmall),
-                          ],
+                                ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    // Expanded(
-                    //   flex: 4,
-                    //   child: Padding(
-                    //     padding: const EdgeInsets.all(8.0),
-                    //     child: Row(
-                    //       mainAxisSize: MainAxisSize.min,
-                    //       mainAxisAlignment: MainAxisAlignment.end,
-                    //       children: [
-                    //         Flexible(
-                    //           child: Chip(
-                    //             visualDensity: VisualDensity.compact,
-                    //             avatar: PhosphorIcon(
-                    //               getIconForCategory(
-                    //                   journalEntry.product.category!),
-                    //               size: 16,
-                    //             ),
-                    //             label: Text(
-                    //               journalEntry.product.name!,
-                    //               maxLines: 1,
-                    //               overflow: TextOverflow.fade,
-                    //               softWrap: false,
-                    //               style: Theme.of(context).textTheme.bodySmall,
-                    //             ),
-                    //           ),
-                    //         ),
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
-                  ],
+                      Expanded(
+                        flex: 7,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 4.0, left: 4.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                feelingSummaryString,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleSmall
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                              Text(
+                                  Jiffy.parseFromDateTime(
+                                          journalEntry.createdAt)
+                                      .fromNow(),
+                                  style: Theme.of(context).textTheme.bodySmall),
+                            ],
+                          ),
+                        ),
+                      ),
+                      // Expanded(
+                      //   flex: 4,
+                      //   child: Padding(
+                      //     padding: const EdgeInsets.all(8.0),
+                      //     child: Row(
+                      //       mainAxisSize: MainAxisSize.min,
+                      //       mainAxisAlignment: MainAxisAlignment.end,
+                      //       children: [
+                      //         Flexible(
+                      //           child: Chip(
+                      //             visualDensity: VisualDensity.compact,
+                      //             avatar: PhosphorIcon(
+                      //               getIconForCategory(
+                      //                   journalEntry.product.category!),
+                      //               size: 16,
+                      //             ),
+                      //             label: Text(
+                      //               journalEntry.product.name!,
+                      //               maxLines: 1,
+                      //               overflow: TextOverflow.fade,
+                      //               softWrap: false,
+                      //               style: Theme.of(context).textTheme.bodySmall,
+                      //             ),
+                      //           ),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-          const Divider(),
         ],
       ),
     );
@@ -405,156 +415,154 @@ class _SessionListTileState extends State<SessionListTile>
   @override
   Widget build(BuildContext context) {
     JournalEntry journalEntry = widget.journalEntry;
-    int feelingCount = journalEntry.feelings.length;
-    bool overFeelingAvatarLimit = journalEntry.feelings.length > 3;
-    int feelingAvatarLimit =
-        overFeelingAvatarLimit ? 4 : journalEntry.feelings.length;
-    double circleAvatarRadius = calculateCircleAvatarRadius(feelingCount);
-    double iconSize = calculateIconRadius(feelingCount);
-    String feelingSummaryString =
-        composeFeelingSummaryString(journalEntry.feelings);
+    Product product = journalEntry.product!;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Slidable(
-            controller: slidableController,
-            startActionPane: ActionPane(
-              motion: const DrawerMotion(),
-              children: [
-                SlidableAction(
-                  onPressed: (context) {},
-                  icon: PhosphorIcons.trashSimple(),
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(8.0),
-                    bottomLeft: Radius.circular(8.0),
-                  ),
-                  backgroundColor: Colors.redAccent,
-                ),
-                SlidableAction(
-                  onPressed: (context) {},
-                  icon: PhosphorIcons.pencilSimple(),
-                  // borderRadius: const BorderRadius.only(
-                  //   topRight: Radius.circular(16.0),
-                  //   bottomRight: Radius.circular(16.0),
-                  // ),
-                  backgroundColor: Colors.blueAccent,
-                )
-              ],
-            ),
-            child: InkWell(
-              onTap: () async {
-                slidableOpen
-                    ? await slidableController.close().then((value) {
-                        setState(() {
-                          slidableOpen = !slidableOpen;
-                        });
-                      })
-                    : await slidableController.openStartActionPane().then(
-                        (value) {
-                          setState(() {
-                            slidableOpen = !slidableOpen;
-                          });
-                        },
-                      );
-
-                print('Slidable open: $slidableOpen');
-                print('Tapped');
-              },
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Slidable(
+                controller: slidableController,
+                startActionPane: ActionPane(
+                  motion: const DrawerMotion(),
                   children: [
-                    Expanded(
-                      flex: 2,
-                      child: Wrap(
-                        alignment: WrapAlignment.center,
-                        spacing: 4.0,
-                        runSpacing: journalEntry.feelings.length > 3 ? 4.0 : 0,
-                        children: [
-                          for (int i = 0; i < feelingAvatarLimit; i++)
-                            CircleAvatar(
-                              radius: circleAvatarRadius,
-                              backgroundColor:
-                                  getColorForFeeling(journalEntry.feelings[i]),
-                              child: PhosphorIcon(
-                                getIconForFeeling(journalEntry.feelings[i]),
-                                size: iconSize,
-                                color: Theme.of(context).brightness ==
-                                        Brightness.light
-                                    ? Colors.white
-                                    : null,
-                              ),
-                            ),
-                        ],
+                    SlidableAction(
+                      onPressed: (context) {},
+                      icon: PhosphorIcons.trashSimple(),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(8.0),
+                        bottomLeft: Radius.circular(8.0),
                       ),
+                      backgroundColor: Colors.redAccent,
                     ),
-                    Expanded(
-                      flex: 4,
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 4.0, left: 4.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              feelingSummaryString,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleSmall
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                            ),
-                            Text(
-                                Jiffy.parseFromDateTime(journalEntry.createdAt)
-                                    .fromNow(),
-                                style: Theme.of(context).textTheme.bodySmall),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 4,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Flexible(
-                              child: Chip(
-                                visualDensity: VisualDensity.compact,
-                                avatar: PhosphorIcon(
-                                  getIconForCategory(
-                                      journalEntry.product.category!),
-                                  size: 16,
-                                ),
-                                label: Text(
-                                  journalEntry.product.name!,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.fade,
-                                  softWrap: false,
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    SlidableAction(
+                      onPressed: (context) {},
+                      icon: PhosphorIcons.pencilSimple(),
+                      // borderRadius: const BorderRadius.only(
+                      //   topRight: Radius.circular(16.0),
+                      //   bottomRight: Radius.circular(16.0),
+                      // ),
+                      backgroundColor: Colors.blueAccent,
+                    )
                   ],
                 ),
+                child: InkWell(
+                  onTap: () async {
+                    slidableOpen
+                        ? await slidableController.close().then((value) {
+                            setState(() {
+                              slidableOpen = !slidableOpen;
+                            });
+                          })
+                        : await slidableController.openStartActionPane().then(
+                            (value) {
+                              setState(() {
+                                slidableOpen = !slidableOpen;
+                              });
+                            },
+                          );
+
+                    print('Slidable open: $slidableOpen');
+                    print('Tapped');
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 4.0, vertical: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: Wrap(
+                            alignment: WrapAlignment.center,
+                            spacing: 4.0,
+                            children: [
+                              CircleAvatar(
+                                radius: 20,
+                                backgroundColor: getColorForProductCategory(
+                                    product.category!),
+                                child: PhosphorIcon(
+                                  getIconForCategory(product.category!),
+                                  size: 24,
+                                  color: Theme.of(context).brightness ==
+                                          Brightness.light
+                                      ? Colors.white
+                                      : null,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          flex: 4,
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.only(right: 4.0, left: 12.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  product.name!,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                ),
+                                Text(
+                                    Jiffy.parseFromDateTime(
+                                            journalEntry.createdAt)
+                                        .fromNow(),
+                                    style:
+                                        Theme.of(context).textTheme.bodySmall),
+                              ],
+                            ),
+                          ),
+                        ),
+                        // Expanded(
+                        //   flex: 4,
+                        //   child: Padding(
+                        //     padding: const EdgeInsets.all(8.0),
+                        //     child: Row(
+                        //       mainAxisSize: MainAxisSize.min,
+                        //       mainAxisAlignment: MainAxisAlignment.end,
+                        //       children: [
+                        //         Flexible(
+                        //           child: Chip(
+                        //             visualDensity: VisualDensity.compact,
+                        //             avatar: PhosphorIcon(
+                        //               getIconForCategory(
+                        //                   journalEntry.product!.category!),
+                        //               size: 16,
+                        //             ),
+                        //             label: Text(
+                        //               journalEntry.product!.name!,
+                        //               maxLines: 1,
+                        //               overflow: TextOverflow.fade,
+                        //               softWrap: false,
+                        //               style: Theme.of(context).textTheme.bodySmall,
+                        //             ),
+                        //           ),
+                        //         ),
+                        //       ],
+                        //     ),
+                        //   ),
+                        // ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
-          const Divider(),
-        ],
+        ),
       ),
     );
   }
