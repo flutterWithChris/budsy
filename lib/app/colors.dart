@@ -16,7 +16,7 @@ Color getColorForFeeling(Feeling feeling) {
     case Feeling.hungry:
       return Colors.deepOrangeAccent;
     case Feeling.energetic:
-      return Colors.amber;
+      return Colors.orange;
     case Feeling.focus:
       return Colors.purple;
     case Feeling.social:
