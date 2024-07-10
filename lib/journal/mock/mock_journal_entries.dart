@@ -16,14 +16,14 @@ List<JournalEntry> mockJournalEntries = [
     id: '2',
     createdAt: generateRandomDateWithinWeek(),
     type: EntryType.feeling,
-    products: [mockProducts[1]],
+    products: [mockProducts[1], mockProducts[2]],
     feelings: [Feeling.creative, Feeling.social],
   ),
   JournalEntry(
     id: '3',
     createdAt: generateRandomDateWithinWeek(),
     type: EntryType.feeling,
-    products: [mockProducts[2]],
+    products: [mockProducts[2], mockProducts[3], mockProducts[0]],
     feelings: [Feeling.hungry, Feeling.energetic, Feeling.focus],
   ),
   JournalEntry(
@@ -63,13 +63,13 @@ List<JournalEntry> mockJournalEntries = [
     id: '8',
     createdAt: generateRandomDateWithinWeek(),
     type: EntryType.session,
-    products: [mockProducts[2]],
+    products: [mockProducts[2], mockProducts[3]],
   ),
   JournalEntry(
     id: '9',
     createdAt: generateRandomDateWithinWeek(),
     type: EntryType.session,
-    products: [mockProducts[1]],
+    products: [mockProducts[1], mockProducts[2], mockProducts[3]],
   ),
   JournalEntry(
     id: '10',

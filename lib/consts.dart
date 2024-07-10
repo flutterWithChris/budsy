@@ -87,9 +87,9 @@ double calculateCircleAvatarRadius(int feelingCount) {
 
 double calculateIconRadius(int feelingCount) {
   if (feelingCount == 1) {
-    return 26;
+    return 24;
   } else if (feelingCount == 2) {
-    return 20;
+    return 18;
   } else {
     return 16;
   }

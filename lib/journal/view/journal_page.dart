@@ -484,12 +484,14 @@ class _SessionListTileState extends State<SessionListTile>
                             children: [
                               for (Product product in journalEntry.products!)
                                 CircleAvatar(
-                                  radius: 20,
+                                  radius: calculateCircleAvatarRadius(
+                                      journalEntry.products!.length),
                                   backgroundColor: getColorForProductCategory(
                                       product.category!),
                                   child: PhosphorIcon(
                                     getIconForCategory(product.category!),
-                                    size: 24,
+                                    size: calculateIconRadius(
+                                        journalEntry.products!.length),
                                     color: Theme.of(context).brightness ==
                                             Brightness.light
                                         ? Colors.white
@@ -502,8 +504,10 @@ class _SessionListTileState extends State<SessionListTile>
                         Expanded(
                           flex: 4,
                           child: Padding(
-                            padding:
-                                const EdgeInsets.only(right: 4.0, left: 12.0),
+                            padding: const EdgeInsets.only(
+                              right: 16.0,
+                              left: 12.0,
+                            ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
@@ -575,12 +579,14 @@ class _SessionListTileState extends State<SessionListTile>
 String composeProductSummaryString(List<Product> products) {
   String productSummaryString = '';
   for (int i = 0; i < products.length; i++) {
-    if (i == products.length - 1) {
-      productSummaryString += ' & ${products[i].name}';
-    } else if (products.length == 1) {
-      productSummaryString += '${products[i].name}';
+    if (products.length == 1) {
+      productSummaryString += products[i].name!;
     } else {
-      productSummaryString += '${products[i].name}, ';
+      if (i == products.length - 1) {
+        productSummaryString += '& ${products[i].name}';
+      } else {
+        productSummaryString += '${products[i].name}, ';
+      }
     }
   }
   return productSummaryString;
