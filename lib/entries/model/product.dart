@@ -1,3 +1,4 @@
+import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:budsy/entries/model/cannabinoid.dart';
 import 'package:budsy/entries/model/terpene.dart';
 
@@ -7,7 +8,7 @@ enum FlowerType { sativa, indica, hybrid, cbd, thc, other }
 
 enum FlowerUnit { gram, eighth, quarter, half, ounce, other }
 
-class Product {
+class Product with CustomDropdownListFilter {
   final String? id;
   final String? name;
   final List<String>? images;
@@ -125,5 +126,10 @@ class Product {
   @override
   String toString() {
     return 'Product{id: $id, name: $name, images: $images, description: $description, category: $category, type: $type, price: $price, weight: $weight, unit: $unit, dispensary: $dispensary, brand: $brand, cannabinoids: $cannabinoids, terpenes: $terpenes}';
+  }
+
+  @override
+  bool filter(String query) {
+    return name!.toLowerCase().contains(query.toLowerCase());
   }
 }

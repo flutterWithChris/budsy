@@ -33,7 +33,7 @@ Color getColorForTerpene(Terpene terpene) {
     case 'Myrcene':
       return Colors.red[600]!;
     case 'Limonene':
-      return Colors.yellow;
+      return Colors.yellowAccent;
     case 'Caryophyllene':
       return Colors.green[600]!;
     case 'Pinene':

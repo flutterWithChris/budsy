@@ -22,6 +22,7 @@ class _AddJournalEntryPageState extends State<AddJournalEntryPage> {
   JournalEntry? journalEntry;
   List<Feeling> selectedFeelings = [];
   Product? selectedProduct;
+  int intensity = 5;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,33 +49,21 @@ class _AddJournalEntryPageState extends State<AddJournalEntryPage> {
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    DropdownMenu<Product>(
-                      label: const Text('Product'),
-                      expandedInsets: EdgeInsets.zero,
-                      enableFilter: true,
-                      requestFocusOnTap: true,
-                      menuStyle: MenuStyle(
-                        shape: WidgetStatePropertyAll(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24),
-                          ),
-                        ),
-                      ),
-                      onSelected: (product) {
+                    Text('Intensity',
+                        style: Theme.of(context).textTheme.titleSmall),
+                    Slider(
+                      value: intensity.toDouble(),
+                      onChanged: (value) {
                         setState(() {
-                          selectedProduct = product;
+                          intensity = value.toInt();
                         });
-                        SystemChannels.textInput.invokeMethod('TextInput.hide');
-                        FocusScope.of(context).unfocus();
                       },
-                      dropdownMenuEntries: mockProducts.map((product) {
-                        return DropdownMenuEntry(
-                          label: product.name!,
-                          value: product,
-                        );
-                      }).toList(),
+                      min: 0,
+                      max: 10,
+                      divisions: 10,
+                      label: intensity.toString(),
                     ),
-                    const Gap(size: 16),
+                    const SizedBox(height: 4),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

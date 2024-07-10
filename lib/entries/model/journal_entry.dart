@@ -22,15 +22,17 @@ class JournalEntry {
   final String id;
   final DateTime createdAt;
   final EntryType type;
-  final Product? product;
+  final List<Product>? products;
   final List<Feeling>? feelings;
+  final int? intensity;
 
   JournalEntry({
     required this.id,
     required this.createdAt,
     required this.type,
-    this.product,
+    this.products,
     this.feelings,
+    this.intensity,
   });
 
   factory JournalEntry.fromJson(Map<String, dynamic> json) {
@@ -40,12 +42,17 @@ class JournalEntry {
       type: EntryType.values.firstWhere(
         (element) => element.toString() == 'EntryType.${json['type']}',
       ),
-      product: Product.fromJson(json['product']),
+      products: json['products'] != null
+          ? (json['products'] as List<dynamic>)
+              .map((product) => Product.fromJson(product))
+              .toList()
+          : null,
       feelings: (json['feelings'] as List<dynamic>)
           .map((feeling) => Feeling.values.firstWhere(
                 (element) => element.toString() == 'Feeling.$feeling',
               ))
           .toList(),
+      intensity: json['intensity'],
     );
   }
 
@@ -54,15 +61,16 @@ class JournalEntry {
       'id': id,
       'createdAt': createdAt.toIso8601String(),
       'type': type.toString().split('.').last,
-      'product': product?.toJson(),
+      'products': products?.map((product) => product.toJson()).toList(),
       'feelings': feelings
           ?.map((feeling) => feeling.toString().split('.').last)
           .toList(),
+      'intensity': intensity,
     };
   }
 
   @override
   String toString() {
-    return 'JournalEntry{id: $id, createdAt: $createdAt, type: $type, product: $product, feelings: $feelings}';
+    return 'JournalEntry{id: $id, createdAt: $createdAt, type: $type, products: $products, feelings: $feelings, intensity: $intensity}';
   }
 }

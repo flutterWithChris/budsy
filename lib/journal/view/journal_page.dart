@@ -142,7 +142,7 @@ class JournalPageFAB extends StatelessWidget {
             FloatingActionButton(
                 backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                 onPressed: () {
-                  GoRouter.of(context).go('/journal/add');
+                  GoRouter.of(context).go('/add-session');
                 },
                 child: PhosphorIcon(
                     PhosphorIcons.notepad(PhosphorIconsStyle.fill))),
@@ -415,7 +415,9 @@ class _SessionListTileState extends State<SessionListTile>
   @override
   Widget build(BuildContext context) {
     JournalEntry journalEntry = widget.journalEntry;
-    Product product = journalEntry.product!;
+    List<Product> product = journalEntry.products!;
+    String productSummaryString = composeProductSummaryString(product);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4.0),
       child: Card(
@@ -480,19 +482,20 @@ class _SessionListTileState extends State<SessionListTile>
                             alignment: WrapAlignment.center,
                             spacing: 4.0,
                             children: [
-                              CircleAvatar(
-                                radius: 20,
-                                backgroundColor: getColorForProductCategory(
-                                    product.category!),
-                                child: PhosphorIcon(
-                                  getIconForCategory(product.category!),
-                                  size: 24,
-                                  color: Theme.of(context).brightness ==
-                                          Brightness.light
-                                      ? Colors.white
-                                      : null,
+                              for (Product product in journalEntry.products!)
+                                CircleAvatar(
+                                  radius: 20,
+                                  backgroundColor: getColorForProductCategory(
+                                      product.category!),
+                                  child: PhosphorIcon(
+                                    getIconForCategory(product.category!),
+                                    size: 24,
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.light
+                                        ? Colors.white
+                                        : null,
+                                  ),
                                 ),
-                              ),
                             ],
                           ),
                         ),
@@ -506,7 +509,7 @@ class _SessionListTileState extends State<SessionListTile>
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  product.name!,
+                                  productSummaryString,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: Theme.of(context)
@@ -566,4 +569,19 @@ class _SessionListTileState extends State<SessionListTile>
       ),
     );
   }
+}
+
+// Compose product summary string, e.g. "Product A, Product B, & Product C". Commas separate each product, and the last product is preceded by an ampersand.
+String composeProductSummaryString(List<Product> products) {
+  String productSummaryString = '';
+  for (int i = 0; i < products.length; i++) {
+    if (i == products.length - 1) {
+      productSummaryString += ' & ${products[i].name}';
+    } else if (products.length == 1) {
+      productSummaryString += '${products[i].name}';
+    } else {
+      productSummaryString += '${products[i].name}, ';
+    }
+  }
+  return productSummaryString;
 }

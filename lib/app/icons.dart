@@ -77,7 +77,7 @@ IconData getIconForTerpene(Terpene terpene) {
     case 'Myrcene':
       return PhosphorIcons.firstAid();
     case 'Limonene':
-      return PhosphorIcons.leaf();
+      return PhosphorIcons.orangeSlice();
     case 'Caryophyllene':
       return PhosphorIcons.leaf();
     case 'Pinene':
@@ -102,7 +102,7 @@ IconData getFilledIconForTerpene(Terpene terpene) {
     case 'Myrcene':
       return PhosphorIcons.firstAid(PhosphorIconsStyle.fill);
     case 'Limonene':
-      return PhosphorIcons.leaf(PhosphorIconsStyle.fill);
+      return PhosphorIcons.orangeSlice(PhosphorIconsStyle.fill);
     case 'Caryophyllene':
       return PhosphorIcons.leaf(PhosphorIconsStyle.fill);
     case 'Pinene':

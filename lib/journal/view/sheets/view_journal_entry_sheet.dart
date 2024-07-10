@@ -18,12 +18,12 @@ class ViewJournalEntrySheet extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                journalEntry.product!.name!,
+                journalEntry.products![0].name!,
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               const SizedBox(height: 8.0),
               Text(
-                journalEntry.product!.category!.name,
+                journalEntry.products![0].category!.name,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 16.0),

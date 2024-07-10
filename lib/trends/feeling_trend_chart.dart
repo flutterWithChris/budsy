@@ -3,6 +3,7 @@ import 'package:budsy/app/icons.dart';
 import 'package:budsy/consts.dart';
 import 'package:budsy/entries/model/journal_entry.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 
@@ -19,6 +20,8 @@ class FeelingTrendChart extends StatefulWidget {
 
 class _FeelingTrendChartState extends State<FeelingTrendChart> {
   bool showTitle = false;
+  int touchedIndex = 0;
+  String touchedTitle = '';
 
   @override
   Widget build(BuildContext context) {
@@ -49,12 +52,29 @@ class _FeelingTrendChartState extends State<FeelingTrendChart> {
                   enabled: true,
                   longPressDuration: const Duration(seconds: 1),
                   touchCallback: (event, response) {
+                    if (event is FlTapDownEvent) {
+                      print('Tapped');
+                      print(response?.touchedSection?.touchedSectionIndex);
+                      setState(() {
+                        showTitle = true;
+                        touchedIndex =
+                            response?.touchedSection?.touchedSectionIndex ?? 0;
+                        touchedTitle =
+                            response?.touchedSection?.touchedSection?.title ??
+                                '';
+                      });
+                    } else if (event is FlTapUpEvent ||
+                        event is FlLongPressEnd) {
+                      print('Tap Up');
+                      setState(() {
+                        showTitle = false;
+                        touchedIndex = 0;
+                        touchedTitle = '';
+                      });
+                    }
                     if (response?.touchedSection != null) {
                       //  response.touchedSection.touchedSection.
                       print(response!.touchedSection!.touchedSection?.title);
-                      setState(() {
-                        showTitle = !showTitle;
-                      });
                     }
                   }),
               sections: feelingCounts.entries.map((entry) {
@@ -67,12 +87,15 @@ class _FeelingTrendChartState extends State<FeelingTrendChart> {
                           ? 0.6
                           : feelingCounts.length > 2
                               ? 0.55
-                              : 0.5,
+                              : feelingCounts.length > 1
+                                  ? 0.5
+                                  : 0,
                   value: entry.value.toDouble(),
-                  title: entry.key.toString().split('.').last,
+                  title: (entry.key.toString().split('.').last),
                   color: getColorForFeeling(entry.key),
-                  showTitle: showTitle,
-                  titlePositionPercentageOffset: 1.0,
+                  showTitle: showTitle &&
+                      touchedTitle == entry.key.toString().split('.').last,
+                  titlePositionPercentageOffset: 1.25,
                   titleStyle: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,

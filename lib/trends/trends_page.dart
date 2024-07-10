@@ -23,6 +23,7 @@ class TrendsPage extends StatefulWidget {
 class _TrendsPageState extends State<TrendsPage> {
   Map<String, Map<Feeling, int>> trendsData =
       getProductFeelingTrends(mockJournalEntries);
+  Map<Terpene, int> favoriteTerpenes = getFavoriteTerpenes(mockJournalEntries);
   @override
   void initState() {
     super.initState();
@@ -89,7 +90,7 @@ class _TrendsPageState extends State<TrendsPage> {
                   const Gap(size: 16),
                   Row(
                     children: [
-                      for (Terpene terpene in terpenes)
+                      for (Terpene terpene in favoriteTerpenes.keys.toList())
                         Expanded(child: TerpeneAvatar(terpene))
                     ],
                   )
@@ -120,6 +121,9 @@ class TerpeneAvatar extends StatelessWidget {
           child: PhosphorIcon(
             getFilledIconForTerpene(terpene),
             size: 40,
+            color: terpene.name == 'Limonene'
+                ? const Color.fromARGB(255, 20, 20, 20)
+                : Colors.white,
           ),
         ),
         const Gap(size: 8),
@@ -140,25 +144,28 @@ Map<String, Map<Feeling, int>> getProductFeelingTrends(
 
   for (JournalEntry entry in journalEntries) {
     if (entry.type == EntryType.session) {
-      final String productName = entry.product!.name!;
+      final List<String> productNames = entry.products!
+          .map((product) => product.name!)
+          .toList(); // Get the name of the product
       // Iterate through the following journal entries of the type 'feeling' and count them, stopping when the next journal entry is a 'session'.
       for (int i = journalEntries.indexOf(entry) + 1;
           i < journalEntries.length;
           i++) {
         final JournalEntry nextEntry = journalEntries[i];
         if (nextEntry.type == EntryType.feeling) {
-          for (Feeling feeling in nextEntry.feelings!) {
-            if (!productFeelingTrends.containsKey(productName)) {
-              productFeelingTrends[productName] = {};
-            }
+          for (String productName in productNames)
+            for (Feeling feeling in nextEntry.feelings!) {
+              if (!productFeelingTrends.containsKey(productName)) {
+                productFeelingTrends[productName] = {};
+              }
 
-            if (productFeelingTrends[productName]!.containsKey(feeling)) {
-              productFeelingTrends[productName]![feeling] =
-                  productFeelingTrends[productName]![feeling]! + 1;
-            } else {
-              productFeelingTrends[productName]![feeling] = 1;
+              if (productFeelingTrends[productName]!.containsKey(feeling)) {
+                productFeelingTrends[productName]![feeling] =
+                    productFeelingTrends[productName]![feeling]! + 1;
+              } else {
+                productFeelingTrends[productName]![feeling] = 1;
+              }
             }
-          }
         } else if (nextEntry.type == EntryType.session) {
           break;
         }
@@ -167,4 +174,50 @@ Map<String, Map<Feeling, int>> getProductFeelingTrends(
   }
   print('productFeelingTrends: $productFeelingTrends');
   return productFeelingTrends;
+}
+
+// Iterate through session journal entries, gathering terpenes, then seeing what feelings follow them. If the feelings are positive, add the terpene to the map of favorite terpenes with a count of how many times it was followed by a positive feeling. Return the map of favorite terpenes with the count of how many times they were followed by a positive feeling
+Map<Terpene, int> getFavoriteTerpenes(List<JournalEntry> journalEntries) {
+  final Map<Terpene, int> favoriteTerpenes = {};
+
+  for (JournalEntry entry in journalEntries) {
+    if (entry.type == EntryType.session) {
+      final List<Terpene> terpenes = entry.products!
+          .map((product) => product.terpenes!)
+          .expand((element) => element)
+          .toList(); // Get the terpenes of the product
+      for (int i = journalEntries.indexOf(entry) + 1;
+          i < journalEntries.length;
+          i++) {
+        final JournalEntry nextEntry = journalEntries[i];
+        if (nextEntry.type == EntryType.feeling) {
+          for (Feeling feeling in nextEntry.feelings!) {
+            if (feeling == Feeling.happy ||
+                feeling == Feeling.creative ||
+                feeling == Feeling.social ||
+                feeling == Feeling.energetic ||
+                feeling == Feeling.focus ||
+                feeling == Feeling.calm) {
+              for (Terpene terpene in terpenes) {
+                if (favoriteTerpenes.keys
+                    .any((element) => element.name == terpene.name)) {
+                  favoriteTerpenes[favoriteTerpenes.keys.firstWhere(
+                          (element) => element.name == terpene.name)] =
+                      favoriteTerpenes[favoriteTerpenes.keys.firstWhere(
+                              (element) => element.name == terpene.name)]! +
+                          1;
+                } else {
+                  favoriteTerpenes[terpene] = 1;
+                }
+              }
+            }
+          }
+        } else if (nextEntry.type == EntryType.session) {
+          break;
+        }
+      }
+    }
+  }
+  print('favoriteTerpenes: $favoriteTerpenes');
+  return favoriteTerpenes;
 }
