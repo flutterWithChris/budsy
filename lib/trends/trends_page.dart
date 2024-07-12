@@ -2,15 +2,16 @@ import 'package:budsy/app/colors.dart';
 import 'package:budsy/app/icons.dart';
 import 'package:budsy/app/system/bottom_nav.dart';
 import 'package:budsy/consts.dart';
-import 'package:budsy/entries/mock/mock_products.dart';
-import 'package:budsy/entries/model/journal_entry.dart';
-import 'package:budsy/entries/model/product.dart';
-import 'package:budsy/entries/model/terpene.dart';
+import 'package:budsy/stash/mock/mock_products.dart';
+import 'package:budsy/stash/model/journal_entry.dart';
+import 'package:budsy/stash/model/product.dart';
+import 'package:budsy/stash/model/terpene.dart';
 import 'package:budsy/journal/mock/mock_journal_entries.dart';
 import 'package:budsy/trends/feeling_trend_chart.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class TrendsPage extends StatefulWidget {
@@ -104,7 +105,7 @@ class FavoriteProductsWidget extends StatelessWidget {
             Row(
               children: [
                 Icon(
-                  PhosphorIcons.heart(),
+                  PhosphorIcons.heart(PhosphorIconsStyle.fill),
                   size: 20,
                 ),
                 const Gap(size: 8),
@@ -123,6 +124,9 @@ class FavoriteProductsWidget extends StatelessWidget {
                     InkWell(
                       onTap: () {
                         // Navigate to product details page
+                        context.push(
+                            '/stash/product/${ratingSortedProducts[i].id}',
+                            extra: ratingSortedProducts[i]);
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -193,7 +197,7 @@ class TotalsWidget extends StatelessWidget {
             Row(
               children: [
                 Icon(
-                  PhosphorIcons.listNumbers(),
+                  PhosphorIcons.listNumbers(PhosphorIconsStyle.fill),
                   size: 20,
                 ),
                 const Gap(size: 8),
@@ -279,7 +283,7 @@ class FavoriteTerpenesWidget extends StatelessWidget {
             Row(
               children: [
                 Icon(
-                  PhosphorIcons.leaf(),
+                  PhosphorIcons.leaf(PhosphorIconsStyle.fill),
                   size: 20,
                 ),
                 const Gap(size: 8),

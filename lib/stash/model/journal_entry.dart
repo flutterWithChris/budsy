@@ -1,4 +1,4 @@
-import 'package:budsy/entries/model/product.dart';
+import 'package:budsy/stash/model/product.dart';
 import 'package:googleapis/bigquery/v2.dart';
 
 enum Feeling {

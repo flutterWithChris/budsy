@@ -4,10 +4,10 @@ import 'dart:io';
 
 import 'package:budsy/app/system/bottom_nav.dart';
 import 'package:budsy/consts.dart';
-import 'package:budsy/entries/mock/mock_products.dart';
-import 'package:budsy/entries/model/cannabinoid.dart';
-import 'package:budsy/entries/model/product.dart';
-import 'package:budsy/entries/model/terpene.dart';
+import 'package:budsy/stash/mock/mock_products.dart';
+import 'package:budsy/stash/model/cannabinoid.dart';
+import 'package:budsy/stash/model/product.dart';
+import 'package:budsy/stash/model/terpene.dart';
 import 'package:budsy/lab_reports/lab_report.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';

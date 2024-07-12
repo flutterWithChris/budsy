@@ -1,7 +1,7 @@
-import 'package:budsy/entries/model/cannabinoid.dart';
-import 'package:budsy/entries/model/journal_entry.dart';
-import 'package:budsy/entries/model/product.dart';
-import 'package:budsy/entries/model/terpene.dart';
+import 'package:budsy/stash/model/cannabinoid.dart';
+import 'package:budsy/stash/model/journal_entry.dart';
+import 'package:budsy/stash/model/product.dart';
+import 'package:budsy/stash/model/terpene.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';

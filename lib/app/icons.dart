@@ -1,6 +1,6 @@
-import 'package:budsy/entries/model/journal_entry.dart';
-import 'package:budsy/entries/model/product.dart';
-import 'package:budsy/entries/model/terpene.dart';
+import 'package:budsy/stash/model/journal_entry.dart';
+import 'package:budsy/stash/model/product.dart';
+import 'package:budsy/stash/model/terpene.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 

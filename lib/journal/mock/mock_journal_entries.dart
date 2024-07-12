@@ -1,8 +1,8 @@
 import 'dart:math';
 
 import 'package:budsy/consts.dart';
-import 'package:budsy/entries/mock/mock_products.dart';
-import 'package:budsy/entries/model/journal_entry.dart';
+import 'package:budsy/stash/mock/mock_products.dart';
+import 'package:budsy/stash/model/journal_entry.dart';
 
 List<JournalEntry> mockJournalEntries = [
   JournalEntry(
@@ -49,7 +49,7 @@ List<JournalEntry> mockJournalEntries = [
     id: '6',
     createdAt: generateRandomDateWithinWeek(),
     type: EntryType.feeling,
-    products: [mockProducts[1]],
+    products: [mockProducts[3]],
     feelings: [Feeling.creative, Feeling.social],
   ),
   JournalEntry(
@@ -69,7 +69,9 @@ List<JournalEntry> mockJournalEntries = [
     id: '9',
     createdAt: generateRandomDateWithinWeek(),
     type: EntryType.session,
-    products: [mockProducts[1], mockProducts[2], mockProducts[3]],
+    products: [
+      mockProducts[4],
+    ],
   ),
   JournalEntry(
     id: '10',
@@ -105,13 +107,13 @@ List<JournalEntry> mockJournalEntries = [
     id: '15',
     createdAt: generateRandomDateWithinWeek(),
     type: EntryType.session,
-    products: [mockProducts[3]],
+    products: [mockProducts[5]],
   ),
   JournalEntry(
     id: '16',
     createdAt: generateRandomDateWithinWeek(),
     type: EntryType.session,
-    products: [mockProducts[2]],
+    products: [mockProducts[5]],
   ),
   JournalEntry(
     id: '17',
