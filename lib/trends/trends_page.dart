@@ -61,7 +61,17 @@ class _TrendsPageState extends State<TrendsPage> {
             ),
           ),
           ProductToFeelingWidget(trendsData: trendsData),
+          const SliverToBoxAdapter(
+            child: Gap(
+              size: 8,
+            ),
+          ),
           FavoriteTerpenesWidget(favoriteTerpenes: favoriteTerpenes),
+          const SliverToBoxAdapter(
+            child: Gap(
+              size: 16,
+            ),
+          ),
           const FavoriteProductsWidget(),
           const TotalsWidget(),
           const SliverToBoxAdapter(
@@ -88,7 +98,7 @@ class FavoriteProductsWidget extends StatelessWidget {
       ..sort((a, b) => b.rating!.compareTo(a.rating!));
     return SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
           children: [
             Row(
@@ -106,53 +116,58 @@ class FavoriteProductsWidget extends StatelessWidget {
             ),
             const Gap(size: 16),
             Card(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    for (int i = 0; i < 3; i++)
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor: getColorForProductCategory(
-                                    ratingSortedProducts[i].category!),
-                                child: PhosphorIcon(
-                                  getIconForCategory(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (int i = 0; i < 3; i++)
+                    InkWell(
+                      onTap: () {
+                        // Navigate to product details page
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  backgroundColor: getColorForProductCategory(
                                       ratingSortedProducts[i].category!),
-                                  size: 24,
+                                  child: PhosphorIcon(
+                                    getIconForCategory(
+                                        ratingSortedProducts[i].category!),
+                                    size: 24,
+                                  ),
+                                ),
+                                title: Text(ratingSortedProducts[i].name!),
+                                subtitle: Wrap(
+                                  children: [
+                                    for (int index = 0;
+                                        index < ratingSortedProducts[i].rating!;
+                                        index++)
+                                      const Icon(
+                                        Icons.star,
+                                        color: Colors.amber,
+                                        size: 16,
+                                      ),
+                                  ],
+                                ),
+                                trailing: IconButton(
+                                  icon: const Icon(Icons.chevron_right_rounded),
+                                  onPressed: () {
+                                    // Navigate to product details page
+                                  },
                                 ),
                               ),
-                              title: Text(ratingSortedProducts[i].name!),
-                              subtitle: Wrap(
-                                children: [
-                                  for (int index = 0;
-                                      index < ratingSortedProducts[i].rating!;
-                                      index++)
-                                    const Icon(
-                                      Icons.star,
-                                      color: Colors.amber,
-                                      size: 16,
-                                    ),
-                                ],
-                              ),
-                              trailing: IconButton(
-                                icon: const Icon(Icons.chevron_right_rounded),
-                                onPressed: () {
-                                  // Navigate to product details page
-                                },
-                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                  ],
-                ),
+                    ),
+                ],
               ),
             )
           ],
@@ -258,7 +273,7 @@ class FavoriteTerpenesWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
           children: [
             Row(
@@ -303,7 +318,7 @@ class ProductToFeelingWidget extends StatelessWidget {
         padding: const EdgeInsets.only(
           left: 16.0,
           right: 16.0,
-          top: 16.0,
+          top: 8.0,
         ),
         child: SizedBox(
           height: 126,
