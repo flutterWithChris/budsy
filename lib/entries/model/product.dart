@@ -22,6 +22,7 @@ class Product with CustomDropdownListFilter {
   final String? brand;
   final List<Cannabinoid>? cannabinoids;
   final List<Terpene>? terpenes;
+  final int? rating;
 
   Product({
     this.id,
@@ -37,6 +38,7 @@ class Product with CustomDropdownListFilter {
     this.brand,
     this.cannabinoids,
     this.terpenes,
+    this.rating,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
@@ -68,6 +70,7 @@ class Product with CustomDropdownListFilter {
       terpenes: json['terpenes'] != null
           ? List<Terpene>.from(json['terpenes'].map((x) => Terpene.fromJson(x)))
           : null,
+      rating: json['rating'],
     );
   }
 
@@ -86,6 +89,7 @@ class Product with CustomDropdownListFilter {
       'brand': brand,
       'cannabinoids': cannabinoids,
       'terpenes': terpenes,
+      'rating': rating,
     };
   }
 
@@ -104,6 +108,7 @@ class Product with CustomDropdownListFilter {
     String? brand,
     List<Cannabinoid>? cannabinoids,
     List<Terpene>? terpenes,
+    int? rating,
   }) {
     return Product(
       id: id ?? this.id,
@@ -119,13 +124,14 @@ class Product with CustomDropdownListFilter {
       brand: brand ?? this.brand,
       cannabinoids: cannabinoids ?? this.cannabinoids,
       terpenes: terpenes ?? this.terpenes,
+      rating: rating ?? this.rating,
     );
   }
 
   // toString
   @override
   String toString() {
-    return 'Product{id: $id, name: $name, images: $images, description: $description, category: $category, type: $type, price: $price, weight: $weight, unit: $unit, dispensary: $dispensary, brand: $brand, cannabinoids: $cannabinoids, terpenes: $terpenes}';
+    return 'Product{id: $id, name: $name, images: $images, description: $description, category: $category, type: $type, price: $price, weight: $weight, unit: $unit, dispensary: $dispensary, brand: $brand, cannabinoids: $cannabinoids, terpenes: $terpenes, rating: $rating}';
   }
 
   @override

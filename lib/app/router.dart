@@ -1,6 +1,6 @@
 import 'package:budsy/entries/new_entry.dart';
 import 'package:budsy/entries/qr_scan_screen.dart';
-import 'package:budsy/journal/view/add_journal_page.dart';
+import 'package:budsy/journal/view/add_feeling_page.dart';
 import 'package:budsy/journal/view/add_session_page.dart';
 import 'package:budsy/journal/view/journal_page.dart';
 import 'package:budsy/stash/stash_page.dart';
@@ -16,7 +16,7 @@ GoRouter goRouter = GoRouter(
       routes: [
         GoRoute(
           path: 'add',
-          builder: (context, state) => const AddJournalEntryPage(),
+          builder: (context, state) => const AddFeelingPage(),
         ),
         GoRoute(
           path: 'add-session',

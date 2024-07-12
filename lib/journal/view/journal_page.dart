@@ -6,7 +6,8 @@ import 'package:budsy/entries/mock/mock_products.dart';
 import 'package:budsy/entries/model/journal_entry.dart';
 import 'package:budsy/entries/model/product.dart';
 import 'package:budsy/journal/mock/mock_journal_entries.dart';
-import 'package:budsy/journal/view/add_journal_page.dart';
+import 'package:budsy/journal/view/add_feeling_page.dart';
+import 'package:budsy/journal/view/add_session_page.dart';
 import 'package:budsy/journal/view/sheets/view_journal_entry_sheet.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
@@ -91,14 +92,21 @@ class JournalPage extends StatelessWidget {
   }
 }
 
-class JournalPageFAB extends StatelessWidget {
+class JournalPageFAB extends StatefulWidget {
   const JournalPageFAB({
     super.key,
   });
 
   @override
+  State<JournalPageFAB> createState() => _JournalPageFABState();
+}
+
+class _JournalPageFABState extends State<JournalPageFAB> {
+  final _fabKey = GlobalKey<ExpandableFabState>();
+  @override
   Widget build(BuildContext context) {
     return ExpandableFab(
+      key: _fabKey,
       distance: 72,
       duration: const Duration(milliseconds: 400),
       overlayStyle: const ExpandableFabOverlayStyle(color: Colors.black54),
@@ -141,8 +149,16 @@ class JournalPageFAB extends StatelessWidget {
             ),
             FloatingActionButton(
                 backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                onPressed: () {
-                  GoRouter.of(context).go('/add-session');
+                onPressed: () async {
+                  final state = _fabKey.currentState;
+                  await showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (context) {
+                        return const AddSessionPage();
+                      }).then((value) {
+                    state?.toggle();
+                  });
                 },
                 child: PhosphorIcon(
                     PhosphorIcons.notepad(PhosphorIconsStyle.fill))),
@@ -171,7 +187,18 @@ class JournalPageFAB extends StatelessWidget {
             ),
             FloatingActionButton(
                 backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                onPressed: () => context.push('/add'),
+                onPressed: () async {
+                  final state = _fabKey.currentState;
+
+                  await showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (context) {
+                        return const AddFeelingPage();
+                      }).then((value) {
+                    state?.toggle();
+                  });
+                },
                 child: PhosphorIcon(
                     PhosphorIcons.smiley(PhosphorIconsStyle.fill))),
           ],
@@ -583,7 +610,7 @@ String composeProductSummaryString(List<Product> products) {
       productSummaryString += products[i].name!;
     } else {
       if (i == products.length - 1) {
-        productSummaryString += '& ${products[i].name}';
+        productSummaryString += ' ${products[i].name}';
       } else {
         productSummaryString += '${products[i].name}, ';
       }

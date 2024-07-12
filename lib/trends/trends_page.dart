@@ -35,7 +35,7 @@ class _TrendsPageState extends State<TrendsPage> {
       bottomNavigationBar: const BottomNavBar(),
       body: CustomScrollView(
         slivers: [
-          const SliverAppBar(
+          const SliverAppBar.medium(
             title: Text('Trends'),
             floating: true,
             snap: true,
@@ -49,9 +49,9 @@ class _TrendsPageState extends State<TrendsPage> {
                 children: [
                   Icon(
                     PhosphorIcons.trendUp(),
-                    size: 24,
+                    size: 20,
                   ),
-                  const Gap(size: 16),
+                  const Gap(size: 8),
                   Text(
                     'Product / Feeling Trends',
                     style: Theme.of(context).textTheme.titleMedium,
@@ -60,45 +60,266 @@ class _TrendsPageState extends State<TrendsPage> {
               ),
             ),
           ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-              child: SizedBox(
-                height: 140,
-                child: ListView(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
+          ProductToFeelingWidget(trendsData: trendsData),
+          FavoriteTerpenesWidget(favoriteTerpenes: favoriteTerpenes),
+          const FavoriteProductsWidget(),
+          const TotalsWidget(),
+          const SliverToBoxAdapter(
+            child: Gap(
+              size: 32,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class FavoriteProductsWidget extends StatelessWidget {
+  const FavoriteProductsWidget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    List<Product> ratingSortedProducts = mockProducts
+        .where((element) => element.rating != null)
+        .toList()
+      ..sort((a, b) => b.rating!.compareTo(a.rating!));
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Icon(
+                  PhosphorIcons.heart(),
+                  size: 20,
+                ),
+                const Gap(size: 8),
+                Text(
+                  'Favorite Products',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ],
+            ),
+            const Gap(size: 16),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    for (String productName in trendsData.keys)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: FeelingTrendChart(trendsData, productName),
+                    for (int i = 0; i < 3; i++)
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: ListTile(
+                              leading: CircleAvatar(
+                                backgroundColor: getColorForProductCategory(
+                                    ratingSortedProducts[i].category!),
+                                child: PhosphorIcon(
+                                  getIconForCategory(
+                                      ratingSortedProducts[i].category!),
+                                  size: 24,
+                                ),
+                              ),
+                              title: Text(ratingSortedProducts[i].name!),
+                              subtitle: Wrap(
+                                children: [
+                                  for (int index = 0;
+                                      index < ratingSortedProducts[i].rating!;
+                                      index++)
+                                    const Icon(
+                                      Icons.star,
+                                      color: Colors.amber,
+                                      size: 16,
+                                    ),
+                                ],
+                              ),
+                              trailing: IconButton(
+                                icon: const Icon(Icons.chevron_right_rounded),
+                                onPressed: () {
+                                  // Navigate to product details page
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                   ],
                 ),
               ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class TotalsWidget extends StatelessWidget {
+  const TotalsWidget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 0.0),
+        child: Column(
+          children: [
+            const Gap(size: 8),
+            Row(
+              children: [
+                Icon(
+                  PhosphorIcons.listNumbers(),
+                  size: 20,
+                ),
+                const Gap(size: 8),
+                Text(
+                  'Totals',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ],
             ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-              child: Column(
-                children: [
-                  const Text('Favorite Terpenes'),
-                  const Gap(size: 16),
-                  Row(
-                    children: [
-                      for (Terpene terpene in favoriteTerpenes.keys.toList())
-                        Expanded(child: TerpeneAvatar(terpene))
-                    ],
-                  )
-                ],
-              ),
+            const Gap(size: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Column(
+                  children: [
+                    Text(
+                      '${mockJournalEntries.where((entry) => entry.type == EntryType.session).length}',
+                      style:
+                          Theme.of(context).textTheme.displayMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                    ),
+                    Text(
+                      'Sessions',
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    Text(
+                      '${mockJournalEntries.where((entry) => entry.type == EntryType.feeling).length}',
+                      style:
+                          Theme.of(context).textTheme.displayMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                    ),
+                    Text(
+                      'Feelings',
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    Text(
+                      '${mockJournalEntries.where((entry) => entry.type == EntryType.session).expand((element) => element.products!).length}',
+                      style:
+                          Theme.of(context).textTheme.displayMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                    ),
+                    Text(
+                      'Products',
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                  ],
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class FavoriteTerpenesWidget extends StatelessWidget {
+  const FavoriteTerpenesWidget({
+    super.key,
+    required this.favoriteTerpenes,
+  });
+
+  final Map<Terpene, int> favoriteTerpenes;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Icon(
+                  PhosphorIcons.leaf(),
+                  size: 20,
+                ),
+                const Gap(size: 8),
+                Text(
+                  'Favorite Terpenes',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ],
             ),
+            const Gap(size: 16),
+            Row(
+              children: [
+                for (Terpene terpene in favoriteTerpenes.keys.toList())
+                  Expanded(child: TerpeneAvatar(terpene))
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ProductToFeelingWidget extends StatelessWidget {
+  const ProductToFeelingWidget({
+    super.key,
+    required this.trendsData,
+  });
+
+  final Map<String, Map<Feeling, int>> trendsData;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.only(
+          left: 16.0,
+          right: 16.0,
+          top: 16.0,
+        ),
+        child: SizedBox(
+          height: 126,
+          child: ListView(
+            shrinkWrap: true,
+            scrollDirection: Axis.horizontal,
+            padding: EdgeInsets.zero,
+            children: [
+              for (String productName in trendsData.keys)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: FeelingTrendChart(trendsData, productName),
+                ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

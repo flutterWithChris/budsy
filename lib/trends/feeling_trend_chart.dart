@@ -1,7 +1,9 @@
 import 'package:budsy/app/colors.dart';
 import 'package:budsy/app/icons.dart';
 import 'package:budsy/consts.dart';
+import 'package:budsy/entries/mock/mock_products.dart';
 import 'package:budsy/entries/model/journal_entry.dart';
+import 'package:budsy/entries/model/product.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +27,10 @@ class _FeelingTrendChartState extends State<FeelingTrendChart> {
 
   @override
   Widget build(BuildContext context) {
+    Product product = mockProducts
+        .where((element) => element.name == widget.productName)
+        .first;
+
     Map<Feeling, int> feelingCounts =
         widget.productFeelingTrends[widget.productName] ?? {};
 
@@ -32,16 +38,6 @@ class _FeelingTrendChartState extends State<FeelingTrendChart> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SizedBox(
-          width: 90,
-          child: Text(
-            widget.productName,
-            style: Theme.of(context).textTheme.titleSmall,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 1,
-          ),
-        ),
-        const Gap(size: 16),
         SizedBox(
           height: 90,
           width: 90,
@@ -103,6 +99,28 @@ class _FeelingTrendChartState extends State<FeelingTrendChart> {
                 );
               }).toList(),
             ),
+          ),
+        ),
+        const Gap(size: 8),
+        SizedBox(
+          width: 110,
+          child: Row(
+            children: [
+              Icon(
+                getIconForCategory(product.category!),
+                size: 16,
+                color: getColorForProductCategory(product.category!),
+              ),
+              const Gap(size: 8),
+              Flexible(
+                child: Text(
+                  widget.productName,
+                  style: Theme.of(context).textTheme.titleSmall,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              ),
+            ],
           ),
         ),
       ],
