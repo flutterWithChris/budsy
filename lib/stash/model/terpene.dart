@@ -4,7 +4,7 @@ class Terpene {
   final String? id;
   final String? name;
   final String? icon;
-  final Color? color;
+  final String? color;
   final String? description;
   final String? effects;
   final String? medical;
@@ -63,7 +63,7 @@ class Terpene {
     String? id,
     String? name,
     String? icon,
-    Color? color,
+    String? color,
     String? description,
     String? effects,
     String? medical,

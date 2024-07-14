@@ -60,6 +60,7 @@ dependencies:
   supabase_flutter: ^2.5.8
   sign_in_with_apple: ^6.1.1
   crypto: ^3.0.3
+  equatable: ^2.0.5
 
 dev_dependencies:
   flutter_test:

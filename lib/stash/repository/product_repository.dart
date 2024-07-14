@@ -100,11 +100,15 @@ class ProductRepository {
     try {
       final response = await _supabaseClient
           .from('product_terpenes')
-          .select('*')
+          .select('terpenes(*), amount')
           .eq('product_id', productId);
 
-      print('Terpenes response: $response');
-      return response.map((terpene) => Terpene.fromJson(terpene)).toList();
+      List<Terpene> terpenes = response
+          .map((terpene) => Terpene.fromJson(terpene['terpenes'])
+              .copyWith(amount: terpene['amount']))
+          .toList();
+
+      return terpenes;
     } catch (e) {
       print('Error fetching terpenes: $e');
       return null;
