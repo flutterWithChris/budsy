@@ -3,7 +3,7 @@ import 'package:budsy/app/icons.dart';
 import 'package:budsy/app/system/bottom_nav.dart';
 import 'package:budsy/consts.dart';
 import 'package:budsy/stash/mock/mock_products.dart';
-import 'package:budsy/stash/model/journal_entry.dart';
+import 'package:budsy/journal/model/journal_entry.dart';
 import 'package:budsy/stash/model/product.dart';
 import 'package:budsy/journal/mock/mock_journal_entries.dart';
 import 'package:budsy/journal/view/add_feeling_page.dart';
@@ -223,7 +223,7 @@ class _JournalEntryListState extends State<JournalEntryList> {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index) {
-          List<JournalEntry> journalEntries = mockJournalEntries;
+          List<JournalEntry> journalEntries = [];
           journalEntries.sort(
             (a, b) => b.createdAt.compareTo(a.createdAt),
           );
@@ -240,7 +240,7 @@ class _JournalEntryListState extends State<JournalEntryList> {
             );
           }
         },
-        childCount: mockJournalEntries.length,
+        childCount: 0,
       ),
     );
   }

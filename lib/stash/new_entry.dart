@@ -53,8 +53,8 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
 
   List<Cannabinoid> selectedCannabinoids = [];
   List<Cannabinoid> requiredCannabinoids = [
-    cannabinoids[0].copyWith(amount: 0),
-    cannabinoids[1].copyWith(amount: 0),
+    // cannabinoids[0].copyWith(amount: 0),
+    // cannabinoids[1].copyWith(amount: 0),
   ];
   List<Terpene> selectedTerpenes = [];
 
@@ -63,29 +63,29 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
     super.initState();
   }
 
-  void _addCannabinoid() {
-    setState(() {
-      if (selectedCannabinoids.length + 2 >= cannabinoids.length) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('You have already added all available cannabinoids'),
-        ));
-        return;
-      }
-      selectedCannabinoids.add(cannabinoids[selectedCannabinoids.length + 2]);
-    });
-  }
+  // void _addCannabinoid() {
+  //   setState(() {
+  //     if (selectedCannabinoids.length + 2 >= cannabinoids.length) {
+  //       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+  //         content: Text('You have already added all available cannabinoids'),
+  //       ));
+  //       return;
+  //     }
+  //     selectedCannabinoids.add(cannabinoids[selectedCannabinoids.length + 2]);
+  //   });
+  // }
 
-  void _updateCannabinoid(Cannabinoid cannabinoid, double value) {
-    setState(() {
-      selectedCannabinoids.remove(cannabinoid);
-    });
-  }
+  // void _updateCannabinoid(Cannabinoid cannabinoid, double value) {
+  //   setState(() {
+  //     selectedCannabinoids.remove(cannabinoid);
+  //   });
+  // }
 
-  void _removeCannabinoid(Cannabinoid cannabinoid) {
-    setState(() {
-      selectedCannabinoids.remove(cannabinoid);
-    });
-  }
+  // void _removeCannabinoid(Cannabinoid cannabinoid) {
+  //   setState(() {
+  //     selectedCannabinoids.remove(cannabinoid);
+  //   });
+  // }
 
   void _addTerpene() {
     setState(() {
@@ -514,52 +514,52 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                           Expanded(
                             flex: 3,
                             child: DropdownMenu<Cannabinoid>(
-                              initialSelection: cannabinoid,
-                              menuStyle: MenuStyle(
-                                shape: WidgetStatePropertyAll(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
+                                initialSelection: cannabinoid,
+                                menuStyle: MenuStyle(
+                                  shape: WidgetStatePropertyAll(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              inputDecorationTheme: Theme.of(context)
-                                  .inputDecorationTheme
-                                  .copyWith(
-                                    floatingLabelBehavior:
-                                        FloatingLabelBehavior.always,
-                                  ),
-                              onSelected: (cannabinoid) {
-                                // Add cannabinoid to list if not already present
-                                if (selectedCannabinoids
-                                    .contains(cannabinoid)) {
-                                  return;
-                                }
-                                setState(() {
-                                  selectedCannabinoids
-                                      .add(cannabinoid!.copyWith(amount: 0.0));
-                                });
-                              },
-                              label: const Text('Cannabinoid'),
-                              expandedInsets: EdgeInsets.zero,
-                              dropdownMenuEntries: cannabinoids
-                                  // .where((c) => !selectedCannabinoids.any(
-                                  //     (selectedCannabinoid) =>
-                                  //         selectedCannabinoid['name'] == c))
-                                  .map((c) => DropdownMenuEntry(
-                                        label: c.name!,
-                                        value: c,
-                                        labelWidget: Row(
-                                          children: [
-                                            Text(
-                                              c.name!,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ],
-                                        ),
-                                      ))
-                                  .toList(),
-                            ),
+                                inputDecorationTheme: Theme.of(context)
+                                    .inputDecorationTheme
+                                    .copyWith(
+                                      floatingLabelBehavior:
+                                          FloatingLabelBehavior.always,
+                                    ),
+                                onSelected: (cannabinoid) {
+                                  // Add cannabinoid to list if not already present
+                                  if (selectedCannabinoids
+                                      .contains(cannabinoid)) {
+                                    return;
+                                  }
+                                  setState(() {
+                                    selectedCannabinoids.add(
+                                        cannabinoid!.copyWith(amount: 0.0));
+                                  });
+                                },
+                                label: const Text('Cannabinoid'),
+                                expandedInsets: EdgeInsets.zero,
+                                dropdownMenuEntries: const []
+                                //     // .where((c) => !selectedCannabinoids.any(
+                                //     //     (selectedCannabinoid) =>
+                                //     //         selectedCannabinoid['name'] == c))
+                                //     .map((c) => DropdownMenuEntry(
+                                //           label: c.name!,
+                                //           value: c,
+                                //           labelWidget: Row(
+                                //             children: [
+                                //               Text(
+                                //                 c.name!,
+                                //                 maxLines: 1,
+                                //                 overflow: TextOverflow.ellipsis,
+                                //               ),
+                                //             ],
+                                //           ),
+                                //         ))
+                                //     .toList(),
+                                ),
                           ),
                           const Gap(size: 16),
                           Expanded(
@@ -620,7 +620,7 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                     ),
                   const Gap(size: 8),
                   OutlinedButton.icon(
-                    onPressed: _addCannabinoid,
+                    onPressed: () {},
                     icon: PhosphorIcon(
                       PhosphorIcons.hexagon(PhosphorIconsStyle.duotone),
                     ),
@@ -768,7 +768,7 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                               terpenes: selectedTerpenes,
                             );
                             setState(() {
-                              mockProducts.add(product);
+                              // mockProducts.add(product);
                             });
                           },
                           icon: PhosphorIcon(

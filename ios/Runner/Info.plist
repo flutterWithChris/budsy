@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Budsy</string>
+	<string>Canjo</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -13,7 +13,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>budsy</string>
+	<string>Canjo</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -49,5 +49,21 @@
 	<string>This app needs camera access to scan QR codes and photo entries.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app needs photos access to get QR codes and photo entries from your gallery.</string>
+	<key>GIDClientID</key>
+	<string>249434830589-a6tu15549l3m4ih6u14h16l98j4qi59l.apps.googleusercontent.com</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+	<dict>
+		<key>CFBundleTypeRole</key>
+		<string>Editor</string>
+		<key>CFBundleURLSchemes</key>
+		<array>
+			<!-- TODO Replace this value: -->
+			<!-- Copied from GoogleService-Info.plist key REVERSED_CLIENT_ID -->
+			<string>com.googleusercontent.apps.249434830589-a6tu15549l3m4ih6u14h16l98j4qi59l</string>
+		</array>
+	</dict>
+</array>
+<!-- End of the Google Sign-in Section -->
 </dict>
 </plist>

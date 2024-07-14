@@ -4,7 +4,7 @@ import 'package:budsy/stash/model/terpene.dart';
 
 enum ProductCategory { flower, concentrate, edible, topical, cartridge, other }
 
-enum FlowerType { sativa, indica, hybrid, cbd, thc, other }
+enum FlowerType { sativa, indica, hybrid }
 
 enum FlowerUnit { gram, eighth, quarter, half, ounce, other }
 
@@ -23,29 +23,32 @@ class Product with CustomDropdownListFilter {
   final List<Cannabinoid>? cannabinoids;
   final List<Terpene>? terpenes;
   final int? rating;
+  final bool? archived;
+  final DateTime? createdAt;
 
-  Product({
-    this.id,
-    this.name,
-    this.images,
-    this.description,
-    this.category,
-    this.type,
-    this.price,
-    this.weight,
-    this.unit,
-    this.dispensary,
-    this.brand,
-    this.cannabinoids,
-    this.terpenes,
-    this.rating,
-  });
+  Product(
+      {this.id,
+      this.name,
+      this.images,
+      this.description,
+      this.category,
+      this.type,
+      this.price,
+      this.weight,
+      this.unit,
+      this.dispensary,
+      this.brand,
+      this.cannabinoids,
+      this.terpenes,
+      this.rating,
+      this.archived,
+      this.createdAt});
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
       id: json['id'],
       name: json['name'],
-      images: json['images'] != null ? List<String>.from(json['images']) : null,
+      // images: json['images'] != null ? List<String>.from(json['images']) : null,
       description: json['description'],
       category: json['category'] != null
           ? ProductCategory.values.firstWhere(
@@ -56,21 +59,18 @@ class Product with CustomDropdownListFilter {
               .firstWhere((e) => e.toString() == 'FlowerType.${json['type']}')
           : null,
       price: json['price'],
-      weight: json['weight'],
       unit: json['unit'] != null
           ? FlowerUnit.values
               .firstWhere((e) => e.toString() == 'FlowerUnit.${json['unit']}')
           : null,
       dispensary: json['dispensary'],
       brand: json['brand'],
-      cannabinoids: json['cannabinoids'] != null
-          ? List<Cannabinoid>.from(
-              json['cannabinoids'].map((x) => Cannabinoid.fromJson(x)))
-          : null,
-      terpenes: json['terpenes'] != null
-          ? List<Terpene>.from(json['terpenes'].map((x) => Terpene.fromJson(x)))
-          : null,
+
       rating: json['rating'],
+      archived: json['archived'],
+      // createdAt: json['created_at'] != null
+      //     ? DateTime.parse(json['created_at'])
+      //     : null,
     );
   }
 
@@ -90,6 +90,7 @@ class Product with CustomDropdownListFilter {
       'cannabinoids': cannabinoids,
       'terpenes': terpenes,
       'rating': rating,
+      'archived': archived,
     };
   }
 
@@ -109,29 +110,30 @@ class Product with CustomDropdownListFilter {
     List<Cannabinoid>? cannabinoids,
     List<Terpene>? terpenes,
     int? rating,
+    bool? archived,
   }) {
     return Product(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      images: images ?? this.images,
-      description: description ?? this.description,
-      category: category ?? this.category,
-      type: type ?? this.type,
-      price: price ?? this.price,
-      weight: weight ?? this.weight,
-      unit: unit ?? this.unit,
-      dispensary: dispensary ?? this.dispensary,
-      brand: brand ?? this.brand,
-      cannabinoids: cannabinoids ?? this.cannabinoids,
-      terpenes: terpenes ?? this.terpenes,
-      rating: rating ?? this.rating,
-    );
+        id: id ?? this.id,
+        name: name ?? this.name,
+        images: images ?? this.images,
+        description: description ?? this.description,
+        category: category ?? this.category,
+        type: type ?? this.type,
+        price: price ?? this.price,
+        weight: weight ?? this.weight,
+        unit: unit ?? this.unit,
+        dispensary: dispensary ?? this.dispensary,
+        brand: brand ?? this.brand,
+        cannabinoids: cannabinoids ?? this.cannabinoids,
+        terpenes: terpenes ?? this.terpenes,
+        rating: rating ?? this.rating,
+        archived: archived ?? this.archived);
   }
 
   // toString
   @override
   String toString() {
-    return 'Product{id: $id, name: $name, images: $images, description: $description, category: $category, type: $type, price: $price, weight: $weight, unit: $unit, dispensary: $dispensary, brand: $brand, cannabinoids: $cannabinoids, terpenes: $terpenes, rating: $rating}';
+    return 'Product{id: $id, name: $name, images: $images, description: $description, category: $category, type: $type, price: $price, weight: $weight, unit: $unit, dispensary: $dispensary, brand: $brand, cannabinoids: $cannabinoids, terpenes: $terpenes, rating: $rating, archived: $archived}';
   }
 
   @override

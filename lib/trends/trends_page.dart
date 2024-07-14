@@ -3,7 +3,7 @@ import 'package:budsy/app/icons.dart';
 import 'package:budsy/app/system/bottom_nav.dart';
 import 'package:budsy/consts.dart';
 import 'package:budsy/stash/mock/mock_products.dart';
-import 'package:budsy/stash/model/journal_entry.dart';
+import 'package:budsy/journal/model/journal_entry.dart';
 import 'package:budsy/stash/model/product.dart';
 import 'package:budsy/stash/model/terpene.dart';
 import 'package:budsy/journal/mock/mock_journal_entries.dart';
@@ -22,9 +22,8 @@ class TrendsPage extends StatefulWidget {
 }
 
 class _TrendsPageState extends State<TrendsPage> {
-  Map<String, Map<Feeling, int>> trendsData =
-      getProductFeelingTrends(mockJournalEntries);
-  Map<Terpene, int> favoriteTerpenes = getFavoriteTerpenes(mockJournalEntries);
+  Map<String, Map<Feeling, int>> trendsData = getProductFeelingTrends([]);
+  Map<Terpene, int> favoriteTerpenes = getFavoriteTerpenes([]);
   @override
   void initState() {
     super.initState();
@@ -93,7 +92,7 @@ class FavoriteProductsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Product> ratingSortedProducts = mockProducts
+    List<Product> ratingSortedProducts = [Product()]
         .where((element) => element.rating != null)
         .toList()
       ..sort((a, b) => b.rating!.compareTo(a.rating!));
@@ -188,6 +187,7 @@ class TotalsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final List<JournalEntry> mockJournalEntries = [];
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 0.0),

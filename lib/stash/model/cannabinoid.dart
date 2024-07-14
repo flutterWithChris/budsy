@@ -5,7 +5,7 @@ class Cannabinoid {
   final String? name;
   final String? icon;
   final double? amount;
-  final Color? color;
+  final String? color;
 
   Cannabinoid({
     this.id,
@@ -41,7 +41,7 @@ class Cannabinoid {
     String? name,
     String? icon,
     double? amount,
-    Color? color,
+    String? color,
   }) {
     return Cannabinoid(
       id: id ?? this.id,

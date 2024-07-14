@@ -1,4 +1,4 @@
-import 'package:budsy/stash/model/journal_entry.dart';
+import 'package:budsy/journal/model/journal_entry.dart';
 import 'package:budsy/stash/model/product.dart';
 import 'package:budsy/stash/model/terpene.dart';
 import 'package:flutter/material.dart';

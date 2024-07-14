@@ -3,7 +3,7 @@ import 'package:budsy/app/colors.dart';
 import 'package:budsy/app/icons.dart';
 import 'package:budsy/app/system/bottom_nav.dart';
 import 'package:budsy/stash/mock/mock_products.dart';
-import 'package:budsy/stash/model/journal_entry.dart';
+import 'package:budsy/journal/model/journal_entry.dart';
 import 'package:budsy/stash/model/product.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -67,7 +67,8 @@ class _AddSessionPageState extends State<AddSessionPage> {
                   children: [
                     CustomDropdown<Product>.multiSelectSearch(
                       hintText: 'Select Product(s)',
-                      items: mockProducts,
+                      // TODO: Replace with actual products
+                      items: const [],
                       overlayHeight: MediaQuery.sizeOf(context).height * 0.4,
                       searchHintText: 'Search Products',
                       onListChanged: (selectedProducts) {

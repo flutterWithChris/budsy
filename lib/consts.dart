@@ -1,5 +1,5 @@
 import 'package:budsy/stash/model/cannabinoid.dart';
-import 'package:budsy/stash/model/journal_entry.dart';
+import 'package:budsy/journal/model/journal_entry.dart';
 import 'package:budsy/stash/model/product.dart';
 import 'package:budsy/stash/model/terpene.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
@@ -7,39 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-
-final List<Cannabinoid> _cannabinoids = [
-  Cannabinoid(
-    id: '1',
-    name: 'THC',
-    icon: '🔥',
-    color: Colors.green,
-    amount: 0.0,
-  ),
-  Cannabinoid(
-    id: '2',
-    name: 'CBD',
-    icon: '🌿',
-    color: Colors.blue,
-    amount: 0.0,
-  ),
-  Cannabinoid(
-    id: '3',
-    name: 'CBN',
-    icon: '🌙',
-    color: Colors.deepPurpleAccent,
-    amount: 0.0,
-  ),
-  Cannabinoid(
-    id: '4',
-    name: 'CBG',
-    icon: '🌼',
-    color: Colors.yellow,
-    amount: 0.0,
-  ),
-];
-
-List<Cannabinoid> get cannabinoids => _cannabinoids;
 
 List<Terpene> _terpenes = [
   Terpene(

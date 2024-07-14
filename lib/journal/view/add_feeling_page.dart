@@ -1,7 +1,7 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:budsy/app/colors.dart';
 import 'package:budsy/app/icons.dart';
-import 'package:budsy/stash/model/journal_entry.dart';
+import 'package:budsy/journal/model/journal_entry.dart';
 import 'package:budsy/stash/model/product.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
