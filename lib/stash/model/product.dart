@@ -68,27 +68,27 @@ class Product with CustomDropdownListFilter {
 
       rating: json['rating'],
       archived: json['archived'],
-      // createdAt: json['created_at'] != null
-      //     ? DateTime.parse(json['created_at'])
-      //     : null,
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'])
+          : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      // 'id': id,
       'name': name,
-      'images': images,
+      // 'images': images,
       'description': description,
       'category': category.toString().split('.').last,
       'type': type.toString().split('.').last,
       'price': price,
-      'weight': weight,
+      // 'weight': weight,
       'unit': unit.toString().split('.').last,
       'dispensary': dispensary,
       'brand': brand,
-      'cannabinoids': cannabinoids,
-      'terpenes': terpenes,
+      // 'cannabinoids': cannabinoids,
+      // 'terpenes': terpenes,
       'rating': rating,
       'archived': archived,
     };

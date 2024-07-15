@@ -149,13 +149,12 @@ class StashList extends StatelessWidget {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index) {
-          final product = archived == true
-              ? stash
-                  .where((product) => product.archived == true)
-                  .toList()[index]
-              : stash
-                  .where((product) => product.archived != true)
-                  .toList()[index];
+          List<Product> stashDateSorted = archived == true
+              ? stash.where((product) => product.archived == true).toList()
+              : stash.where((product) => product.archived != true).toList();
+          stashDateSorted.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
+          final product = stashDateSorted[index];
+
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
             child: Card(

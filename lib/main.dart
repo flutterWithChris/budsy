@@ -52,6 +52,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(
             create: (context) => StashBloc(
               productRepository: context.read<ProductRepository>(),
+              authBloc: context.read<AuthBloc>(),
             )..add(FetchStash(context.read<AuthBloc>().state.user!.id)),
           ),
           BlocProvider(

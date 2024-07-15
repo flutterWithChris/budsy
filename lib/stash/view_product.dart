@@ -234,33 +234,35 @@ class _ViewProductPageState extends State<ViewProductPage> {
                                   ],
                                 ),
                               ),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        PhosphorIcon(
-                                            PhosphorIcons.tag(
-                                                PhosphorIconsStyle.fill),
-                                            size: 14.0),
-                                        const Gap(size: 8.0),
-                                        Text('Price',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleMedium),
-                                      ],
-                                    ),
-                                    Text(
-                                        '\$${widget.product.price!.toStringAsFixed(0)}/${widget.product.unit?.name[0]}',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium),
-                                  ],
+                              if (widget.product.price != null)
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          PhosphorIcon(
+                                              PhosphorIcons.tag(
+                                                  PhosphorIconsStyle.fill),
+                                              size: 14.0),
+                                          const Gap(size: 8.0),
+                                          Text('Price',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleMedium),
+                                        ],
+                                      ),
+                                      Text(
+                                          '\$${widget.product.price!.toStringAsFixed(0)}/${widget.product.unit?.name[0]}',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium),
+                                    ],
+                                  ),
                                 ),
-                              ),
                             ],
                           ),
                         ),

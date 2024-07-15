@@ -1,18 +1,27 @@
+import 'dart:io';
+
 import 'package:budsy/stash/model/cannabinoid.dart';
 import 'package:budsy/stash/model/product.dart';
 import 'package:budsy/stash/model/terpene.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:uuid/uuid.dart';
 
 class ProductRepository {
   final SupabaseClient _supabaseClient = Supabase.instance.client;
 
-  // Create a new product
+  // Create a new product & re
   Future<Product?> addProduct(Product product) async {
     try {
-      final response =
-          await _supabaseClient.from('products').upsert(product.toJson());
+      final response = await _supabaseClient
+          .from('products')
+          .upsert(product.toJson())
+          .select();
+      print('Response: $response');
+      Product createdProduct = Product.fromJson(response.first);
+      print('Created Product: $createdProduct');
 
-      return Product.fromJson(response.data.first);
+      return createdProduct;
     } catch (e) {
       print('Error adding product: $e');
       return null;
@@ -127,6 +136,90 @@ class ProductRepository {
     } catch (e) {
       print('Error fetching images: $e');
       return null;
+    }
+  }
+
+  // Fetch all cannabinoids
+  Future<List<Cannabinoid>?> fetchAllCannabinoids() async {
+    try {
+      final response = await _supabaseClient.from('cannabinoids').select('*');
+
+      return response
+          .map((cannabinoid) => Cannabinoid.fromJson(cannabinoid))
+          .toList();
+    } catch (e) {
+      print('Error fetching cannabinoids: $e');
+      return null;
+    }
+  }
+
+  // Fetch all terpenes
+  Future<List<Terpene>?> fetchAllTerpenes() async {
+    try {
+      final response = await _supabaseClient.from('terpenes').select('*');
+
+      return response.map((terpene) => Terpene.fromJson(terpene)).toList();
+    } catch (e) {
+      print('Error fetching terpenes: $e');
+      return null;
+    }
+  }
+
+  // Add cannabinoids to a product
+  Future<void> addProductCannabinoids(
+      String productId, List<Cannabinoid> cannabinoids) async {
+    final List<Map<String, dynamic>> data = cannabinoids
+        .map((cannabinoid) => {
+              'product_id': productId,
+              'cannabinoid_id': cannabinoid.id,
+              'amount': cannabinoid.amount
+            })
+        .toList();
+
+    await _supabaseClient.from('product_cannabinoids').upsert(data);
+  }
+
+  // Add terpenes to a product
+
+  Future<void> addProductTerpenes(
+      String productId, List<Terpene> terpenes) async {
+    final List<Map<String, dynamic>> data = terpenes
+        .map((terpene) => {
+              'product_id': productId,
+              'terpene_id': terpene.id,
+              'amount': terpene.amount
+            })
+        .toList();
+
+    await _supabaseClient.from('product_terpenes').upsert(data);
+  }
+
+  // Add images to a product
+  Future<void> addProductImages(String productId, List<XFile> images) async {
+    try {
+      String? url;
+      // Store in supabase storage
+      for (var i = 0; i < images.length; i++) {
+        Uuid uuid = const Uuid();
+        String imageId = uuid.v4();
+        File imageFile = File(images[i].path);
+        XFile image = images[i];
+        url = await _supabaseClient.storage
+            .from('product_images')
+            .upload('$productId/${image.name}', imageFile);
+      }
+
+      if (url == null) {
+        print('Error uploading image');
+        return;
+      }
+
+      // Store in database
+      final List<Map<String, dynamic>> data = images
+          .map((image) => {'product_id': productId, 'image_url': url})
+          .toList();
+    } catch (e) {
+      print('Error uploading image: $e');
     }
   }
 }

@@ -10,22 +10,20 @@ class FetchStash extends StashEvent {
 }
 
 class AddToStash extends StashEvent {
-  final String userId;
   final Product product;
+  final List<XFile> images;
 
-  AddToStash(this.userId, this.product);
+  AddToStash(this.product, this.images);
 }
 
 class RemoveFromStash extends StashEvent {
-  final String userId;
   final Product product;
 
-  RemoveFromStash(this.userId, this.product);
+  RemoveFromStash(this.product);
 }
 
 class UpdateProduct extends StashEvent {
-  final String userId;
   final Product product;
 
-  UpdateProduct(this.userId, this.product);
+  UpdateProduct(this.product);
 }
