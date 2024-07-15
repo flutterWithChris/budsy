@@ -5,14 +5,18 @@ import 'package:budsy/stash/bloc/product_details_bloc.dart';
 import 'package:budsy/stash/model/cannabinoid.dart';
 import 'package:budsy/stash/model/product.dart';
 import 'package:budsy/stash/model/terpene.dart';
+import 'package:budsy/stash/widgets/cannabinoid_chart.dart';
+import 'package:budsy/stash/widgets/terpene_chart.dart';
 import 'package:custom_rating_bar/custom_rating_bar.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 class ViewProductPage extends StatefulWidget {
   final Product product;
@@ -311,21 +315,77 @@ class _ViewProductPageState extends State<ViewProductPage> {
             //     },
             //   ),
             // ),
+            // SliverToBoxAdapter(
+            //   child: Padding(
+            //     padding:
+            //         const EdgeInsets.symmetric(horizontal: 24.0, vertical: 4.0),
+            //     child: Row(
+            //       children: [
+            //         PhosphorIcon(PhosphorIcons.list(), size: 18),
+            //         const Gap(size: 8.0),
+            //         Text('Details',
+            //             style: Theme.of(context)
+            //                 .textTheme
+            //                 .titleMedium
+            //                 ?.copyWith(fontWeight: FontWeight.bold)),
+            //       ],
+            //     ),
+            //   ),
+            // ),
             SliverToBoxAdapter(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24.0, vertical: 4.0),
-                child: Row(
-                  children: [
-                    PhosphorIcon(PhosphorIcons.list(), size: 18),
-                    const Gap(size: 8.0),
-                    Text('Details',
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium
-                            ?.copyWith(fontWeight: FontWeight.bold)),
-                  ],
-                ),
+              child: BlocBuilder<ProductDetailsBloc, ProductDetailsState>(
+                builder: (context, state) {
+                  if (state is ProductDetailsLoading) {
+                    return const Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 8.0, vertical: 0.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Flexible(child: TerpeneEmptyCard()),
+                        ],
+                      ),
+                    );
+                  }
+                  if (state is ProductDetailsLoaded) {
+                    if (state.cannabinoids.isEmpty && state.terpenes.isEmpty) {
+                      return const Text(
+                          'No cannabinoids or terpene data added.');
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0, vertical: 0.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: state.cannabinoids.isNotEmpty &&
+                                state.terpenes.isNotEmpty
+                            ? MainAxisAlignment.spaceEvenly
+                            : MainAxisAlignment.center,
+                        children: [
+                          // state.cannabinoids.isNotEmpty
+                          //     ? Expanded(
+                          //         child: CannabinoidChart(
+                          //             cannabinoids: state.cannabinoids),
+                          //       )
+                          //     : const SizedBox(),
+                          // const SizedBox(),
+                          // const Gap(size: 4.0),
+                          if (state.terpenes.isNotEmpty)
+                            Flexible(
+                                child: TerpeneChart(
+                              terpenes: state.terpenes,
+                            ))
+                          else
+                            const Flexible(child: TerpeneEmptyCard()),
+                        ],
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
               ),
             ),
             SliverToBoxAdapter(
@@ -338,7 +398,7 @@ class _ViewProductPageState extends State<ViewProductPage> {
                     }
                     return Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8.0, vertical: 8.0),
+                          horizontal: 8.0, vertical: 0.0),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
@@ -355,13 +415,13 @@ class _ViewProductPageState extends State<ViewProductPage> {
                               : const SizedBox(),
                           const SizedBox(),
                           const Gap(size: 4.0),
-                          if (state.terpenes.isNotEmpty)
-                            Expanded(
-                                child: TerpeneChart(
-                              terpenes: state.terpenes,
-                            ))
-                          else
-                            const SizedBox(),
+                          // if (state.terpenes.isNotEmpty)
+                          //   Flexible(
+                          //       child: TerpeneChart(
+                          //     terpenes: state.terpenes,
+                          //   ))
+                          // else
+                          //   const SizedBox(),
                         ],
                       ),
                     );
@@ -411,22 +471,84 @@ class TerpeneEmptyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Example of a terpene chart
-
-          Expanded(
-            flex: 2,
-            child: Center(
+    return AspectRatio(
+      aspectRatio: 1.0,
+      child: Card(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            // Example of a terpene chart
+            Flexible(
               child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: OutlinedButton(
-                      onPressed: () {}, child: const Text('Add Terpenes'))),
+                padding: const EdgeInsets.only(left: 16.0, top: 16.0),
+                child: Row(
+                  children: [
+                    PhosphorIcon(PhosphorIcons.leaf(), size: 20),
+                    const Gap(size: 8.0),
+                    Text('Terpenes',
+                        style: Theme.of(context).textTheme.titleMedium),
+                  ],
+                ),
+              ),
             ),
-          ),
-        ],
+            Expanded(
+              flex: 7,
+              child: Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: SfCircularChart(
+                    margin: EdgeInsets.zero,
+                    tooltipBehavior: TooltipBehavior(
+                      enable: true,
+                      color: Theme.of(context).colorScheme.surface,
+                      builder: (data, point, series, pointIndex, seriesIndex) {
+                        print('Data: $data');
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              '${data.amount}%',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    series: [
+                      RadialBarSeries<Terpene, String>(
+                        animationDuration: 400,
+                        gap: '12%',
+                        radius: '100%',
+                        innerRadius: '25%',
+                        strokeWidth: 2.9,
+                        cornerStyle: CornerStyle.bothCurve,
+                        trackColor: Theme.of(context).colorScheme.surface,
+                        dataSource: [
+                          Terpene(name: 'Myrcene', amount: 20),
+                          Terpene(name: 'Limonene', amount: 30),
+                          Terpene(name: 'Caryophyllene', amount: 50),
+                        ],
+                        xValueMapper: (Terpene terpene, _) => terpene.name,
+                        yValueMapper: (Terpene terpene, _) => terpene.amount,
+                        pointColorMapper: (Terpene terpene, _) =>
+                            Theme.of(context).colorScheme.surface,
+                      ),
+                    ],
+                  )
+                      .animate(
+                        onComplete: (controller) => controller.repeat(),
+                      )
+                      .shimmer(
+                        duration: const Duration(seconds: 1, milliseconds: 800),
+                        curve: Curves.easeInOutSine,
+                        color: Theme.of(context).colorScheme.tertiary,
+                      )),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -480,180 +602,6 @@ class ExampleTerpeneChart extends StatelessWidget {
           )),
         )
       ],
-    );
-  }
-}
-
-class TerpeneChart extends StatelessWidget {
-  final List<Terpene> terpenes;
-  const TerpeneChart({
-    super.key,
-    required this.terpenes,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                PhosphorIcon(PhosphorIcons.leaf(), size: 20),
-                const Gap(size: 8.0),
-                Text('Terpenes',
-                    style: Theme.of(context).textTheme.titleMedium),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 105,
-            width: 120,
-            child: PieChart(PieChartData(
-              centerSpaceRadius: 30,
-              sections: [
-                for (var terpene in terpenes)
-                  PieChartSectionData(
-                    radius: 22,
-                    color: getColorForTerpene(terpene),
-                    badgeWidget: Icon(getIconForTerpene(terpene),
-                        color: Colors.white, size: 14.0),
-                    value: terpene.amount!,
-                    showTitle: false,
-                  ),
-              ],
-            )),
-          ),
-          const Gap(size: 24.0),
-        ],
-      ),
-    );
-  }
-}
-
-class CannabinoidChart extends StatelessWidget {
-  final List<Cannabinoid> cannabinoids;
-  const CannabinoidChart({
-    super.key,
-    required this.cannabinoids,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              children: [
-                PhosphorIcon(
-                  PhosphorIcons.hexagon(),
-                  size: 20,
-                ),
-                const Gap(size: 8.0),
-                Text('Cannabinoids',
-                    style: Theme.of(context).textTheme.titleMedium),
-              ],
-            ),
-            const SizedBox(height: 24.0),
-            AspectRatio(
-              aspectRatio: context
-                          .read<ProductDetailsBloc>()
-                          .state
-                          .terpenes
-                          ?.isNotEmpty ==
-                      true
-                  ? 1.5
-                  : 2.1,
-              // height: 120,
-              // width: 160,
-
-              child: BarChart(BarChartData(
-                  alignment: BarChartAlignment.spaceAround,
-                  groupsSpace: 16.0,
-                  barTouchData: BarTouchData(touchTooltipData:
-                      BarTouchTooltipData(
-                          getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                    return BarTooltipItem(
-                      '${rod.toY.toString()}%',
-                      GoogleFonts.roboto().copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    );
-                  })),
-                  titlesData: FlTitlesData(
-                    show: true,
-                    bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                      reservedSize: 36,
-                      showTitles: true,
-                      getTitlesWidget: (value, meta) => Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          cannabinoids[value.toInt()].name!,
-                        ),
-                      ),
-                    )),
-                    topTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false)),
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: context
-                                    .read<ProductDetailsBloc>()
-                                    .state
-                                    .terpenes
-                                    ?.isNotEmpty ==
-                                true
-                            ? 28
-                            : 60,
-                        getTitlesWidget: (value, meta) {
-                          String? formattedValue;
-
-                          if (value > 1) {
-                            formattedValue = value.toStringAsFixed(0);
-                          } // check if values second digit after decimal is 0, if so, remove it
-                          else if (value.toString().split('.')[1] == '0') {
-                            formattedValue = value.toStringAsFixed(0);
-                          } else {
-                            formattedValue = value.toStringAsFixed(2);
-                          }
-
-                          return Text(
-                            '$formattedValue%',
-                            maxLines: 1,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                          );
-                        },
-                      ),
-                    ),
-                    rightTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false)),
-                  ),
-                  borderData: FlBorderData(
-                    show: false,
-                  ),
-                  barGroups: [
-                    for (var i = 0; i < cannabinoids.length; i++)
-                      BarChartGroupData(x: i, barRods: [
-                        BarChartRodData(
-                          toY: cannabinoids[i].amount!,
-                          color: getColorForCannabinoid(cannabinoids[i]),
-                        )
-                      ])
-                  ])),
-            )
-          ],
-        ),
-      ),
     );
   }
 }

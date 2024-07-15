@@ -14,7 +14,7 @@ class ProductDetailsBloc
   final ProductRepository _productRepository;
   ProductDetailsBloc({required ProductRepository productRepository})
       : _productRepository = productRepository,
-        super(ProductDetailsInitial()) {
+        super(ProductDetailsLoading()) {
     on<FetchProductDetails>(_onFetchProductDetails);
   }
 
