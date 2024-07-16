@@ -2,6 +2,7 @@ import 'package:budsy/app/colors.dart';
 import 'package:budsy/app/icons.dart';
 import 'package:budsy/app/system/bottom_nav.dart';
 import 'package:budsy/consts.dart';
+import 'package:budsy/journal/model/feeling.dart';
 import 'package:budsy/stash/mock/mock_products.dart';
 import 'package:budsy/journal/model/journal_entry.dart';
 import 'package:budsy/stash/model/product.dart';
@@ -432,12 +433,12 @@ Map<Terpene, int> getFavoriteTerpenes(List<JournalEntry> journalEntries) {
         final JournalEntry nextEntry = journalEntries[i];
         if (nextEntry.type == EntryType.feeling) {
           for (Feeling feeling in nextEntry.feelings!) {
-            if (feeling == Feeling.happy ||
-                feeling == Feeling.creative ||
-                feeling == Feeling.social ||
-                feeling == Feeling.energetic ||
-                feeling == Feeling.focus ||
-                feeling == Feeling.calm) {
+            if (feeling.name == 'happy' ||
+                feeling.name == 'creative' ||
+                feeling.name == 'social' ||
+                feeling.name == 'energetic' ||
+                feeling.name == 'focus' ||
+                feeling.name == 'calm') {
               for (Terpene terpene in terpenes) {
                 if (favoriteTerpenes.keys
                     .any((element) => element.name == terpene.name)) {

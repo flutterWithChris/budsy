@@ -1,17 +1,6 @@
+import 'package:budsy/journal/model/feeling.dart';
 import 'package:budsy/stash/model/product.dart';
 import 'package:googleapis/bigquery/v2.dart';
-
-enum Feeling {
-  happy,
-  creative,
-  sleepy,
-  anxious,
-  hungry,
-  energetic,
-  focus,
-  social,
-  calm,
-}
 
 enum EntryType {
   feeling,
@@ -38,20 +27,10 @@ class JournalEntry {
   factory JournalEntry.fromJson(Map<String, dynamic> json) {
     return JournalEntry(
       id: json['id'],
-      createdAt: DateTime.parse(json['createdAt']),
+      createdAt: DateTime.parse(json['created_at']),
       type: EntryType.values.firstWhere(
         (element) => element.toString() == 'EntryType.${json['type']}',
       ),
-      products: json['products'] != null
-          ? (json['products'] as List<dynamic>)
-              .map((product) => Product.fromJson(product))
-              .toList()
-          : null,
-      feelings: (json['feelings'] as List<dynamic>)
-          .map((feeling) => Feeling.values.firstWhere(
-                (element) => element.toString() == 'Feeling.$feeling',
-              ))
-          .toList(),
       intensity: json['intensity'],
     );
   }
@@ -67,6 +46,25 @@ class JournalEntry {
           .toList(),
       'intensity': intensity,
     };
+  }
+
+  // copyWith method
+  JournalEntry copyWith({
+    String? id,
+    DateTime? createdAt,
+    EntryType? type,
+    List<Product>? products,
+    List<Feeling>? feelings,
+    int? intensity,
+  }) {
+    return JournalEntry(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      type: type ?? this.type,
+      products: products ?? this.products,
+      feelings: feelings ?? this.feelings,
+      intensity: intensity ?? this.intensity,
+    );
   }
 
   @override

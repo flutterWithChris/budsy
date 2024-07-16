@@ -176,7 +176,7 @@ class _ViewProductPageState extends State<ViewProductPage> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16.0, vertical: 8.0),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               // Dispensary
                               Expanded(
@@ -206,34 +206,36 @@ class _ViewProductPageState extends State<ViewProductPage> {
                                 ),
                               ),
                               // FlowerType
-
-                              Expanded(
-                                flex: 2,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        PhosphorIcon(
-                                            PhosphorIcons.storefront(
-                                                PhosphorIconsStyle.duotone),
-                                            size: 14.0),
-                                        const Gap(size: 8.0),
-                                        Text('Dispensary',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleSmall),
-                                      ],
-                                    ),
-                                    Text(widget.product.dispensary!,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium),
-                                  ],
+                              if (widget.product.dispensary?.isNotEmpty ??
+                                  false)
+                                Expanded(
+                                  flex: 2,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          PhosphorIcon(
+                                              PhosphorIcons.storefront(
+                                                  PhosphorIconsStyle.duotone),
+                                              size: 14.0),
+                                          const Gap(size: 8.0),
+                                          Text('Dispensary',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleSmall),
+                                        ],
+                                      ),
+                                      Text(widget.product.dispensary!,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium),
+                                    ],
+                                  ),
                                 ),
-                              ),
                               if (widget.product.price != null)
                                 Expanded(
                                   child: Column(

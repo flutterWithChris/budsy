@@ -1,32 +1,16 @@
+import 'package:budsy/journal/model/feeling.dart';
 import 'package:budsy/stash/model/cannabinoid.dart';
 import 'package:budsy/journal/model/journal_entry.dart';
 import 'package:budsy/stash/model/product.dart';
 import 'package:budsy/stash/model/terpene.dart';
+import 'package:color_hex/class/hex_to_color.dart';
 import 'package:flutter/material.dart';
 
 Color getColorForFeeling(Feeling feeling) {
-  switch (feeling) {
-    case Feeling.happy:
-      return Colors.green;
-    case Feeling.creative:
-      return Colors.lightBlue;
-    case Feeling.sleepy:
-      return Colors.deepPurple;
-    case Feeling.anxious:
-      return Colors.red;
-    case Feeling.hungry:
-      return Colors.deepOrangeAccent;
-    case Feeling.energetic:
-      return Colors.orange;
-    case Feeling.focus:
-      return Colors.purple;
-    case Feeling.social:
-      return Colors.pink;
-    case Feeling.calm:
-      return Colors.teal;
-    default:
-      return Colors.grey;
+  if (feeling.color == null) {
+    return Colors.grey;
   }
+  return hexToColor(feeling.color!);
 }
 
 Color getColorForTerpene(Terpene terpene) {

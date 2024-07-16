@@ -1,10 +1,13 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:budsy/app/colors.dart';
 import 'package:budsy/app/icons.dart';
+import 'package:budsy/journal/cubit/feelings_cubit.dart';
+import 'package:budsy/journal/model/feeling.dart';
 import 'package:budsy/journal/model/journal_entry.dart';
 import 'package:budsy/stash/model/product.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
@@ -65,83 +68,51 @@ class _AddFeelingPageState extends State<AddFeelingPage> {
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          CustomDropdown<Feeling>.multiSelectSearch(
-                            items: Feeling.values,
-                            overlayHeight:
-                                MediaQuery.sizeOf(context).height * 0.4,
-                            onListChanged: (selectedFeelings) {
-                              setState(() {
-                                this.selectedFeelings = selectedFeelings;
-                              });
-                            },
-                            hintText: 'Select Feeling(s)',
-                            searchHintText: 'Search Feelings',
-                            headerListBuilder:
-                                (context, selecteFeelings, enabled) {
-                              return Wrap(
-                                runSpacing: 8,
-                                spacing: 8,
-                                children: [
-                                  for (var feeling in selectedFeelings)
-                                    Flexible(
-                                        child: Chip(
-                                      color: WidgetStatePropertyAll(
-                                          getColorForFeeling(feeling)),
-                                      visualDensity: VisualDensity.compact,
-                                      label: Text(feeling.name.capitalize),
-                                      avatar: PhosphorIcon(
-                                        getIconForFeeling(feeling),
-                                        size: 16,
-                                        color: Colors.white,
-                                      ),
-                                      side: BorderSide.none,
-                                      backgroundColor:
-                                          getColorForFeeling(feeling),
-                                    )),
-                                ],
-                              );
-                            },
-                            decoration: CustomDropdownDecoration(
-                                expandedFillColor: Theme.of(context)
-                                    .inputDecorationTheme
-                                    .fillColor,
-                                closedFillColor: Theme.of(context)
-                                    .inputDecorationTheme
-                                    .fillColor,
-                                listItemDecoration: ListItemDecoration(
-                                  selectedColor: Theme.of(context)
-                                      .colorScheme
-                                      .primaryContainer,
-                                ),
-                                searchFieldDecoration: SearchFieldDecoration(
-                                  fillColor: Theme.of(context)
-                                      .inputDecorationTheme
-                                      .fillColor,
-                                )),
-                            listItemBuilder:
-                                (context, feeling, isSelected, onItemSelect) {
-                              return Row(
-                                children: [
-                                  Container(
-                                    child: InkWell(
-                                      onTap: () {
-                                        onItemSelect();
-                                      },
-                                      child: Row(
-                                        children: [
-                                          Checkbox(
-                                            value: isSelected,
-                                            onChanged: (value) {
-                                              onItemSelect();
-                                            },
-                                          ),
-                                          Chip(
+                          BlocBuilder<FeelingsCubit, FeelingsState>(
+                            builder: (context, state) {
+                              if (state is FeelingsError) {
+                                return Center(
+                                  child: Text(state.message),
+                                );
+                              }
+                              if (state is FeelingsLoading) {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                              if (state is FeelingsLoaded &&
+                                  state.feelings.isEmpty) {
+                                return const Text('Error loading feelings');
+                              }
+                              if (state is FeelingsLoaded &&
+                                  state.feelings.isNotEmpty) {
+                                return CustomDropdown<
+                                    Feeling>.multiSelectSearch(
+                                  items: state.feelings,
+                                  overlayHeight:
+                                      MediaQuery.sizeOf(context).height * 0.4,
+                                  onListChanged: (selectedFeelings) {
+                                    setState(() {
+                                      this.selectedFeelings = selectedFeelings;
+                                    });
+                                  },
+                                  hintText: 'Select Feeling(s)',
+                                  searchHintText: 'Search Feelings',
+                                  headerListBuilder:
+                                      (context, selecteFeelings, enabled) {
+                                    return Wrap(
+                                      runSpacing: 8,
+                                      spacing: 8,
+                                      children: [
+                                        for (var feeling in selectedFeelings)
+                                          Flexible(
+                                              child: Chip(
                                             color: WidgetStatePropertyAll(
                                                 getColorForFeeling(feeling)),
                                             visualDensity:
                                                 VisualDensity.compact,
                                             label:
-                                                Text(feeling.name.capitalize),
+                                                Text(feeling.name!.capitalize),
                                             avatar: PhosphorIcon(
                                               getIconForFeeling(feeling),
                                               size: 16,
@@ -150,13 +121,74 @@ class _AddFeelingPageState extends State<AddFeelingPage> {
                                             side: BorderSide.none,
                                             backgroundColor:
                                                 getColorForFeeling(feeling),
-                                          )
-                                        ],
+                                          )),
+                                      ],
+                                    );
+                                  },
+                                  decoration: CustomDropdownDecoration(
+                                      expandedFillColor: Theme.of(context)
+                                          .inputDecorationTheme
+                                          .fillColor,
+                                      closedFillColor: Theme.of(context)
+                                          .inputDecorationTheme
+                                          .fillColor,
+                                      listItemDecoration: ListItemDecoration(
+                                        selectedColor: Theme.of(context)
+                                            .colorScheme
+                                            .primaryContainer,
                                       ),
-                                    ),
-                                  )
-                                ],
-                              );
+                                      searchFieldDecoration:
+                                          SearchFieldDecoration(
+                                        fillColor: Theme.of(context)
+                                            .inputDecorationTheme
+                                            .fillColor,
+                                      )),
+                                  listItemBuilder: (context, feeling,
+                                      isSelected, onItemSelect) {
+                                    return Row(
+                                      children: [
+                                        Container(
+                                          child: InkWell(
+                                            onTap: () {
+                                              onItemSelect();
+                                            },
+                                            child: Row(
+                                              children: [
+                                                Checkbox(
+                                                  value: isSelected,
+                                                  onChanged: (value) {
+                                                    onItemSelect();
+                                                  },
+                                                ),
+                                                Chip(
+                                                  color: WidgetStatePropertyAll(
+                                                      getColorForFeeling(
+                                                          feeling)),
+                                                  visualDensity:
+                                                      VisualDensity.compact,
+                                                  label: Text(
+                                                      feeling.name!.capitalize),
+                                                  avatar: PhosphorIcon(
+                                                    getIconForFeeling(feeling),
+                                                    size: 16,
+                                                    color: Colors.white,
+                                                  ),
+                                                  side: BorderSide.none,
+                                                  backgroundColor:
+                                                      getColorForFeeling(
+                                                          feeling),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    );
+                                  },
+                                );
+                              } else {
+                                return const Text('Something went wrong');
+                              }
                             },
                           ),
                           const SizedBox(height: 16),

@@ -1,3 +1,4 @@
+import 'package:budsy/journal/model/feeling.dart';
 import 'package:budsy/stash/model/cannabinoid.dart';
 import 'package:budsy/journal/model/journal_entry.dart';
 import 'package:budsy/stash/model/product.dart';
@@ -67,11 +68,11 @@ String composeFeelingSummaryString(List<Feeling> feelings) {
   String feelingSummaryString = '';
   for (int i = 0; i < feelings.length; i++) {
     if (i == 0) {
-      feelingSummaryString += feelings[i].name.capitalize;
+      feelingSummaryString += feelings[i].name!.capitalize;
     } else if (i == feelings.length - 1) {
-      feelingSummaryString += ' & ${feelings[i].name.capitalize}';
+      feelingSummaryString += ' & ${feelings[i].name!.capitalize}';
     } else {
-      feelingSummaryString += ', ${feelings[i].name.capitalize}';
+      feelingSummaryString += ', ${feelings[i].name!.capitalize}';
     }
   }
   return feelingSummaryString;

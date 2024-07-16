@@ -2,6 +2,10 @@ import 'package:budsy/app/router.dart';
 import 'package:budsy/auth/bloc/auth_bloc.dart';
 import 'package:budsy/auth/repository/auth_repository.dart';
 import 'package:budsy/consts.dart';
+import 'package:budsy/journal/bloc/journal_bloc.dart';
+import 'package:budsy/journal/cubit/feelings_cubit.dart';
+import 'package:budsy/journal/repository/feelings_repository.dart';
+import 'package:budsy/journal/repository/journal_repository.dart';
 import 'package:budsy/login/cubit/login_cubit.dart';
 import 'package:budsy/stash/bloc/product_details_bloc.dart';
 import 'package:budsy/stash/bloc/stash_bloc.dart';
@@ -37,6 +41,12 @@ class MyApp extends StatelessWidget {
         RepositoryProvider(
           create: (context) => ProductRepository(),
         ),
+        RepositoryProvider(
+          create: (context) => JournalRepository(),
+        ),
+        RepositoryProvider(
+          create: (context) => FeelingsRepository(),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -60,6 +70,16 @@ class MyApp extends StatelessWidget {
               productRepository: context.read<ProductRepository>(),
             ),
           ),
+          BlocProvider(
+            create: (context) => JournalBloc(
+              journalRepository: context.read<JournalRepository>(),
+            )..add(LoadJournal()),
+          ),
+          BlocProvider(
+            create: (context) => FeelingsCubit(
+              feelingsRepository: context.read<FeelingsRepository>(),
+            )..getFeelings(),
+          )
         ],
         child: MaterialApp.router(
           routeInformationParser: goRouter.routeInformationParser,

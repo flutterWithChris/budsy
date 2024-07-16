@@ -1,3 +1,4 @@
+import 'package:budsy/journal/model/feeling.dart';
 import 'package:budsy/journal/model/journal_entry.dart';
 import 'package:budsy/stash/model/product.dart';
 import 'package:budsy/stash/model/terpene.dart';
@@ -40,36 +41,81 @@ IconData getBoldIconForCategory(ProductCategory category) {
   return boldCategoryIcons[category]!;
 }
 
-Map<Feeling, IconData> feelingIcons = {
-  Feeling.happy: PhosphorIcons.smiley(),
-  Feeling.creative: PhosphorIcons.paintBrush(),
-  Feeling.sleepy: PhosphorIcons.moon(),
-  Feeling.anxious: PhosphorIcons.smileyNervous(),
-  Feeling.hungry: PhosphorIcons.bowlFood(),
-  Feeling.energetic: PhosphorIcons.lightning(),
-  Feeling.focus: PhosphorIcons.eye(),
-  Feeling.social: PhosphorIcons.users(),
-  Feeling.calm: PhosphorIcons.waveSine(),
-};
+// Map<Feeling, IconData> feelingIcons = {
+//   Feeling.happy: PhosphorIcons.smiley(),
+//   Feeling.creative: PhosphorIcons.paintBrush(),
+//   Feeling.sleepy: PhosphorIcons.moon(),
+//   Feeling.anxious: PhosphorIcons.smileyNervous(),
+//   Feeling.hungry: PhosphorIcons.bowlFood(),
+//   Feeling.energetic: PhosphorIcons.lightning(),
+//   Feeling.focus: PhosphorIcons.eye(),
+//   Feeling.social: PhosphorIcons.users(),
+//   Feeling.calm: PhosphorIcons.waveSine(),
+// };
 
 IconData getIconForFeeling(Feeling feeling) {
-  return feelingIcons[feeling]!;
+  switch (feeling.name) {
+    case 'happy':
+      return PhosphorIcons.smiley();
+    case 'creative':
+      return PhosphorIcons.paintBrush();
+    case 'sleepy':
+      return PhosphorIcons.moon();
+    case 'anxious':
+      return PhosphorIcons.smileyNervous();
+    case 'hungry':
+      return PhosphorIcons.bowlFood();
+    case 'energetic':
+      return PhosphorIcons.lightning();
+    case 'focus':
+      return PhosphorIcons.eye();
+    case 'social':
+      return PhosphorIcons.users();
+    case 'calm':
+      return PhosphorIcons.waveSine();
+    default:
+      return PhosphorIcons.smiley();
+  }
 }
 
-Map<Feeling, IconData> feelingDuotoneIcons = {
-  Feeling.happy: PhosphorIcons.smiley(PhosphorIconsStyle.duotone),
-  Feeling.creative: PhosphorIcons.paintBrush(PhosphorIconsStyle.duotone),
-  Feeling.sleepy: PhosphorIcons.moon(PhosphorIconsStyle.duotone),
-  Feeling.anxious: PhosphorIcons.smileyNervous(PhosphorIconsStyle.duotone),
-  Feeling.hungry: PhosphorIcons.bowlFood(PhosphorIconsStyle.duotone),
-  Feeling.energetic: PhosphorIcons.lightning(PhosphorIconsStyle.duotone),
-  Feeling.focus: PhosphorIcons.eye(PhosphorIconsStyle.duotone),
-  Feeling.social: PhosphorIcons.users(PhosphorIconsStyle.duotone),
-  Feeling.calm: PhosphorIcons.waveSine(PhosphorIconsStyle.duotone),
-};
+// Map<Feeling, IconData> feelingDuotoneIcons = {
+//   switch (feeling.name) {
+
+//   }
+//   Feeling.happy: PhosphorIcons.smiley(PhosphorIconsStyle.duotone),
+//   Feeling.creative: PhosphorIcons.paintBrush(PhosphorIconsStyle.duotone),
+//   Feeling.sleepy: PhosphorIcons.moon(PhosphorIconsStyle.duotone),
+//   Feeling.anxious: PhosphorIcons.smileyNervous(PhosphorIconsStyle.duotone),
+//   Feeling.hungry: PhosphorIcons.bowlFood(PhosphorIconsStyle.duotone),
+//   Feeling.energetic: PhosphorIcons.lightning(PhosphorIconsStyle.duotone),
+//   Feeling.focus: PhosphorIcons.eye(PhosphorIconsStyle.duotone),
+//   Feeling.social: PhosphorIcons.users(PhosphorIconsStyle.duotone),
+//   Feeling.calm: PhosphorIcons.waveSine(PhosphorIconsStyle.duotone),
+// };
 
 IconData getDuotoneIconForFeeling(Feeling feeling) {
-  return feelingDuotoneIcons[feeling]!;
+  switch (feeling.name) {
+    case 'happy':
+      return PhosphorIcons.smiley(PhosphorIconsStyle.duotone);
+    case 'creative':
+      return PhosphorIcons.paintBrush(PhosphorIconsStyle.duotone);
+    case 'sleepy':
+      return PhosphorIcons.moon(PhosphorIconsStyle.duotone);
+    case 'anxious':
+      return PhosphorIcons.smileyNervous(PhosphorIconsStyle.duotone);
+    case 'hungry':
+      return PhosphorIcons.bowlFood(PhosphorIconsStyle.duotone);
+    case 'energetic':
+      return PhosphorIcons.lightning(PhosphorIconsStyle.duotone);
+    case 'focus':
+      return PhosphorIcons.eye(PhosphorIconsStyle.duotone);
+    case 'social':
+      return PhosphorIcons.users(PhosphorIconsStyle.duotone);
+    case 'calm':
+      return PhosphorIcons.waveSine(PhosphorIconsStyle.duotone);
+    default:
+      return PhosphorIcons.smiley(PhosphorIconsStyle.duotone);
+  }
 }
 
 IconData getIconForTerpene(Terpene terpene) {

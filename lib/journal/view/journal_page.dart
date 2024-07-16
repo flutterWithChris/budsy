@@ -2,6 +2,7 @@ import 'package:budsy/app/colors.dart';
 import 'package:budsy/app/icons.dart';
 import 'package:budsy/app/system/bottom_nav.dart';
 import 'package:budsy/consts.dart';
+import 'package:budsy/journal/bloc/journal_bloc.dart';
 import 'package:budsy/stash/mock/mock_products.dart';
 import 'package:budsy/journal/model/journal_entry.dart';
 import 'package:budsy/stash/model/product.dart';
@@ -12,6 +13,7 @@ import 'package:budsy/journal/view/sheets/view_journal_entry_sheet.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -220,28 +222,65 @@ class JournalEntryList extends StatefulWidget {
 class _JournalEntryListState extends State<JournalEntryList> {
   @override
   Widget build(BuildContext context) {
-    return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (context, index) {
-          List<JournalEntry> journalEntries = [];
-          journalEntries.sort(
-            (a, b) => b.createdAt.compareTo(a.createdAt),
+    return BlocBuilder<JournalBloc, JournalState>(
+      builder: (context, state) {
+        if (state is JournalLoading) {
+          return const SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
           );
-          JournalEntry journalEntry = journalEntries[index];
-          if (journalEntry.type == EntryType.session) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 2.0),
-              child: SessionListTile(journalEntry: journalEntry),
-            );
-          } else {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 2.0),
-              child: FeelingListTile(journalEntry: journalEntry),
-            );
-          }
-        },
-        childCount: 0,
-      ),
+        }
+        if (state is JournalLoaded && state.entries.isNotEmpty) {
+          print('Journal Loaded & Entries not empty');
+          return SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                List<JournalEntry> journalEntries = state.entries;
+                print('Journal Entries In Widget: $journalEntries');
+                journalEntries.sort(
+                  (a, b) => b.createdAt.compareTo(a.createdAt),
+                );
+                JournalEntry journalEntry = journalEntries[index];
+                if (journalEntry.type == EntryType.session) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 2.0),
+                    child: SessionListTile(journalEntry: journalEntry),
+                  );
+                } else {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 2.0),
+                    child: FeelingListTile(journalEntry: journalEntry),
+                  );
+                }
+              },
+              childCount: state.entries.length,
+            ),
+          );
+        }
+        if (state is JournalLoaded && state.entries.isEmpty) {
+          return const SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Center(
+                child: Text('No journal entries found'),
+              ),
+            ),
+          );
+        } else {
+          return const SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Center(
+                child: Text('Something went wrong'),
+              ),
+            ),
+          );
+        }
+      },
     );
   }
 }
