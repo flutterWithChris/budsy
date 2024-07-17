@@ -5,9 +5,15 @@ class FeelingsRepository {
   final SupabaseClient client = Supabase.instance.client;
 
   Future<List<Feeling>> getFeelings() async {
-    final response = await client.from('feelings').select();
-    List<Feeling> feelings = [];
-    response.map((feeling) => feelings.add(Feeling.fromJson(feeling)));
-    return feelings;
+    try {
+      final response = await client.from('feelings').select();
+      print(response);
+      List<Feeling> feelings =
+          response.map((e) => Feeling.fromJson(e)).toList();
+      return feelings;
+    } catch (e) {
+      print(e);
+      return [];
+    }
   }
 }

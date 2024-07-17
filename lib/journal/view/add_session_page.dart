@@ -2,10 +2,13 @@ import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:budsy/app/colors.dart';
 import 'package:budsy/app/icons.dart';
 import 'package:budsy/app/system/bottom_nav.dart';
+import 'package:budsy/journal/bloc/journal_bloc.dart';
+import 'package:budsy/stash/bloc/stash_bloc.dart';
 import 'package:budsy/stash/mock/mock_products.dart';
 import 'package:budsy/journal/model/journal_entry.dart';
 import 'package:budsy/stash/model/product.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:uuid/uuid.dart';
@@ -61,114 +64,159 @@ class _AddSessionPageState extends State<AddSessionPage> {
               SliverToBoxAdapter(
                   child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CustomDropdown<Product>.multiSelectSearch(
-                      hintText: 'Select Product(s)',
-                      // TODO: Replace with actual products
-                      items: const [],
-                      overlayHeight: MediaQuery.sizeOf(context).height * 0.4,
-                      searchHintText: 'Search Products',
-                      onListChanged: (selectedProducts) {
-                        setState(() {
-                          this.selectedProducts = selectedProducts;
-                        });
-                        print('Selected Products: $selectedProducts');
-                      },
-                      headerListBuilder: (context, selectedItems, enabled) {
-                        return Wrap(
-                          runSpacing: 8,
-                          children: [
-                            for (var item in selectedItems)
-                              Flexible(
-                                child: Container(
-                                  margin: const EdgeInsets.only(right: 8),
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: getColorForProductCategory(
-                                        item.category!),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(getIconForCategory(item.category!),
-                                          size: 16),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        item.name!,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                          ],
-                        );
-                      },
-                      decoration: CustomDropdownDecoration(
-                          expandedFillColor:
-                              Theme.of(context).inputDecorationTheme.fillColor,
-                          closedFillColor:
-                              Theme.of(context).inputDecorationTheme.fillColor,
-                          listItemDecoration: ListItemDecoration(
-                            selectedColor:
-                                Theme.of(context).colorScheme.primaryContainer,
-                          ),
-                          searchFieldDecoration: SearchFieldDecoration(
-                            fillColor: Theme.of(context)
-                                .inputDecorationTheme
-                                .fillColor,
-                          )),
-                      listItemBuilder:
-                          (context, item, isSelected, onItemSelect) {
-                        return Row(
-                          children: [
-                            Container(
-                              child: InkWell(
-                                onTap: () {
-                                  onItemSelect();
+                child: BlocBuilder<JournalBloc, JournalState>(
+                  builder: (context, state) {
+                    return Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        BlocBuilder<StashBloc, StashState>(
+                          builder: (context, state) {
+                            if (state is StashError) {
+                              return Center(
+                                child: Text(state.message),
+                              );
+                            }
+                            if (state is StashLoading) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+                            if (state is StashLoaded &&
+                                state.products.isNotEmpty) {
+                              return CustomDropdown<Product>.multiSelectSearch(
+                                hintText: 'Select Product(s)',
+                                // TODO: Replace with actual products
+                                items: state.products,
+                                overlayHeight:
+                                    MediaQuery.sizeOf(context).height * 0.4,
+                                searchHintText: 'Search Products',
+                                onListChanged: (selectedProducts) {
+                                  setState(() {
+                                    this.selectedProducts = selectedProducts;
+                                  });
+                                  print('Selected Products: $selectedProducts');
                                 },
-                                child: Row(
-                                  children: [
-                                    Checkbox(
-                                      value: isSelected,
-                                      onChanged: (value) {
-                                        onItemSelect();
-                                      },
+                                headerListBuilder:
+                                    (context, selectedItems, enabled) {
+                                  return Wrap(
+                                    runSpacing: 8,
+                                    children: [
+                                      for (var item in selectedItems)
+                                        Flexible(
+                                          child: Container(
+                                            margin:
+                                                const EdgeInsets.only(right: 8),
+                                            padding: const EdgeInsets.all(8),
+                                            decoration: BoxDecoration(
+                                              color: getColorForProductCategory(
+                                                  item.category!),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(
+                                                    getIconForCategory(
+                                                        item.category!),
+                                                    size: 16),
+                                                const SizedBox(width: 8),
+                                                Text(
+                                                  item.name!,
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  );
+                                },
+                                decoration: CustomDropdownDecoration(
+                                    expandedFillColor: Theme.of(context)
+                                        .inputDecorationTheme
+                                        .fillColor,
+                                    closedFillColor: Theme.of(context)
+                                        .inputDecorationTheme
+                                        .fillColor,
+                                    listItemDecoration: ListItemDecoration(
+                                      selectedColor: Theme.of(context)
+                                          .colorScheme
+                                          .primaryContainer,
                                     ),
-                                    Icon(getIconForCategory(item.category!),
-                                        size: 18),
-                                    const SizedBox(width: 8),
-                                    Text(item.name!),
-                                  ],
-                                ),
-                              ),
-                            )
-                          ],
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () {
-                        final entry = JournalEntry(
-                          id: const Uuid().v4(),
-                          createdAt: DateTime.now(),
-                          type: EntryType.feeling,
-                          products: selectedProducts,
-                          // feelings: selectedFeelings,
-                          intensity: intensity,
-                        );
-                        // context.read<JournalBloc>().add(AddJournalEntry(entry));
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text('Add Session'),
-                    ),
-                  ],
+                                    searchFieldDecoration:
+                                        SearchFieldDecoration(
+                                      fillColor: Theme.of(context)
+                                          .inputDecorationTheme
+                                          .fillColor,
+                                    )),
+                                listItemBuilder:
+                                    (context, item, isSelected, onItemSelect) {
+                                  return Row(
+                                    children: [
+                                      Container(
+                                        child: InkWell(
+                                          onTap: () {
+                                            onItemSelect();
+                                          },
+                                          child: Row(
+                                            children: [
+                                              Checkbox(
+                                                value: isSelected,
+                                                onChanged: (value) {
+                                                  onItemSelect();
+                                                },
+                                              ),
+                                              Icon(
+                                                  getIconForCategory(
+                                                      item.category!),
+                                                  size: 18),
+                                              const SizedBox(width: 8),
+                                              Text(item.name!),
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                            if (state is StashLoaded &&
+                                state.products.isEmpty) {
+                              // TODO: Add a button to add your first product
+                              return FilledButton(
+                                onPressed: () {
+                                  context.go('/stash/add');
+                                },
+                                child: const Text('Add your first product'),
+                              );
+                            } else {
+                              return const Text('Error loading stash!');
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () {
+                            final entry = JournalEntry(
+                              id: const Uuid().v4(),
+                              createdAt: DateTime.now(),
+                              type: EntryType.session,
+                              products: selectedProducts,
+                            );
+                            context
+                                .read<JournalBloc>()
+                                .add(AddJournalEntry(entry));
+                          },
+                          child: const Text('Add Session'),
+                        ),
+                      ],
+                    );
+                  },
                 ),
               )),
             ],

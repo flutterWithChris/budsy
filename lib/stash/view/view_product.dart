@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -46,8 +47,10 @@ class _ViewProductPageState extends State<ViewProductPage> {
               snap: true,
               actions: [
                 IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.search),
+                  onPressed: () async => await context.push(
+                      '/stash/product/${widget.product.id}/edit',
+                      extra: widget.product),
+                  icon: PhosphorIcon(PhosphorIcons.pencil()),
                 ),
               ],
             ),

@@ -1,13 +1,14 @@
 import 'package:budsy/auth/bloc/auth_bloc.dart';
 import 'package:budsy/login/view/login_page.dart';
 import 'package:budsy/stash/model/product.dart';
-import 'package:budsy/stash/new_entry.dart';
+import 'package:budsy/stash/view/edit_product.dart';
+import 'package:budsy/stash/view/new_entry.dart';
 import 'package:budsy/stash/qr_scan_screen.dart';
 import 'package:budsy/journal/view/add_feeling_page.dart';
 import 'package:budsy/journal/view/add_session_page.dart';
 import 'package:budsy/journal/view/journal_page.dart';
-import 'package:budsy/stash/stash_page.dart';
-import 'package:budsy/stash/view_product.dart';
+import 'package:budsy/stash/view/stash_page.dart';
+import 'package:budsy/stash/view/view_product.dart';
 import 'package:budsy/trends/trends_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -66,7 +67,16 @@ GoRouter goRouter = GoRouter(
                 return ViewProductPage(
                   product: state.extra as Product,
                 );
-              })
+              },
+              routes: [
+                GoRoute(
+                    path: 'edit',
+                    builder: (context, state) {
+                      return EditProductPage(
+                        product: state.extra as Product,
+                      );
+                    })
+              ]),
         ]),
     GoRoute(
       path: '/trends',

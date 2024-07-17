@@ -83,3 +83,16 @@ Color getColorForCannabinoid(Cannabinoid cannabinoid) {
       return Colors.grey;
   }
 }
+
+bool isColorDark(Color color) {
+  // Calculate luminance to determine if color is dark or light
+  double luminance =
+      (0.299 * color.red + 0.587 * color.green + 0.114 * color.blue) / 255;
+  return luminance < 0.7;
+}
+
+Color getContrastingColor(Color backgroundColor) {
+  return isColorDark(backgroundColor)
+      ? Colors.white
+      : const Color.fromARGB(255, 27, 27, 27);
+}

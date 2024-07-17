@@ -61,4 +61,74 @@ class JournalRepository {
       return null;
     }
   }
+
+  // Add a new journal entry
+  Future<JournalEntry?> addEntry(JournalEntry entry) async {
+    try {
+      final response = await client
+          .from('journal_entries')
+          .upsert(entry.toJson(
+            userId: Supabase.instance.client.auth.currentUser!.id,
+          ))
+          .select();
+
+      return JournalEntry.fromJson(response.first);
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  // Update a journal entry
+  Future<JournalEntry?> updateEntry(JournalEntry entry) async {
+    try {
+      final response = await client
+          .from('journal_entries')
+          .upsert(entry.toJson(
+            userId: Supabase.instance.client.auth.currentUser!.id,
+          ))
+          .select();
+      return JournalEntry.fromJson(response.first);
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  // Delete a journal entry
+  Future<void> deleteEntry(String entryId) async {
+    try {
+      await client.from('journal_entries').delete().eq('id', entryId);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  // Add products into journal_products table
+  Future<void> addProductToEntry(
+      String entryId, String productId, String userId) async {
+    try {
+      await client.from('journal_products').upsert({
+        'entry_id': entryId,
+        'product_id': productId,
+        'user_id': userId,
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  // Add feelings into journal_feelings table
+  Future<void> addFeelingToEntry(
+      String entryId, String feelingId, String userId) async {
+    try {
+      await client.from('journal_feelings').upsert({
+        'entry_id': entryId,
+        'feeling_id': feelingId,
+        'user_id': userId,
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
 }

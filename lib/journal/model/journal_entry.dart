@@ -8,17 +8,17 @@ enum EntryType {
 }
 
 class JournalEntry {
-  final String id;
-  final DateTime createdAt;
-  final EntryType type;
+  final String? id;
+  final DateTime? createdAt;
+  final EntryType? type;
   final List<Product>? products;
   final List<Feeling>? feelings;
   final int? intensity;
 
   JournalEntry({
-    required this.id,
-    required this.createdAt,
-    required this.type,
+    this.id,
+    this.createdAt,
+    this.type,
     this.products,
     this.feelings,
     this.intensity,
@@ -35,16 +35,11 @@ class JournalEntry {
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson({required String userId}) {
     return {
-      'id': id,
-      'createdAt': createdAt.toIso8601String(),
       'type': type.toString().split('.').last,
-      'products': products?.map((product) => product.toJson()).toList(),
-      'feelings': feelings
-          ?.map((feeling) => feeling.toString().split('.').last)
-          .toList(),
       'intensity': intensity,
+      'user_id': userId,
     };
   }
 

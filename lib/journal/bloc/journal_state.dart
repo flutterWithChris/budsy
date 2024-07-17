@@ -20,6 +20,24 @@ final class JournalLoaded extends JournalState {
   List<Object> get props => [entries];
 }
 
+final class JournalEntryAdded extends JournalState {
+  final JournalEntry entry;
+
+  const JournalEntryAdded(this.entry);
+
+  @override
+  List<Object> get props => [entry];
+}
+
+final class JournalEntryUpdated extends JournalState {
+  final JournalEntry entry;
+
+  const JournalEntryUpdated(this.entry);
+
+  @override
+  List<Object> get props => [entry];
+}
+
 final class JournalError extends JournalState {
   final String message;
 

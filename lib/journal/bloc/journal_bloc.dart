@@ -3,6 +3,7 @@ import 'package:budsy/journal/model/feeling.dart';
 import 'package:budsy/journal/model/journal_entry.dart';
 import 'package:budsy/journal/repository/journal_repository.dart';
 import 'package:equatable/equatable.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 part 'journal_event.dart';
 part 'journal_state.dart';
@@ -14,6 +15,9 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
       : _journalRepository = journalRepository,
         super(JournalLoading()) {
     on<LoadJournal>(_onLoadJournal);
+    on<AddJournalEntry>(_onAddJournalEntry);
+    on<UpdateJournalEntry>(_onUpdateJournalEntry);
+    on<DeleteJournalEntry>(_onDeleteJournalEntry);
   }
 
   void _onLoadJournal(LoadJournal event, Emitter<JournalState> emit) async {
@@ -30,6 +34,69 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
     } catch (e) {
       print(e);
       emit(const JournalError('Failed to load journal entries'));
+    }
+  }
+
+  void _onAddJournalEntry(
+      AddJournalEntry event, Emitter<JournalState> emit) async {
+    emit(JournalLoading());
+    try {
+      print('Adding journal entry');
+      JournalEntry? entry = await _journalRepository.addEntry(event.entry);
+
+      if (entry == null) {
+        emit(const JournalError('Failed to add journal entry'));
+        return;
+      }
+
+      if (event.entry.products != null && event.entry.products!.isNotEmpty) {
+        for (var product in event.entry.products!) {
+          await _journalRepository.addProductToEntry(entry.id!, product.id!,
+              Supabase.instance.client.auth.currentUser!.id);
+        }
+      }
+      if (event.entry.feelings != null && event.entry.feelings!.isNotEmpty) {
+        print('Adding feelings to entry');
+        for (var feeling in event.entry.feelings!) {
+          await _journalRepository.addFeelingToEntry(entry.id!, feeling.id!,
+              Supabase.instance.client.auth.currentUser!.id);
+        }
+      }
+      emit(JournalEntryAdded(entry));
+      add(LoadJournal());
+    } catch (e) {
+      print(e);
+      emit(const JournalError('Failed to add journal entry'));
+    }
+  }
+
+  void _onUpdateJournalEntry(
+      UpdateJournalEntry event, Emitter<JournalState> emit) async {
+    emit(JournalLoading());
+    try {
+      print('Updating journal entry');
+      JournalEntry? entry = await _journalRepository.updateEntry(event.entry);
+      if (entry == null) {
+        emit(const JournalError('Failed to update journal entry'));
+        return;
+      }
+      emit(JournalEntryUpdated(entry));
+    } catch (e) {
+      print(e);
+      emit(const JournalError('Failed to update journal entry'));
+    }
+  }
+
+  void _onDeleteJournalEntry(
+      DeleteJournalEntry event, Emitter<JournalState> emit) async {
+    emit(JournalLoading());
+    try {
+      print('Deleting journal entry');
+      await _journalRepository.deleteEntry(event.entryId);
+      emit(JournalInitial());
+    } catch (e) {
+      print(e);
+      emit(const JournalError('Failed to delete journal entry'));
     }
   }
 }

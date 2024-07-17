@@ -53,11 +53,29 @@ IconData getBoldIconForCategory(ProductCategory category) {
 //   Feeling.calm: PhosphorIcons.waveSine(),
 // };
 
-IconData getIconForFeeling(Feeling feeling) {
+IconData getIconForFeeling(Feeling feeling,
+    {bool filled = false, bool duoTone = false}) {
+  if (feeling.icon == null) {
+    return PhosphorIcons.smiley();
+  }
+
+  List<String> parts = feeling.icon!.split(':');
+  String fontFamily = parts[0];
+  int codePoint = int.parse(parts[1]);
+
+  if (duoTone) {
+    return PhosphorIconData(codePoint, 'Duotone');
+  }
+
+  if (filled) {
+    return PhosphorIconData(codePoint, 'Fill');
+  }
+
+  return PhosphorIconData(codePoint, 'Regular');
   switch (feeling.name) {
     case 'happy':
       return PhosphorIcons.smiley();
-    case 'creative':
+    case 'Creative':
       return PhosphorIcons.paintBrush();
     case 'sleepy':
       return PhosphorIcons.moon();

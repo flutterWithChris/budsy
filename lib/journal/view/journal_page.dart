@@ -242,7 +242,7 @@ class _JournalEntryListState extends State<JournalEntryList> {
                 List<JournalEntry> journalEntries = state.entries;
                 print('Journal Entries In Widget: $journalEntries');
                 journalEntries.sort(
-                  (a, b) => b.createdAt.compareTo(a.createdAt),
+                  (a, b) => b.createdAt!.compareTo(a.createdAt!),
                 );
                 JournalEntry journalEntry = journalEntries[index];
                 if (journalEntry.type == EntryType.session) {
@@ -417,7 +417,7 @@ class _FeelingListTileState extends State<FeelingListTile>
                               ),
                               Text(
                                   Jiffy.parseFromDateTime(
-                                          journalEntry.createdAt)
+                                          journalEntry.createdAt!)
                                       .fromNow(),
                                   style: Theme.of(context).textTheme.bodySmall),
                             ],
@@ -483,6 +483,7 @@ class _SessionListTileState extends State<SessionListTile>
     JournalEntry journalEntry = widget.journalEntry;
     List<Product> product = journalEntry.products!;
     String productSummaryString = composeProductSummaryString(product);
+    print('Product Summary String: $productSummaryString');
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4.0),
@@ -591,7 +592,7 @@ class _SessionListTileState extends State<SessionListTile>
                                 ),
                                 Text(
                                     Jiffy.parseFromDateTime(
-                                            journalEntry.createdAt)
+                                            journalEntry.createdAt!)
                                         .fromNow(),
                                     style:
                                         Theme.of(context).textTheme.bodySmall),
