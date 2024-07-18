@@ -49,7 +49,7 @@ class _ViewProductPageState extends State<ViewProductPage> {
                 IconButton(
                   onPressed: () async => await context.push(
                       '/stash/product/${widget.product.id}/edit',
-                      extra: widget.product),
+                      extra: context.read<ProductDetailsBloc>().state.product),
                   icon: PhosphorIcon(PhosphorIcons.pencil()),
                 ),
               ],
@@ -58,222 +58,246 @@ class _ViewProductPageState extends State<ViewProductPage> {
               padding:
                   const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
               sliver: SliverToBoxAdapter(
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 16.0),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Row(
+                child: BlocBuilder<ProductDetailsBloc, ProductDetailsState>(
+                  builder: (context, state) {
+                    if (state is ProductDetailsError) {
+                      return Center(
+                        child: Text('Error: ${state.message}'),
+                      );
+                    }
+                    if (state is ProductDetailsLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (state is ProductDetailsLoaded) {
+                      Product product = state is ProductDetailsLoaded
+                          ? state.product
+                          : widget.product;
+                      return Card(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 16.0),
+                          child: Column(
                             children: [
-                              Flexible(
-                                flex: 2,
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
                                 child: Row(
                                   children: [
-                                    CircleAvatar(
-                                      radius: 28.0,
-                                      backgroundColor:
-                                          getColorForProductCategory(
-                                              widget.product.category ??
-                                                  ProductCategory.other),
-                                      foregroundImage:
-                                          widget.product.images != null
-                                              ? NetworkImage(
-                                                  widget.product.images![0])
-                                              : null,
-                                      child: widget.product.images == null ||
-                                              widget.product.images!.isEmpty
-                                          ? Icon(
-                                              getIconForCategory(
-                                                  widget.product.category ??
-                                                      ProductCategory.other),
-                                              size: 28.0,
-                                            )
-                                          : null,
-                                    ),
-                                    const Gap(size: 16.0),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Text(
-                                              widget.product.name!,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleMedium
-                                                  ?.copyWith(),
-                                            ),
-                                            const Gap(size: 16.0),
-                                            widget.product.images != null
-                                                ? CircleAvatar(
-                                                    radius: 14,
-                                                    backgroundColor:
-                                                        getColorForProductCategory(
-                                                            widget.product
+                                    Flexible(
+                                      flex: 2,
+                                      child: Row(
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 28.0,
+                                            backgroundColor:
+                                                getColorForProductCategory(
+                                                    product.category ??
+                                                        ProductCategory.other),
+                                            foregroundImage:
+                                                product.images != null
+                                                    ? NetworkImage(
+                                                        product.images![0])
+                                                    : null,
+                                            child: product.images == null ||
+                                                    product.images!.isEmpty
+                                                ? Icon(
+                                                    getIconForCategory(product
+                                                            .category ??
+                                                        ProductCategory.other),
+                                                    size: 28.0,
+                                                  )
+                                                : null,
+                                          ),
+                                          const Gap(size: 16.0),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Text(
+                                                    product.name!,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .titleMedium
+                                                        ?.copyWith(),
+                                                  ),
+                                                  const Gap(size: 16.0),
+                                                  product.images != null
+                                                      ? CircleAvatar(
+                                                          radius: 14,
+                                                          backgroundColor:
+                                                              getColorForProductCategory(widget
+                                                                      .product
+                                                                      .category ??
+                                                                  ProductCategory
+                                                                      .other),
+                                                          child: Icon(
+                                                            getIconForCategory(widget
+                                                                    .product
                                                                     .category ??
                                                                 ProductCategory
                                                                     .other),
-                                                    child: Icon(
-                                                      getIconForCategory(widget
-                                                              .product
-                                                              .category ??
-                                                          ProductCategory
-                                                              .other),
-                                                      size: 14.0,
-                                                      color: Colors.white,
-                                                    ),
-                                                  )
-                                                : const SizedBox.shrink(),
-                                          ],
-                                        ),
-                                        Wrap(
-                                          spacing: 8.0,
-                                          children: [
-                                            Text(
-                                              widget.product.brand!,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall,
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                                            size: 14.0,
+                                                            color: Colors.white,
+                                                          ),
+                                                        )
+                                                      : const SizedBox.shrink(),
+                                                ],
+                                              ),
+                                              Wrap(
+                                                spacing: 8.0,
+                                                children: [
+                                                  Text(
+                                                    product.brand!,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall,
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ),
+                                    Expanded(
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          RatingBar(
+                                            initialRating:
+                                                product.rating?.toDouble() ??
+                                                    0.0,
+                                            size: 20,
+                                            filledIcon: PhosphorIcons.star(
+                                                PhosphorIconsStyle.fill),
+                                            emptyIcon: PhosphorIcons.star(),
+                                            onRatingChanged: (rating) {
+                                              setState(() {
+                                                _selectedRating =
+                                                    rating.toInt();
+                                              });
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    )
                                   ],
                                 ),
                               ),
-                              Expanded(
+                              const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Divider(),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0, vertical: 8.0),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    RatingBar(
-                                      initialRating:
-                                          widget.product.rating?.toDouble() ??
-                                              0.0,
-                                      size: 20,
-                                      filledIcon: PhosphorIcons.star(
-                                          PhosphorIconsStyle.fill),
-                                      emptyIcon: PhosphorIcons.star(),
-                                      onRatingChanged: (rating) {
-                                        setState(() {
-                                          _selectedRating = rating.toInt();
-                                        });
-                                      },
+                                    // Dispensary
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              PhosphorIcon(
+                                                  getIconForCategory(
+                                                      product.category!),
+                                                  size: 14.0),
+                                              const Gap(size: 8.0),
+                                              Text('Type',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .titleSmall),
+                                            ],
+                                          ),
+                                          Text(product.type!.name.capitalize,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium),
+                                        ],
+                                      ),
                                     ),
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Divider(),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0, vertical: 8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              // Dispensary
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        PhosphorIcon(
-                                            getIconForCategory(
-                                                widget.product.category!),
-                                            size: 14.0),
-                                        const Gap(size: 8.0),
-                                        Text('Type',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleSmall),
-                                      ],
-                                    ),
-                                    Text(widget.product.type!.name.capitalize,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium),
+                                    // FlowerType
+                                    if (product.dispensary?.isNotEmpty ?? false)
+                                      Expanded(
+                                        flex: 2,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                PhosphorIcon(
+                                                    PhosphorIcons.storefront(
+                                                        PhosphorIconsStyle
+                                                            .duotone),
+                                                    size: 14.0),
+                                                const Gap(size: 8.0),
+                                                Text('Dispensary',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .titleSmall),
+                                              ],
+                                            ),
+                                            Text(product.dispensary!,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium),
+                                          ],
+                                        ),
+                                      ),
+                                    if (product.price != null)
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                PhosphorIcon(
+                                                    PhosphorIcons.tag(
+                                                        PhosphorIconsStyle
+                                                            .fill),
+                                                    size: 14.0),
+                                                const Gap(size: 8.0),
+                                                Text('Price',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .titleMedium),
+                                              ],
+                                            ),
+                                            Text(
+                                                '\$${product.price!.toStringAsFixed(0)}/${product.unit?.name[0]}',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium),
+                                          ],
+                                        ),
+                                      ),
                                   ],
                                 ),
                               ),
-                              // FlowerType
-                              if (widget.product.dispensary?.isNotEmpty ??
-                                  false)
-                                Expanded(
-                                  flex: 2,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          PhosphorIcon(
-                                              PhosphorIcons.storefront(
-                                                  PhosphorIconsStyle.duotone),
-                                              size: 14.0),
-                                          const Gap(size: 8.0),
-                                          Text('Dispensary',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleSmall),
-                                        ],
-                                      ),
-                                      Text(widget.product.dispensary!,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium),
-                                    ],
-                                  ),
-                                ),
-                              if (widget.product.price != null)
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          PhosphorIcon(
-                                              PhosphorIcons.tag(
-                                                  PhosphorIconsStyle.fill),
-                                              size: 14.0),
-                                          const Gap(size: 8.0),
-                                          Text('Price',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleMedium),
-                                        ],
-                                      ),
-                                      Text(
-                                          '\$${widget.product.price!.toStringAsFixed(0)}/${widget.product.unit?.name[0]}',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium),
-                                    ],
-                                  ),
-                                ),
                             ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
+                      );
+                    } else {
+                      return const Text('Error loading product');
+                    }
+                  },
                 ),
               ),
             ),

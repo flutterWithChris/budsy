@@ -47,7 +47,11 @@ class StashBloc extends Bloc<StashEvent, StashState> {
       print('All Cannabinoids: $allCannabinoids');
       print('All Terpenes: ${allTerpenes?.length}');
       print('Products: $products');
-      emit(StashLoaded(products ?? []));
+      if (products == null) {
+        emit(StashError('Error fetching stash'));
+        return;
+      }
+      emit(StashLoaded(products!));
     } catch (e) {
       emit(StashError(e.toString()));
     }
@@ -83,9 +87,7 @@ class StashBloc extends Bloc<StashEvent, StashState> {
     try {
       emit(StashLoading());
       await _productRepository.deleteProduct(event.product.id!);
-      emit(StashLoaded(
-          await _productRepository.fetchProducts(_authBloc.state.user!.id) ??
-              []));
+      add(FetchStash(_authBloc.state.user!.id));
     } catch (e) {
       emit(StashError(e.toString()));
     }
@@ -94,11 +96,12 @@ class StashBloc extends Bloc<StashEvent, StashState> {
   void _onUpdateProduct(UpdateProduct event, Emitter<StashState> emit) async {
     try {
       emit(StashLoading());
-      await _productRepository.updateProduct(event.product);
-      emit(StashLoaded(
-          await _productRepository.fetchProducts(_authBloc.state.user!.id) ??
-              []));
+      Product product = await _productRepository.updateProduct(event.product);
+      emit(StashUpdated(product));
+      add(FetchStash(_authBloc.state.user!.id));
     } catch (e) {
+      print(e);
+
       emit(StashError(e.toString()));
     }
   }

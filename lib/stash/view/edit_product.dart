@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:budsy/app/icons.dart';
+import 'package:budsy/app/snackbars.dart';
 import 'package:budsy/app/system/bottom_nav.dart';
 import 'package:budsy/consts.dart';
 import 'package:budsy/stash/bloc/product_details_bloc.dart';
@@ -126,13 +127,15 @@ class _EditProductPageState extends State<EditProductPage> {
     print('requiredCannabinoids: $requiredCannabinoids');
     return Scaffold(
         bottomNavigationBar: const BottomNavBar(),
-        appBar: AppBar(
-          title: const Text('Edit Product'),
-        ),
         body: Column(
           children: [
             Expanded(
               child: CustomScrollView(slivers: [
+                const SliverAppBar(
+                  title: Text(
+                    'Edit Product',
+                  ),
+                ),
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
@@ -640,6 +643,50 @@ class _EditProductPageState extends State<EditProductPage> {
                         _isProcessing
                             ? const CircularProgressIndicator.adaptive()
                             : Text(labReport?.toString() ?? ''),
+                        FilledButton.icon(
+                          style: FilledButton.styleFrom(
+                              backgroundColor: Colors.red),
+                          icon: PhosphorIcon(
+                            PhosphorIcons.trash(PhosphorIconsStyle.fill),
+                            size: 20,
+                            color: Colors.white,
+                          ),
+                          label: const Text('Delete Product',
+                              style: TextStyle(color: Colors.white)),
+                          onPressed: () async {
+                            await showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: const Text('Delete Product'),
+                                  content: const Text(
+                                      'Are you sure you want to delete this product?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        context.pop();
+                                      },
+                                      child: const Text('Cancel'),
+                                    ),
+                                    FilledButton(
+                                      style: FilledButton.styleFrom(
+                                        backgroundColor: Colors.red,
+                                      ),
+                                      onPressed: () {
+                                        // context.read<StashBloc>().add(
+                                        //     DeleteProduct(widget.product.id!));
+                                        context.pop();
+                                      },
+                                      child: const Text('Delete',
+                                          style:
+                                              TextStyle(color: Colors.white)),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                        ),
                       ],
                     ),
                   ),
@@ -673,27 +720,23 @@ class _EditProductPageState extends State<EditProductPage> {
                   children: [
                     Expanded(
                       child: BlocConsumer<StashBloc, StashState>(
-                        listenWhen: (previous, current) =>
-                            previous is StashLoading &&
-                                current is StashLoaded ||
-                            current is StashError,
                         listener: (context, state) async {
                           if (state is StashError) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                    'Error adding product: ${state.message}'),
-                              ),
+                              getErrorSnackBar(state.message),
                             );
-                            await Future.delayed(const Duration(seconds: 2));
-                            context.pop();
-                          } else {
+                          }
+                          if (state is StashUpdated) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Product added to stash'),
-                              ),
+                              getSuccessSnackBar(
+                                  'Product updated successfully'),
                             );
-                            await Future.delayed(const Duration(seconds: 2));
+
+                            context
+                                .read<ProductDetailsBloc>()
+                                .add(FetchProductDetails(widget.product));
+                            await Future.delayed(
+                                const Duration(milliseconds: 400));
                             context.pop();
                           }
                         },

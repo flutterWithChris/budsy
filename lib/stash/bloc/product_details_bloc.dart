@@ -22,13 +22,20 @@ class ProductDetailsBloc
       FetchProductDetails event, Emitter<ProductDetailsState> emit) async {
     emit(ProductDetailsLoading());
     try {
-      final product = event.product;
+      final productId = event.product.id!;
+      final product = await _productRepository.fetchProductById(productId);
+
+      if (product == null) {
+        emit(const ProductDetailsError('Error fetching product'));
+        return;
+      }
+
       List<Cannabinoid> cannabinoids =
-          await _productRepository.fetchCannabinoids(event.product.id!) ?? [];
+          await _productRepository.fetchCannabinoids(productId) ?? [];
       List<Terpene> terpenes =
-          await _productRepository.fetchTerpenes(event.product.id!) ?? [];
+          await _productRepository.fetchTerpenes(productId) ?? [];
       List<String> images =
-          await _productRepository.fetchProductImages(event.product.id!) ?? [];
+          await _productRepository.fetchProductImages(productId) ?? [];
 
       emit(ProductDetailsLoaded(
           product: product,

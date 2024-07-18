@@ -48,12 +48,18 @@ class ProductRepository {
 
   // Update a product
   Future<Product> updateProduct(Product product) async {
-    final response = await _supabaseClient
-        .from('products')
-        .update(product.toJson())
-        .eq('id', product.id!);
+    try {
+      final response = await _supabaseClient
+          .from('products')
+          .update(product.toJson())
+          .eq('id', product.id!)
+          .select();
 
-    return Product.fromJson(response.data.first);
+      return Product.fromJson(response.first);
+    } catch (e) {
+      print('Error updating product: $e');
+      return product;
+    }
   }
 
   // Delete a product
@@ -66,8 +72,7 @@ class ProductRepository {
     try {
       final response = await _supabaseClient
           .from('products')
-          .select(
-              '*, product_categories(name, icon_name, color), flower_types(name, icon_name, color)')
+          .select('*')
           .eq('id', productId);
 
       return Product.fromJson(response.first);

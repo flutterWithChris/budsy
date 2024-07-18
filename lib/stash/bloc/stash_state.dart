@@ -18,3 +18,9 @@ final class StashError extends StashState {
 
   StashError(this.message);
 }
+
+final class StashUpdated extends StashState {
+  final Product product;
+
+  StashUpdated(this.product);
+}
