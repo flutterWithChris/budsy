@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:budsy/app/icons.dart';
 import 'package:budsy/app/snackbars.dart';
 import 'package:budsy/app/system/bottom_nav.dart';
+import 'package:budsy/auth/bloc/auth_bloc.dart';
 import 'package:budsy/consts.dart';
 import 'package:budsy/stash/bloc/product_details_bloc.dart';
 import 'package:budsy/stash/bloc/stash_bloc.dart';
@@ -668,18 +669,55 @@ class _EditProductPageState extends State<EditProductPage> {
                                       },
                                       child: const Text('Cancel'),
                                     ),
-                                    FilledButton(
-                                      style: FilledButton.styleFrom(
-                                        backgroundColor: Colors.red,
-                                      ),
-                                      onPressed: () {
-                                        // context.read<StashBloc>().add(
-                                        //     DeleteProduct(widget.product.id!));
-                                        context.pop();
+                                    BlocConsumer<StashBloc, StashState>(
+                                      listener: (context, state) {
+                                        if (state is StashError) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            getErrorSnackBar(state.message),
+                                          );
+                                        }
+                                        if (state is ProductRemoved) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            getSuccessSnackBar(
+                                                'Product deleted successfully'),
+                                          );
+                                          context.read<StashBloc>().add(
+                                              FetchStash(context
+                                                  .read<AuthBloc>()
+                                                  .state
+                                                  .user!
+                                                  .id));
+                                          context.go('/stash');
+                                        }
                                       },
-                                      child: const Text('Delete',
-                                          style:
-                                              TextStyle(color: Colors.white)),
+                                      builder: (context, state) {
+                                        if (state is StashLoading) {
+                                          return FilledButton(
+                                            style: FilledButton.styleFrom(
+                                              backgroundColor: Colors.red,
+                                            ),
+                                            onPressed: () {},
+                                            child: const Text('Deleting...',
+                                                style: TextStyle(
+                                                    color: Colors.white)),
+                                          );
+                                        }
+                                        return FilledButton(
+                                          style: FilledButton.styleFrom(
+                                            backgroundColor: Colors.red,
+                                          ),
+                                          onPressed: () {
+                                            context.read<StashBloc>().add(
+                                                RemoveFromStash(
+                                                    widget.product));
+                                          },
+                                          child: const Text('Delete',
+                                              style: TextStyle(
+                                                  color: Colors.white)),
+                                        );
+                                      },
                                     ),
                                   ],
                                 );
@@ -726,7 +764,7 @@ class _EditProductPageState extends State<EditProductPage> {
                               getErrorSnackBar(state.message),
                             );
                           }
-                          if (state is StashUpdated) {
+                          if (state is ProductUpdated) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               getSuccessSnackBar(
                                   'Product updated successfully'),

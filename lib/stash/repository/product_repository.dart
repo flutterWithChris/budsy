@@ -64,7 +64,11 @@ class ProductRepository {
 
   // Delete a product
   Future<void> deleteProduct(String productId) async {
-    await _supabaseClient.from('products').delete().eq('id', productId);
+    try {
+      await _supabaseClient.from('products').delete().eq('id', productId);
+    } catch (e) {
+      print('Error deleting product: $e');
+    }
   }
 
   // Fetch a product by its ID

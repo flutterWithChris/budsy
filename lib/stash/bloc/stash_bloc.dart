@@ -76,6 +76,7 @@ class StashBloc extends Bloc<StashEvent, StashState> {
       if (event.images.isNotEmpty) {
         await _productRepository.addProductImages(product.id!, event.images);
       }
+      emit(ProductAdded(product));
       add(FetchStash(_authBloc.state.user!.id));
     } catch (e) {
       emit(StashError(e.toString()));
@@ -87,6 +88,7 @@ class StashBloc extends Bloc<StashEvent, StashState> {
     try {
       emit(StashLoading());
       await _productRepository.deleteProduct(event.product.id!);
+      emit(ProductRemoved(event.product));
       add(FetchStash(_authBloc.state.user!.id));
     } catch (e) {
       emit(StashError(e.toString()));
@@ -97,7 +99,7 @@ class StashBloc extends Bloc<StashEvent, StashState> {
     try {
       emit(StashLoading());
       Product product = await _productRepository.updateProduct(event.product);
-      emit(StashUpdated(product));
+      emit(ProductUpdated(product));
       add(FetchStash(_authBloc.state.user!.id));
     } catch (e) {
       print(e);
