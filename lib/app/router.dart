@@ -1,11 +1,13 @@
 import 'package:budsy/auth/bloc/auth_bloc.dart';
+import 'package:budsy/journal/model/journal_entry.dart';
+import 'package:budsy/journal/view/edit_entry_page.dart';
 import 'package:budsy/login/view/login_page.dart';
 import 'package:budsy/stash/model/product.dart';
 import 'package:budsy/stash/view/edit_product.dart';
 import 'package:budsy/stash/view/new_entry.dart';
 import 'package:budsy/stash/qr_scan_screen.dart';
 import 'package:budsy/journal/view/add_feeling_page.dart';
-import 'package:budsy/journal/view/add_session_page.dart';
+import 'package:budsy/journal/view/add_entry_page.dart';
 import 'package:budsy/journal/view/journal_page.dart';
 import 'package:budsy/stash/view/stash_page.dart';
 import 'package:budsy/stash/view/view_product.dart';
@@ -36,13 +38,17 @@ GoRouter goRouter = GoRouter(
       builder: (context, state) => const JournalPage(),
       routes: [
         GoRoute(
-          path: 'add',
-          builder: (context, state) => const AddFeelingPage(),
+          path: 'add-entry',
+          builder: (context, state) => const AddEntryPage(),
         ),
         GoRoute(
-          path: 'add-session',
-          builder: (context, state) => const AddSessionPage(),
-        )
+          path: 'edit-entry/:id',
+          builder: (context, state) {
+            return EditEntryPage(
+              journalEntry: state.extra as JournalEntry,
+            );
+          },
+        ),
       ],
     ),
     GoRoute(path: '/login', builder: (context, state) => const LoginPage()),

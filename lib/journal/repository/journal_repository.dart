@@ -6,47 +6,51 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class JournalRepository {
   SupabaseClient client = Supabase.instance.client;
 
-  // Get entries & also fetch the related products and feelings
+// Get entries & also fetch the related products and feelings
   Future<List<JournalEntry>?> getEntries() async {
     try {
       final response = await client.from('journal_entries').select();
       List<JournalEntry> entries = [];
 
-      for (var entry in response) {
+      List<Future<void>> entryFutures = response.map((entry) async {
         // Fetch related product IDs from journal_products
-        final journalProductsResponse = await client
+        final journalProductsResponse = client
             .from('journal_products')
             .select()
             .eq('entry_id', entry['id']);
 
         // Fetch related feeling IDs from journal_feelings
-        final journalFeelingsResponse = await client
+        final journalFeelingsResponse = client
             .from('journal_feelings')
             .select()
             .eq('entry_id', entry['id']);
 
-        List<Product> products = [];
-        List<Feeling> feelings = [];
+        final journalProducts = await journalProductsResponse;
+        final journalFeelings = await journalFeelingsResponse;
 
-        // Fetch actual products data from products table
-        for (var journalProduct in journalProductsResponse) {
+        // Fetch actual products and feelings data concurrently
+        List<Future<Product>> productFutures =
+            journalProducts.map((journalProduct) async {
           final productResponse = await client
               .from('products')
               .select()
               .eq('id', journalProduct['product_id'])
               .single();
-          products.add(Product.fromJson(productResponse));
-        }
+          return Product.fromJson(productResponse);
+        }).toList();
 
-        // Fetch actual feelings data from feelings table
-        for (var journalFeeling in journalFeelingsResponse) {
+        List<Future<Feeling>> feelingFutures =
+            journalFeelings.map((journalFeeling) async {
           final feelingResponse = await client
               .from('feelings')
               .select()
               .eq('id', journalFeeling['feeling_id'])
               .single();
-          feelings.add(Feeling.fromJson(feelingResponse));
-        }
+          return Feeling.fromJson(feelingResponse);
+        }).toList();
+
+        List<Product> products = await Future.wait(productFutures);
+        List<Feeling> feelings = await Future.wait(feelingFutures);
 
         entries.add(
           JournalEntry.fromJson(entry).copyWith(
@@ -54,7 +58,10 @@ class JournalRepository {
             feelings: feelings,
           ),
         );
-      }
+      }).toList();
+
+      await Future.wait(entryFutures);
+
       return entries;
     } catch (e) {
       print(e);
@@ -84,15 +91,19 @@ class JournalRepository {
     try {
       final response = await client
           .from('journal_entries')
-          .upsert(entry.toJson(
+          .update(entry.toJson(
             userId: Supabase.instance.client.auth.currentUser!.id,
           ))
+          .eq('id', entry.id!)
           .select();
-      return JournalEntry.fromJson(response.first);
+      JournalEntry responseEntry = JournalEntry.fromJson(response.first);
+      print('Updated entry: $responseEntry');
+      return responseEntry;
     } catch (e) {
       print(e);
       return null;
     }
+    return null;
   }
 
   // Delete a journal entry
@@ -118,6 +129,19 @@ class JournalRepository {
     }
   }
 
+  // Remove products from journal_products table
+  Future<void> removeProductsFromEntry(String entryId, String userId) async {
+    try {
+      await client
+          .from('journal_products')
+          .delete()
+          .eq('entry_id', entryId)
+          .eq('user_id', userId);
+    } catch (e) {
+      print(e);
+    }
+  }
+
   // Add feelings into journal_feelings table
   Future<void> addFeelingToEntry(
       String entryId, String feelingId, String userId) async {
@@ -127,6 +151,19 @@ class JournalRepository {
         'feeling_id': feelingId,
         'user_id': userId,
       });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  // Remove feelings from journal_feelings table
+  Future<void> removeFeelingsFromEntry(String entryId, String userId) async {
+    try {
+      await client
+          .from('journal_feelings')
+          .delete()
+          .eq('entry_id', entryId)
+          .eq('user_id', userId);
     } catch (e) {
       print(e);
     }

@@ -14,6 +14,7 @@ class JournalEntry {
   final List<Product>? products;
   final List<Feeling>? feelings;
   final int? intensity;
+  final String? notes;
 
   JournalEntry({
     this.id,
@@ -22,6 +23,7 @@ class JournalEntry {
     this.products,
     this.feelings,
     this.intensity,
+    this.notes,
   });
 
   factory JournalEntry.fromJson(Map<String, dynamic> json) {
@@ -32,6 +34,7 @@ class JournalEntry {
         (element) => element.toString() == 'EntryType.${json['type']}',
       ),
       intensity: json['intensity'],
+      notes: json['notes'],
     );
   }
 
@@ -40,6 +43,7 @@ class JournalEntry {
       'type': type.toString().split('.').last,
       'intensity': intensity,
       'user_id': userId,
+      'notes': notes,
     };
   }
 
@@ -51,6 +55,7 @@ class JournalEntry {
     List<Product>? products,
     List<Feeling>? feelings,
     int? intensity,
+    String? notes,
   }) {
     return JournalEntry(
       id: id ?? this.id,
@@ -59,11 +64,12 @@ class JournalEntry {
       products: products ?? this.products,
       feelings: feelings ?? this.feelings,
       intensity: intensity ?? this.intensity,
+      notes: notes ?? this.notes,
     );
   }
 
   @override
   String toString() {
-    return 'JournalEntry{id: $id, createdAt: $createdAt, type: $type, products: $products, feelings: $feelings, intensity: $intensity}';
+    return 'JournalEntry{id: $id, createdAt: $createdAt, type: $type, products: $products, feelings: $feelings, intensity: $intensity, notes: $notes}';
   }
 }

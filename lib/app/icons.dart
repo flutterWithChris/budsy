@@ -41,6 +41,18 @@ IconData getBoldIconForCategory(ProductCategory category) {
   return boldCategoryIcons[category]!;
 }
 
+Map<ProductCategory, IconData> filledCategoryIcons = {
+  ProductCategory.flower: PhosphorIcons.plant(PhosphorIconsStyle.fill),
+  ProductCategory.edible: PhosphorIcons.cookie(PhosphorIconsStyle.fill),
+  ProductCategory.concentrate: PhosphorIcons.drop(PhosphorIconsStyle.fill),
+  ProductCategory.cartridge: PhosphorIcons.cloud(PhosphorIconsStyle.fill),
+  ProductCategory.topical: PhosphorIcons.jarLabel(PhosphorIconsStyle.fill),
+};
+
+IconData getFilledIconForCategory(ProductCategory category) {
+  return filledCategoryIcons[category]!;
+}
+
 // Map<Feeling, IconData> feelingIcons = {
 //   Feeling.happy: PhosphorIcons.smiley(),
 //   Feeling.creative: PhosphorIcons.paintBrush(),

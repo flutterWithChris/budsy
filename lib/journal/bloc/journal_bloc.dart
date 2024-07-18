@@ -49,19 +49,33 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
         return;
       }
 
+      List<Future<void>> addFutures = [];
+
       if (event.entry.products != null && event.entry.products!.isNotEmpty) {
+        print('Adding products to entry');
         for (var product in event.entry.products!) {
-          await _journalRepository.addProductToEntry(entry.id!, product.id!,
-              Supabase.instance.client.auth.currentUser!.id);
+          addFutures.add(_journalRepository.addProductToEntry(
+            entry.id!,
+            product.id!,
+            Supabase.instance.client.auth.currentUser!.id,
+          ));
         }
       }
+
       if (event.entry.feelings != null && event.entry.feelings!.isNotEmpty) {
         print('Adding feelings to entry');
         for (var feeling in event.entry.feelings!) {
-          await _journalRepository.addFeelingToEntry(entry.id!, feeling.id!,
-              Supabase.instance.client.auth.currentUser!.id);
+          addFutures.add(_journalRepository.addFeelingToEntry(
+            entry.id!,
+            feeling.id!,
+            Supabase.instance.client.auth.currentUser!.id,
+          ));
         }
       }
+
+      // Wait for all add futures to complete
+      await Future.wait(addFutures);
+
       emit(JournalEntryAdded(entry));
       add(LoadJournal());
     } catch (e) {
@@ -80,7 +94,44 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
         emit(const JournalError('Failed to update journal entry'));
         return;
       }
+
+      List<Future<void>> updateFutures = [];
+
+      // Remove all products and feelings from the entry
+      await _journalRepository.removeProductsFromEntry(
+          entry.id!, Supabase.instance.client.auth.currentUser!.id);
+      await _journalRepository.removeFeelingsFromEntry(
+          entry.id!, Supabase.instance.client.auth.currentUser!.id);
+
+      if (event.entry.products != null && event.entry.products!.isNotEmpty) {
+        print('Adding products to entry');
+        for (var product in event.entry.products!) {
+          print('Adding product ${product.name} to entry ${entry.id}');
+          updateFutures.add(_journalRepository.addProductToEntry(
+            entry.id!,
+            product.id!,
+            Supabase.instance.client.auth.currentUser!.id,
+          ));
+        }
+      }
+
+      if (event.entry.feelings != null && event.entry.feelings!.isNotEmpty) {
+        print('Adding feelings to entry');
+        for (var feeling in event.entry.feelings!) {
+          updateFutures.add(_journalRepository.addFeelingToEntry(
+            entry.id!,
+            feeling.id!,
+            Supabase.instance.client.auth.currentUser!.id,
+          ));
+        }
+      }
+
+      // Wait for all update futures to complete
+      await Future.wait(updateFutures);
+
       emit(JournalEntryUpdated(entry));
+
+      add(LoadJournal());
     } catch (e) {
       print(e);
       emit(const JournalError('Failed to update journal entry'));
