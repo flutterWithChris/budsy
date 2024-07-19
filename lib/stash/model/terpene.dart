@@ -91,4 +91,15 @@ class Terpene {
   String toString() {
     return 'Terpene{id: $id, name: $name, icon: $icon, color: $color, description: $description, effects: $effects, medical: $medical, flavor: $flavor, aroma: $aroma, image: $image, amount: $amount}';
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Terpene &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          name == other.name;
+
+  @override
+  int get hashCode => id.hashCode ^ name.hashCode;
 }

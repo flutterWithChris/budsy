@@ -144,7 +144,8 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
     try {
       print('Deleting journal entry');
       await _journalRepository.deleteEntry(event.entryId);
-      emit(JournalInitial());
+      emit(JournalEntryDeleted());
+      add(LoadJournal());
     } catch (e) {
       print(e);
       emit(const JournalError('Failed to delete journal entry'));

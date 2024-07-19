@@ -1,10 +1,18 @@
 part of 'journal_bloc.dart';
 
 sealed class JournalState extends Equatable {
-  const JournalState();
+  final List<JournalEntry>? entries;
+  final JournalEntry? entry;
+  const JournalState({
+    this.entries,
+    this.entry,
+  });
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [
+        entries,
+        entry,
+      ];
 }
 
 final class JournalInitial extends JournalState {}
@@ -12,6 +20,7 @@ final class JournalInitial extends JournalState {}
 final class JournalLoading extends JournalState {}
 
 final class JournalLoaded extends JournalState {
+  @override
   final List<JournalEntry> entries;
 
   const JournalLoaded(this.entries);
@@ -21,6 +30,7 @@ final class JournalLoaded extends JournalState {
 }
 
 final class JournalEntryAdded extends JournalState {
+  @override
   final JournalEntry entry;
 
   const JournalEntryAdded(this.entry);
@@ -30,6 +40,7 @@ final class JournalEntryAdded extends JournalState {
 }
 
 final class JournalEntryUpdated extends JournalState {
+  @override
   final JournalEntry entry;
 
   const JournalEntryUpdated(this.entry);
@@ -37,6 +48,8 @@ final class JournalEntryUpdated extends JournalState {
   @override
   List<Object> get props => [entry];
 }
+
+final class JournalEntryDeleted extends JournalState {}
 
 final class JournalError extends JournalState {
   final String message;

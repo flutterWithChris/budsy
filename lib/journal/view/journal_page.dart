@@ -1,10 +1,12 @@
 import 'package:budsy/app/colors.dart';
 import 'package:budsy/app/icons.dart';
+import 'package:budsy/app/snackbars.dart';
 import 'package:budsy/app/system/bottom_nav.dart';
 import 'package:budsy/consts.dart';
 import 'package:budsy/journal/bloc/journal_bloc.dart';
 import 'package:budsy/journal/model/feeling.dart';
 import 'package:budsy/journal/model/journal_entry.dart';
+import 'package:budsy/stash/bloc/stash_bloc.dart';
 import 'package:budsy/stash/model/product.dart';
 import 'package:budsy/journal/view/add_feeling_page.dart';
 import 'package:budsy/journal/view/add_entry_page.dart';
@@ -198,8 +200,18 @@ class _FeelingListTileState extends State<FeelingListTile>
                   context: context,
                   isScrollControlled: true,
                   builder: (context) {
-                    return ViewEntrySheet(
-                      entry: widget.journalEntry,
+                    return BlocListener<JournalBloc, JournalState>(
+                      listener: (context, state) async {
+                        if (state is JournalEntryUpdated) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              getSuccessSnackBar('Entry updated'));
+                          context.pop();
+                        }
+                        // TODO: implement listener
+                      },
+                      child: ViewEntrySheet(
+                        entry: widget.journalEntry,
+                      ),
                     );
                   }),
               child: Padding(
@@ -278,10 +290,22 @@ class _FeelingListTileState extends State<FeelingListTile>
                             children: [
                               Flexible(
                                 child: Chip(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  side: BorderSide.none,
+                                  backgroundColor: getColorForProductCategory(
+                                      journalEntry.products!.first.category!),
                                   visualDensity: VisualDensity.compact,
                                   avatar: PhosphorIcon(
                                     getIconForCategory(
-                                        journalEntry.products!.first.category!),
+                                      journalEntry.products!.first.category!,
+                                    ),
+                                    color: getContrastingColor(
+                                      getColorForProductCategory(
+                                        journalEntry.products!.first.category!,
+                                      ),
+                                    ),
                                     size: 16,
                                   ),
                                   label: Text(
@@ -529,134 +553,181 @@ class ViewEntrySheet extends StatelessWidget {
     }
     String categorySummaryString =
         composeCategorySummaryString(entry.products!);
-    return DraggableScrollableSheet(
-      initialChildSize: 0.6,
-      minChildSize: 0.25,
-      maxChildSize: 0.9,
-      expand: false,
-      builder: (context, scrollController) {
-        return Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(16.0),
-              topRight: Radius.circular(16.0),
+    return BlocListener<JournalBloc, JournalState>(
+      listener: (context, state) {
+        if (state is JournalEntryDeleted) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(getSuccessSnackBar('Entry deleted'));
+          context.pop();
+        }
+        //  if (state is JournalEntryUpdated){
+        //     ScaffoldMessenger.of(context).showSnackBar(getSuccessSnackBar('Entry updated'));
+        //     context.read<JournalBloc>().a
+        //     context.pop();
+        //  }
+      },
+      child: DraggableScrollableSheet(
+        initialChildSize: 0.6,
+        minChildSize: 0.25,
+        maxChildSize: 0.9,
+        expand: false,
+        builder: (context, scrollController) {
+          return Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(16.0),
+                topRight: Radius.circular(16.0),
+              ),
             ),
-          ),
-          child: ListView(
-            controller: scrollController,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0, vertical: 16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Entry',
-                          style:
-                              Theme.of(context).textTheme.titleLarge?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                        ),
-                        Row(
-                          children: [
-                            IconButton(
-                                onPressed: () => context.push(
-                                    '/edit-entry/${entry.id}',
-                                    extra: entry),
-                                icon: PhosphorIcon(PhosphorIcons.pencil(
-                                    PhosphorIconsStyle.fill))),
-                            IconButton(
-                              onPressed: () {},
-                              icon: const Icon(Icons.close),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const Gap(size: 8.0),
-                    Row(
-                      children: [
-                        if (entry.products.isNotNullOrEmpty)
-                          ProductCategorySummary(
-                            productCategories: productCategories,
-                          ),
-                        const Gap(size: 8.0),
-                        Text(
-                          composeProductSummaryString(entry.products!),
-                          style:
-                              Theme.of(context).textTheme.titleSmall?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                        ),
-                      ],
-                    ),
-                    const Gap(size: 16.0),
-                    Text(
-                      'Feelings',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                    const Gap(size: 8.0),
-                    Wrap(
-                      spacing: 8.0,
-                      runSpacing: 0.0,
-                      children: [
-                        for (Feeling feeling in entry.feelings!)
-                          Chip(
-                            backgroundColor: getColorForFeeling(feeling),
-                            side: BorderSide.none,
-                            avatar: PhosphorIcon(
-                              getIconForFeeling(feeling),
-                              size: 16.0,
-                              color: getContrastingColor(
-                                getColorForFeeling(feeling),
-                              ),
-                            ),
-                            label: Text(
-                              feeling.name!.capitalize,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
-                                  ?.copyWith(
-                                      color: getContrastingColor(
-                                          getColorForFeeling(feeling))),
-                            ),
-                          ),
-                      ],
-                    ),
-                    const Gap(size: 16.0),
-                    if (entry.notes != null && entry.notes!.isNotEmpty)
-                      Column(
+            child: ListView(
+              controller: scrollController,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text(
-                            'Notes',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Entry',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                              const Gap(size: 8.0),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4.0),
+                                child: Text(
+                                  '· ${Jiffy.parseFromDateTime(entry.createdAt!).fromNow()}',
+                                  style: Theme.of(context).textTheme.bodySmall,
                                 ),
+                              ),
+                            ],
                           ),
-                          const Gap(size: 8.0),
-                          Text(
-                            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam',
-                            style: Theme.of(context).textTheme.bodySmall,
+                          Row(
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: IconButton.outlined(
+                                  onPressed: () => context.push(
+                                      '/edit-entry/${entry.id}',
+                                      extra: entry),
+                                  icon: PhosphorIcon(
+                                    PhosphorIcons.pencil(
+                                        PhosphorIconsStyle.fill),
+                                    size: 20,
+                                  ),
+                                ),
+                              ),
+                              IconButton.filledTonal(
+                                onPressed: () => context.pop(),
+                                icon: const Icon(Icons.close),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                  ],
+                      if (entry.products.isNotNullOrEmpty)
+                        Column(
+                          children: [
+                            const Gap(size: 8.0),
+                            Row(
+                              children: [
+                                if (entry.products.isNotNullOrEmpty)
+                                  ProductCategorySummary(
+                                    productCategories: productCategories,
+                                  ),
+                                const Gap(size: 8.0),
+                                Text(
+                                  composeProductSummaryString(entry.products!),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                ),
+                              ],
+                            ),
+                            const Gap(size: 16.0),
+                          ],
+                        ),
+                      Text(
+                        'Feelings',
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                      ),
+                      const Gap(size: 8.0),
+                      Wrap(
+                        spacing: 8.0,
+                        runSpacing: 0.0,
+                        children: [
+                          for (Feeling feeling in entry.feelings!)
+                            Chip(
+                              backgroundColor: getColorForFeeling(feeling),
+                              side: BorderSide.none,
+                              avatar: PhosphorIcon(
+                                getIconForFeeling(feeling),
+                                size: 16.0,
+                                color: getContrastingColor(
+                                  getColorForFeeling(feeling),
+                                ),
+                              ),
+                              label: Text(
+                                feeling.name!.capitalize,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                        color: getContrastingColor(
+                                            getColorForFeeling(feeling))),
+                              ),
+                            ),
+                        ],
+                      ),
+                      const Gap(size: 16.0),
+                      if (entry.notes != null && entry.notes!.isNotEmpty)
+                        Column(
+                          children: [
+                            Text(
+                              'Notes',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                            const Gap(size: 8.0),
+                            Text(
+                              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam',
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        );
-      },
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

@@ -33,4 +33,18 @@ class Feeling {
   String toString() {
     return 'Feeling{id: $id, name: $name, icon: $icon, color: $color}';
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Feeling &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          name == other.name &&
+          icon == other.icon &&
+          color == other.color;
+
+  @override
+  int get hashCode =>
+      id.hashCode ^ name.hashCode ^ icon.hashCode ^ color.hashCode;
 }

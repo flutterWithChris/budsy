@@ -5,6 +5,7 @@ import 'package:budsy/stash/model/cannabinoid.dart';
 import 'package:budsy/stash/model/product.dart';
 import 'package:budsy/stash/model/terpene.dart';
 import 'package:budsy/stash/repository/product_repository.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:meta/meta.dart';
@@ -48,7 +49,7 @@ class StashBloc extends Bloc<StashEvent, StashState> {
       print('All Terpenes: ${allTerpenes?.length}');
       print('Products: $products');
       if (products == null) {
-        emit(StashError('Error fetching stash'));
+        emit(const StashError('Error fetching stash'));
         return;
       }
       emit(StashLoaded(products!));
@@ -62,7 +63,7 @@ class StashBloc extends Bloc<StashEvent, StashState> {
       emit(StashLoading());
       Product? product = await _productRepository.addProduct(event.product);
       if (product == null) {
-        emit(StashError('Error adding product'));
+        emit(const StashError('Error adding product'));
         return;
       }
       if (event.product.cannabinoids != null) {

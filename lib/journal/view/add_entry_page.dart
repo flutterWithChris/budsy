@@ -1,6 +1,7 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:budsy/app/colors.dart';
 import 'package:budsy/app/icons.dart';
+import 'package:budsy/app/snackbars.dart';
 import 'package:budsy/app/system/bottom_nav.dart';
 import 'package:budsy/journal/bloc/journal_bloc.dart';
 import 'package:budsy/journal/cubit/feelings_cubit.dart';
@@ -430,9 +431,29 @@ class _AddEntryPageState extends State<AddEntryPage> {
                               state.feelings.isNotEmpty) {
                             return ElevatedButton(
                               onPressed: () {
+                                if (selectedFeelings.isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    getErrorSnackBar(
+                                        'Please select at least one feeling'),
+                                  );
+                                }
+                                if (selectedProducts.isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      getErrorSnackBar(
+                                          'Please select at least one product'));
+                                }
+
+                                if (selectedFeelings.isEmpty ||
+                                    selectedProducts.isEmpty) {
+                                  return;
+                                }
+
                                 JournalEntry entry = JournalEntry(
                                   feelings: selectedFeelings,
                                   products: selectedProducts,
+                                  notes: notesController.value.text.isNotEmpty
+                                      ? notesController.value.text
+                                      : null,
                                   type: EntryType.feeling,
                                 );
                                 context

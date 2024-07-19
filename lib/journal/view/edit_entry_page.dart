@@ -1,6 +1,7 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:budsy/app/colors.dart';
 import 'package:budsy/app/icons.dart';
+import 'package:budsy/app/snackbars.dart';
 import 'package:budsy/app/system/bottom_nav.dart';
 import 'package:budsy/journal/bloc/journal_bloc.dart';
 import 'package:budsy/journal/cubit/feelings_cubit.dart';
@@ -13,6 +14,7 @@ import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:uuid/uuid.dart';
 
@@ -38,7 +40,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
   void initState() {
     // TODO: implement initState
 
-    selectedFeelings = widget.journalEntry.feelings ?? [];
+    // selectedFeelings = widget.journalEntry.feelings ?? [];
     // selectedProducts = widget.journalEntry.products ?? [];
     notesController.text = widget.journalEntry.notes ?? '';
     super.initState();
@@ -101,16 +103,17 @@ class _EditEntryPageState extends State<EditEntryPage> {
                       }
                       if (state is StashLoaded && state.products.isNotEmpty) {
                         print('Loaded');
+                        if (selectedProducts.isEmpty) {
+                          selectedProducts = state.products.where((element) {
+                            return widget.journalEntry.products != null &&
+                                widget.journalEntry.products!
+                                    .map((e) => e.id)
+                                    .contains(element.id);
+                          }).toList();
+                        }
                         return CustomDropdown<Product>.multiSelectSearch(
                           hintText: 'Add Product(s)',
-                          initialItems: widget.journalEntry.products != null &&
-                                  selectedProducts.isEmpty
-                              ? state.products.where((element) {
-                                  return widget.journalEntry.products!
-                                      .map((e) => e.id)
-                                      .contains(element.id);
-                                }).toList()
-                              : null,
+                          initialItems: selectedProducts,
                           // TODO: Replace with actual products
                           items: state.products,
                           overlayHeight:
@@ -315,19 +318,21 @@ class _EditEntryPageState extends State<EditEntryPage> {
                           }
                           if (state is FeelingsLoaded &&
                               state.feelings.isNotEmpty) {
-                            return CustomDropdown<Feeling>.multiSelectSearch(
-                              items: state.feelings,
-                              initialItems: state.feelings.where((element) {
-                                return selectedFeelings
+                            if (selectedFeelings.isEmpty) {
+                              selectedFeelings =
+                                  state.feelings.where((element) {
+                                return widget.journalEntry.feelings!
                                     .map((e) => e.id)
                                     .contains(element.id);
-                              }).toList(),
+                              }).toList();
+                            }
+                            return CustomDropdown<Feeling>.multiSelectSearch(
+                              items: state.feelings,
+                              initialItems: selectedFeelings,
                               overlayHeight:
                                   MediaQuery.sizeOf(context).height * 0.4,
-                              onListChanged: (selectedFeelings) {
-                                setState(() {
-                                  this.selectedFeelings = selectedFeelings;
-                                });
+                              onListChanged: (value) {
+                                selectedFeelings = value;
                               },
                               hintText: 'Add Feeling(s)',
                               searchHintText: 'Search Feelings',
@@ -472,23 +477,30 @@ class _EditEntryPageState extends State<EditEntryPage> {
                           }
                           if (state is FeelingsLoaded &&
                               state.feelings.isNotEmpty) {
-                            return ElevatedButton(
-                              onPressed: () {
-                                JournalEntry updatedEntry =
-                                    widget.journalEntry.copyWith(
-                                  feelings: selectedFeelings,
-                                  products: selectedProducts,
-                                  type: EntryType.feeling,
-                                );
-                                print('Updated Entry: $updatedEntry');
-                                print('Updated Products: $selectedProducts');
-                                print('Updated Feelings: $selectedFeelings');
+                            return Row(
+                              children: [
+                                Expanded(
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      JournalEntry updatedEntry =
+                                          widget.journalEntry.copyWith(
+                                        feelings: selectedFeelings,
+                                        products: selectedProducts,
+                                        type: EntryType.feeling,
+                                      );
+                                      print('Updated Entry: $updatedEntry');
+                                      print(
+                                          'Updated Products: $selectedProducts');
+                                      print(
+                                          'Updated Feelings: $selectedFeelings');
 
-                                context
-                                    .read<JournalBloc>()
-                                    .add(UpdateJournalEntry(updatedEntry));
-                              },
-                              child: const Text('Update Entry'),
+                                      context.read<JournalBloc>().add(
+                                          UpdateJournalEntry(updatedEntry));
+                                    },
+                                    child: const Text('Update Entry'),
+                                  ),
+                                ),
+                              ],
                             );
                           }
                           if (state is FeelingsLoaded &&
@@ -504,11 +516,97 @@ class _EditEntryPageState extends State<EditEntryPage> {
                           }
                         },
                       ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
+                      const SizedBox(height: 16),
+                      FilledButton.icon(
+                        style: FilledButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white),
+                        onPressed: () async {
+                          await showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: const Text('Delete Entry'),
+                                content: const Text(
+                                    'Are you sure you want to delete this entry?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text('Cancel'),
+                                  ),
+                                  BlocConsumer<JournalBloc, JournalState>(
+                                    listener: (context, state) {
+                                      if (state is JournalError) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text(state.message),
+                                          ),
+                                        );
+                                      }
+                                      if (state is JournalEntryDeleted) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(getSuccessSnackBar(
+                                                'Entry deleted'));
+                                        context.pop();
+                                      }
+                                    },
+                                    builder: (context, state) {
+                                      if (state is JournalError) {
+                                        return TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text('Retry'),
+                                        );
+                                      }
+                                      if (state is JournalLoading) {
+                                        return FilledButton(
+                                            onPressed: () {},
+                                            child: Row(
+                                              children: [
+                                                LoadingAnimationWidget
+                                                    .discreteCircle(
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .primary,
+                                                        size: 20),
+                                                const Text('Deleting...'),
+                                              ],
+                                            ));
+                                      }
+                                      return FilledButton(
+                                        style: FilledButton.styleFrom(
+                                            backgroundColor: Colors.red,
+                                            foregroundColor: Colors.white),
+                                        onPressed: () {
+                                          context.read<JournalBloc>().add(
+                                              DeleteJournalEntry(
+                                                  widget.journalEntry.id!));
+                                          Navigator.of(context).pop(true);
+                                        },
+                                        child: const Text('Delete'),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          ).then((value) {
+                            if (value == true) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  getSuccessSnackBar('Entry deleted'));
+                              context.pop();
+                            }
+                          });
                         },
-                        child: const Text('Cancel'),
+                        label: const Text('Delete Entry'),
+                        icon: PhosphorIcon(
+                          PhosphorIcons.trash(PhosphorIconsStyle.fill),
+                          size: 20,
+                        ),
                       ),
                     ],
                   );

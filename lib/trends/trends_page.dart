@@ -1,18 +1,25 @@
+import 'dart:math';
+
 import 'package:budsy/app/colors.dart';
 import 'package:budsy/app/icons.dart';
 import 'package:budsy/app/system/bottom_nav.dart';
 import 'package:budsy/consts.dart';
+import 'package:budsy/journal/bloc/journal_bloc.dart';
 import 'package:budsy/journal/model/feeling.dart';
+import 'package:budsy/stash/bloc/stash_bloc.dart';
 import 'package:budsy/stash/mock/mock_products.dart';
 import 'package:budsy/journal/model/journal_entry.dart';
 import 'package:budsy/stash/model/product.dart';
 import 'package:budsy/stash/model/terpene.dart';
 import 'package:budsy/journal/mock/mock_journal_entries.dart';
+import 'package:budsy/trends/cubit/favorite_terpenes_cubit.dart';
 import 'package:budsy/trends/feeling_trend_chart.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:list_ext/list_ext.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class TrendsPage extends StatefulWidget {
@@ -23,8 +30,8 @@ class TrendsPage extends StatefulWidget {
 }
 
 class _TrendsPageState extends State<TrendsPage> {
-  Map<String, Map<Feeling, int>> trendsData = getProductFeelingTrends([]);
-  Map<Terpene, int> favoriteTerpenes = getFavoriteTerpenes([]);
+  Map<String, Map<Feeling, int>> trendsData = {};
+  Map<Terpene, int> favoriteTerpenes = {};
   @override
   void initState() {
     super.initState();
@@ -34,69 +41,160 @@ class _TrendsPageState extends State<TrendsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: const BottomNavBar(),
-      body: CustomScrollView(
-        slivers: [
-          const SliverAppBar.medium(
-            title: Text('Trends'),
-            floating: true,
-            snap: true,
-            pinned: true,
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding:
-                  const EdgeInsets.only(top: 16.0, left: 16.0, right: 24.0),
-              child: Row(
-                children: [
-                  Icon(
-                    PhosphorIcons.trendUp(),
-                    size: 20,
-                  ),
-                  const Gap(size: 8),
-                  Text(
-                    'Product / Feeling Trends',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          ProductToFeelingWidget(trendsData: trendsData),
-          const SliverToBoxAdapter(
-            child: Gap(
-              size: 8,
-            ),
-          ),
-          FavoriteTerpenesWidget(favoriteTerpenes: favoriteTerpenes),
-          const SliverToBoxAdapter(
-            child: Gap(
-              size: 16,
-            ),
-          ),
-          const FavoriteProductsWidget(),
-          const TotalsWidget(),
-          const SliverToBoxAdapter(
-            child: Gap(
-              size: 32,
-            ),
-          )
-        ],
+      body: BlocBuilder<JournalBloc, JournalState>(
+        builder: (context, journalState) {
+          if (journalState is JournalLoading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (journalState is JournalLoaded &&
+              journalState.entries.isNotNullOrEmpty) {
+            return BlocBuilder<StashBloc, StashState>(
+              builder: (context, stashState) {
+                if (stashState is StashLoading) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                if (stashState is StashLoaded &&
+                    stashState.products.isNotNullOrEmpty) {
+                  trendsData = getProductFeelingTrends(journalState.entries);
+
+                  return CustomScrollView(
+                    slivers: [
+                      const SliverAppBar.medium(
+                        title: Text('Trends'),
+                        floating: true,
+                        snap: true,
+                        pinned: true,
+                      ),
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              top: 16.0, left: 16.0, right: 24.0),
+                          child: Row(
+                            children: [
+                              Icon(
+                                PhosphorIcons.trendUp(),
+                                size: 20,
+                              ),
+                              const Gap(size: 8),
+                              Text(
+                                'Product / Feeling Trends',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      ProductToFeelingWidget(trendsData: trendsData),
+                      const SliverToBoxAdapter(
+                        child: Gap(
+                          size: 8,
+                        ),
+                      ),
+                      SliverToBoxAdapter(
+                        child: BlocBuilder<FavoriteTerpenesCubit,
+                            FavoriteTerpenesState>(
+                          builder: (context, state) {
+                            if (state is FavoriteTerpenesLoading) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+                            if (state is FavoriteTerpenesLoaded) {
+                              return FavoriteTerpenesWidget(
+                                  favoriteTerpenes: state.terpenes);
+                            } else {
+                              return const Center(
+                                child: Text('Something Went Wrong...'),
+                              );
+                            }
+                          },
+                        ),
+                      ),
+                      const SliverToBoxAdapter(
+                        child: Gap(
+                          size: 16,
+                        ),
+                      ),
+                      BlocBuilder<StashBloc, StashState>(
+                        builder: (context, state) {
+                          if (state is StashError) {
+                            return const Center(
+                              child: Text('Error fetching stash'),
+                            );
+                          }
+                          if (state is StashLoading) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                          if (state is StashLoaded) {
+                            List<Product> ratingSortedProducts = state.products
+                                .where((element) => element.rating != null)
+                                .toList()
+                              ..sort((a, b) => b.rating!.compareTo(a.rating!));
+                            return FavoriteProductsWidget(
+                              ratingSortedProducts: ratingSortedProducts,
+                            );
+                          } else {
+                            return const Center(
+                              child: Text('Something Went Wrong...'),
+                            );
+                          }
+                        },
+                      ),
+                      TotalsWidget(
+                        journalEntries: journalState.entries,
+                      ),
+                      const SliverToBoxAdapter(
+                        child: Gap(
+                          size: 32,
+                        ),
+                      )
+                    ],
+                  );
+                }
+                if (stashState is StashLoaded && stashState.products.isEmpty) {
+                  return const Center(
+                    child: Text('No products in stash'),
+                  );
+                } else {
+                  return const Center(
+                    child: Text('Something Went Wrong...'),
+                  );
+                }
+              },
+            );
+          }
+          if (journalState is JournalLoaded && journalState.entries.isEmpty) {
+            return const Center(
+              child: Text('No journal entries'),
+            );
+          } else {
+            return const Center(
+              child: Text('Something Went Wrong...'),
+            );
+          }
+        },
       ),
     );
   }
 }
 
 class FavoriteProductsWidget extends StatelessWidget {
+  final List<Product> ratingSortedProducts;
   const FavoriteProductsWidget({
+    required this.ratingSortedProducts,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    List<Product> ratingSortedProducts = [Product()]
-        .where((element) => element.rating != null)
-        .toList()
-      ..sort((a, b) => b.rating!.compareTo(a.rating!));
+    // List<Product> ratingSortedProducts = context.read<StashBloc>().state.products
+
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -120,7 +218,12 @@ class FavoriteProductsWidget extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  for (int i = 0; i < 3; i++)
+                  for (int i = 0;
+                      i <
+                          (ratingSortedProducts.length > 3
+                              ? 3
+                              : ratingSortedProducts.length);
+                      i++)
                     InkWell(
                       onTap: () {
                         // Navigate to product details page
@@ -182,13 +285,14 @@ class FavoriteProductsWidget extends StatelessWidget {
 }
 
 class TotalsWidget extends StatelessWidget {
+  final List<JournalEntry> journalEntries;
   const TotalsWidget({
+    required this.journalEntries,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    final List<JournalEntry> mockJournalEntries = [];
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 0.0),
@@ -215,7 +319,7 @@ class TotalsWidget extends StatelessWidget {
                 Column(
                   children: [
                     Text(
-                      '${mockJournalEntries.where((entry) => entry.type == EntryType.session).length}',
+                      '${journalEntries.where((entry) => entry.type == EntryType.session).length}',
                       style:
                           Theme.of(context).textTheme.displayMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
@@ -230,7 +334,7 @@ class TotalsWidget extends StatelessWidget {
                 Column(
                   children: [
                     Text(
-                      '${mockJournalEntries.where((entry) => entry.type == EntryType.feeling).length}',
+                      '${journalEntries.expand((entry) => entry.feelings!).length}',
                       style:
                           Theme.of(context).textTheme.displayMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
@@ -245,7 +349,7 @@ class TotalsWidget extends StatelessWidget {
                 Column(
                   children: [
                     Text(
-                      '${mockJournalEntries.where((entry) => entry.type == EntryType.session).expand((element) => element.products!).length}',
+                      '${journalEntries.expand((element) => element.products!).length}',
                       style:
                           Theme.of(context).textTheme.displayMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
@@ -272,37 +376,35 @@ class FavoriteTerpenesWidget extends StatelessWidget {
     required this.favoriteTerpenes,
   });
 
-  final Map<Terpene, int> favoriteTerpenes;
+  final List<Terpene> favoriteTerpenes;
 
   @override
   Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Icon(
-                  PhosphorIcons.leaf(PhosphorIconsStyle.fill),
-                  size: 20,
-                ),
-                const Gap(size: 8),
-                Text(
-                  'Favorite Terpenes',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ],
-            ),
-            const Gap(size: 16),
-            Row(
-              children: [
-                for (Terpene terpene in favoriteTerpenes.keys.toList())
-                  Expanded(child: TerpeneAvatar(terpene))
-              ],
-            )
-          ],
-        ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Icon(
+                PhosphorIcons.leaf(PhosphorIconsStyle.fill),
+                size: 20,
+              ),
+              const Gap(size: 8),
+              Text(
+                'Favorite Terpenes',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ],
+          ),
+          const Gap(size: 16),
+          Row(
+            children: [
+              for (Terpene terpene in favoriteTerpenes)
+                Expanded(child: TerpeneAvatar(terpene))
+            ],
+          )
+        ],
       ),
     );
   }
@@ -384,31 +486,23 @@ Map<String, Map<Feeling, int>> getProductFeelingTrends(
   final Map<String, Map<Feeling, int>> productFeelingTrends = {};
 
   for (JournalEntry entry in journalEntries) {
-    if (entry.type == EntryType.session) {
-      final List<String> productNames = entry.products!
-          .map((product) => product.name!)
-          .toList(); // Get the name of the product
-      // Iterate through the following journal entries of the type 'feeling' and count them, stopping when the next journal entry is a 'session'.
-      for (int i = journalEntries.indexOf(entry) + 1;
-          i < journalEntries.length;
-          i++) {
-        final JournalEntry nextEntry = journalEntries[i];
-        if (nextEntry.type == EntryType.feeling) {
-          for (String productName in productNames)
-            for (Feeling feeling in nextEntry.feelings!) {
-              if (!productFeelingTrends.containsKey(productName)) {
-                productFeelingTrends[productName] = {};
-              }
+    final List<String> productNames =
+        entry.products!.map((product) => product.name!).toList();
 
-              if (productFeelingTrends[productName]!.containsKey(feeling)) {
-                productFeelingTrends[productName]![feeling] =
-                    productFeelingTrends[productName]![feeling]! + 1;
-              } else {
-                productFeelingTrends[productName]![feeling] = 1;
-              }
-            }
-        } else if (nextEntry.type == EntryType.session) {
-          break;
+    // Check for feelings within the same journal entry
+    if (entry.feelings != null && entry.feelings!.isNotEmpty) {
+      for (String productName in productNames) {
+        for (Feeling feeling in entry.feelings!) {
+          if (!productFeelingTrends.containsKey(productName)) {
+            productFeelingTrends[productName] = {};
+          }
+
+          if (productFeelingTrends[productName]!.containsKey(feeling)) {
+            productFeelingTrends[productName]![feeling] =
+                productFeelingTrends[productName]![feeling]! + 1;
+          } else {
+            productFeelingTrends[productName]![feeling] = 1;
+          }
         }
       }
     }
@@ -418,43 +512,48 @@ Map<String, Map<Feeling, int>> getProductFeelingTrends(
 }
 
 // Iterate through session journal entries, gathering terpenes, then seeing what feelings follow them. If the feelings are positive, add the terpene to the map of favorite terpenes with a count of how many times it was followed by a positive feeling. Return the map of favorite terpenes with the count of how many times they were followed by a positive feeling
-Map<Terpene, int> getFavoriteTerpenes(List<JournalEntry> journalEntries) {
+Map<Terpene, int> getFavoriteTerpenes(
+    List<JournalEntry> journalEntries, BuildContext context) {
   final Map<Terpene, int> favoriteTerpenes = {};
 
   for (JournalEntry entry in journalEntries) {
-    if (entry.type == EntryType.session) {
-      final List<Terpene> terpenes = entry.products!
+    if (entry.products.isNotNullOrEmpty) {
+      final List<Product> products = context
+          .read<StashBloc>()
+          .state
+          .products!
+          .where((element) =>
+              entry.products!.any((product) => product.id == element.id))
+          .toList(); // Get the products of the entry
+      final List<Terpene> terpenes = products
+          .where((product) => product.terpenes != null)
+          .toList()
           .map((product) => product.terpenes!)
           .expand((element) => element)
           .toList(); // Get the terpenes of the product
-      for (int i = journalEntries.indexOf(entry) + 1;
-          i < journalEntries.length;
-          i++) {
-        final JournalEntry nextEntry = journalEntries[i];
-        if (nextEntry.type == EntryType.feeling) {
-          for (Feeling feeling in nextEntry.feelings!) {
-            if (feeling.name == 'happy' ||
-                feeling.name == 'creative' ||
-                feeling.name == 'social' ||
-                feeling.name == 'energetic' ||
-                feeling.name == 'focus' ||
-                feeling.name == 'calm') {
-              for (Terpene terpene in terpenes) {
-                if (favoriteTerpenes.keys
-                    .any((element) => element.name == terpene.name)) {
-                  favoriteTerpenes[favoriteTerpenes.keys.firstWhere(
-                          (element) => element.name == terpene.name)] =
-                      favoriteTerpenes[favoriteTerpenes.keys.firstWhere(
-                              (element) => element.name == terpene.name)]! +
-                          1;
-                } else {
-                  favoriteTerpenes[terpene] = 1;
-                }
+
+      // Check for feelings within the same journal entry
+      if (entry.feelings != null && entry.feelings!.isNotEmpty) {
+        for (Feeling feeling in entry.feelings!) {
+          if (feeling.name == 'happy' ||
+              feeling.name == 'creative' ||
+              feeling.name == 'social' ||
+              feeling.name == 'energetic' ||
+              feeling.name == 'focus' ||
+              feeling.name == 'calm') {
+            for (Terpene terpene in terpenes) {
+              if (favoriteTerpenes.keys
+                  .any((element) => element.name == terpene.name)) {
+                favoriteTerpenes[favoriteTerpenes.keys.firstWhere(
+                        (element) => element.name == terpene.name)] =
+                    favoriteTerpenes[favoriteTerpenes.keys.firstWhere(
+                            (element) => element.name == terpene.name)]! +
+                        1;
+              } else {
+                favoriteTerpenes[terpene] = 1;
               }
             }
           }
-        } else if (nextEntry.type == EntryType.session) {
-          break;
         }
       }
     }

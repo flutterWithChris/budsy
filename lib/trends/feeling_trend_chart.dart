@@ -2,12 +2,14 @@ import 'package:budsy/app/colors.dart';
 import 'package:budsy/app/icons.dart';
 import 'package:budsy/consts.dart';
 import 'package:budsy/journal/model/feeling.dart';
+import 'package:budsy/stash/bloc/stash_bloc.dart';
 import 'package:budsy/stash/mock/mock_products.dart';
 import 'package:budsy/journal/model/journal_entry.dart';
 import 'package:budsy/stash/model/product.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 
 class FeelingTrendChart extends StatefulWidget {
@@ -28,8 +30,12 @@ class _FeelingTrendChartState extends State<FeelingTrendChart> {
 
   @override
   Widget build(BuildContext context) {
-    Product product =
-        [].where((element) => element.name == widget.productName).first;
+    Product product = context
+        .read<StashBloc>()
+        .state
+        .products!
+        .where((element) => element.name == widget.productName)
+        .first;
 
     Map<Feeling, int> feelingCounts =
         widget.productFeelingTrends[widget.productName] ?? {};
