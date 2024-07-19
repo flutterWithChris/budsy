@@ -93,12 +93,12 @@ class _FeelingTrendChartState extends State<FeelingTrendChart> {
                                   ? 0.5
                                   : 0,
                   value: entry.value.toDouble(),
-                  title: (entry.key.toString().split('.').last),
+                  title: entry.key.name,
                   color: getColorForFeeling(entry.key),
-                  showTitle: showTitle &&
-                      touchedTitle == entry.key.toString().split('.').last,
+                  showTitle: showTitle && touchedTitle == entry.key.name,
                   titlePositionPercentageOffset: 1.25,
                   titleStyle: const TextStyle(
+                      //  background: Paint()..color = Colors.white,
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                       color: Colors.white),

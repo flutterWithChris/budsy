@@ -621,7 +621,7 @@ class ViewEntrySheet extends StatelessWidget {
                               Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 8.0),
-                                child: IconButton.outlined(
+                                child: IconButton.filled(
                                   onPressed: () => context.push(
                                       '/edit-entry/${entry.id}',
                                       extra: entry),
@@ -632,7 +632,7 @@ class ViewEntrySheet extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              IconButton.filledTonal(
+                              IconButton.outlined(
                                 onPressed: () => context.pop(),
                                 icon: const Icon(Icons.close),
                               ),

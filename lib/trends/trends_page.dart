@@ -6,6 +6,7 @@ import 'package:budsy/app/system/bottom_nav.dart';
 import 'package:budsy/consts.dart';
 import 'package:budsy/journal/bloc/journal_bloc.dart';
 import 'package:budsy/journal/model/feeling.dart';
+import 'package:budsy/stash/bloc/product_details_bloc.dart';
 import 'package:budsy/stash/bloc/stash_bloc.dart';
 import 'package:budsy/stash/mock/mock_products.dart';
 import 'package:budsy/journal/model/journal_entry.dart';
@@ -227,6 +228,9 @@ class FavoriteProductsWidget extends StatelessWidget {
                     InkWell(
                       onTap: () {
                         // Navigate to product details page
+                        context.read<ProductDetailsBloc>().add(
+                              FetchProductDetails(ratingSortedProducts[i]),
+                            );
                         context.push(
                             '/stash/product/${ratingSortedProducts[i].id}',
                             extra: ratingSortedProducts[i]);

@@ -36,21 +36,33 @@ class _ViewProductPageState extends State<ViewProductPage> {
         body: CustomScrollView(
           slivers: [
             SliverAppBar.medium(
-              title: Text(
-                'Product',
-                style: GoogleFonts.roboto().copyWith(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24.0,
-                ),
+              title: Row(
+                children: [
+                  Text(
+                    'Product',
+                    style: GoogleFonts.roboto().copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 24.0,
+                    ),
+                  ),
+                ],
               ),
               floating: true,
               snap: true,
               actions: [
-                IconButton(
-                  onPressed: () async => await context.push(
-                      '/stash/product/${widget.product.id}/edit',
-                      extra: context.read<ProductDetailsBloc>().state.product),
-                  icon: PhosphorIcon(PhosphorIcons.pencil()),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: TextButton.icon(
+                    onPressed: () async => await context.push(
+                        '/stash/product/${widget.product.id}/edit',
+                        extra:
+                            context.read<ProductDetailsBloc>().state.product),
+                    label: const Text('Edit'),
+                    icon: PhosphorIcon(
+                      PhosphorIcons.pencil(),
+                      size: 20,
+                    ),
+                  ),
                 ),
               ],
             ),
