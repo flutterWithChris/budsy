@@ -13,6 +13,8 @@ import 'package:budsy/journal/model/journal_entry.dart';
 import 'package:budsy/stash/model/product.dart';
 import 'package:budsy/stash/model/terpene.dart';
 import 'package:budsy/journal/mock/mock_journal_entries.dart';
+import 'package:budsy/subscription/bloc/subscription_bloc.dart';
+import 'package:budsy/subscription/sheets/subscription_offer_sheet.dart';
 import 'package:budsy/trends/cubit/favorite_terpenes_cubit.dart';
 import 'package:budsy/trends/feeling_trend_chart.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -22,6 +24,7 @@ import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:list_ext/list_ext.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 
 class TrendsPage extends StatefulWidget {
   const TrendsPage({super.key});
@@ -42,125 +45,160 @@ class _TrendsPageState extends State<TrendsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: const BottomNavBar(),
-      body: BlocBuilder<JournalBloc, JournalState>(
-        builder: (context, journalState) {
-          if (journalState is JournalLoading) {
+      body: BlocBuilder<SubscriptionBloc, SubscriptionState>(
+        builder: (context, state) {
+          if (state is SubscriptionLoading) {
             return const Center(
               child: CircularProgressIndicator(),
             );
           }
-          if (journalState is JournalLoaded &&
-              journalState.entries.isNotNullOrEmpty) {
-            return BlocBuilder<StashBloc, StashState>(
-              builder: (context, stashState) {
-                if (stashState is StashLoading) {
+          if (state is SubscriptionError) {
+            return const Center(
+              child: Text('Error fetching subscription'),
+            );
+          }
+          if (state is SubscriptionLoaded &&
+              state.customerInfo != null &&
+              state.customerInfo!.entitlements.active.isNotEmpty) {
+            return BlocBuilder<JournalBloc, JournalState>(
+              builder: (context, journalState) {
+                if (journalState is JournalLoading) {
                   return const Center(
                     child: CircularProgressIndicator(),
                   );
                 }
-                if (stashState is StashLoaded &&
-                    stashState.products.isNotNullOrEmpty) {
-                  trendsData = getProductFeelingTrends(journalState.entries);
+                if (journalState is JournalLoaded &&
+                    journalState.entries.isNotNullOrEmpty) {
+                  return BlocBuilder<StashBloc, StashState>(
+                    builder: (context, stashState) {
+                      if (stashState is StashLoading) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                      if (stashState is StashLoaded &&
+                          stashState.products.isNotNullOrEmpty) {
+                        trendsData =
+                            getProductFeelingTrends(journalState.entries);
 
-                  return CustomScrollView(
-                    slivers: [
-                      const SliverAppBar.medium(
-                        title: Text('Trends'),
-                        floating: true,
-                        snap: true,
-                        pinned: true,
-                      ),
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              top: 16.0, left: 16.0, right: 24.0),
-                          child: Row(
-                            children: [
-                              Icon(
-                                PhosphorIcons.trendUp(),
-                                size: 20,
+                        return CustomScrollView(
+                          slivers: [
+                            const SliverAppBar.medium(
+                              title: Text('Trends'),
+                              floating: true,
+                              snap: true,
+                              pinned: true,
+                            ),
+                            SliverToBoxAdapter(
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 16.0, left: 16.0, right: 24.0),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      PhosphorIcons.trendUp(),
+                                      size: 20,
+                                    ),
+                                    const Gap(size: 8),
+                                    Text(
+                                      'Product / Feeling Trends',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium,
+                                    ),
+                                  ],
+                                ),
                               ),
-                              const Gap(size: 8),
-                              Text(
-                                'Product / Feeling Trends',
-                                style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                            ProductToFeelingWidget(trendsData: trendsData),
+                            const SliverToBoxAdapter(
+                              child: Gap(
+                                size: 8,
                               ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      ProductToFeelingWidget(trendsData: trendsData),
-                      const SliverToBoxAdapter(
-                        child: Gap(
-                          size: 8,
-                        ),
-                      ),
-                      SliverToBoxAdapter(
-                        child: BlocBuilder<FavoriteTerpenesCubit,
-                            FavoriteTerpenesState>(
-                          builder: (context, state) {
-                            if (state is FavoriteTerpenesLoading) {
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            }
-                            if (state is FavoriteTerpenesLoaded) {
-                              return FavoriteTerpenesWidget(
-                                  favoriteTerpenes: state.terpenes);
-                            } else {
-                              return const Center(
-                                child: Text('Something Went Wrong...'),
-                              );
-                            }
-                          },
-                        ),
-                      ),
-                      const SliverToBoxAdapter(
-                        child: Gap(
-                          size: 16,
-                        ),
-                      ),
-                      BlocBuilder<StashBloc, StashState>(
-                        builder: (context, state) {
-                          if (state is StashError) {
-                            return const Center(
-                              child: Text('Error fetching stash'),
-                            );
-                          }
-                          if (state is StashLoading) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                          if (state is StashLoaded) {
-                            List<Product> ratingSortedProducts = state.products
-                                .where((element) => element.rating != null)
-                                .toList()
-                              ..sort((a, b) => b.rating!.compareTo(a.rating!));
-                            return FavoriteProductsWidget(
-                              ratingSortedProducts: ratingSortedProducts,
-                            );
-                          } else {
-                            return const Center(
-                              child: Text('Something Went Wrong...'),
-                            );
-                          }
-                        },
-                      ),
-                      TotalsWidget(
-                        journalEntries: journalState.entries,
-                      ),
-                      const SliverToBoxAdapter(
-                        child: Gap(
-                          size: 32,
-                        ),
-                      )
-                    ],
+                            ),
+                            SliverToBoxAdapter(
+                              child: BlocBuilder<FavoriteTerpenesCubit,
+                                  FavoriteTerpenesState>(
+                                builder: (context, state) {
+                                  if (state is FavoriteTerpenesLoading) {
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  }
+                                  if (state is FavoriteTerpenesLoaded) {
+                                    return FavoriteTerpenesWidget(
+                                        favoriteTerpenes: state.terpenes);
+                                  } else {
+                                    return const Center(
+                                      child: Text('Something Went Wrong...'),
+                                    );
+                                  }
+                                },
+                              ),
+                            ),
+                            const SliverToBoxAdapter(
+                              child: Gap(
+                                size: 16,
+                              ),
+                            ),
+                            BlocBuilder<StashBloc, StashState>(
+                              builder: (context, state) {
+                                if (state is StashError) {
+                                  return const Center(
+                                    child: Text('Error fetching stash'),
+                                  );
+                                }
+                                if (state is StashLoading) {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                }
+                                if (state is StashLoaded) {
+                                  List<Product> ratingSortedProducts = state
+                                      .products
+                                      .where(
+                                          (element) => element.rating != null)
+                                      .toList()
+                                    ..sort((a, b) =>
+                                        b.rating!.compareTo(a.rating!));
+                                  return FavoriteProductsWidget(
+                                    ratingSortedProducts: ratingSortedProducts,
+                                  );
+                                } else {
+                                  return const Center(
+                                    child: Text('Something Went Wrong...'),
+                                  );
+                                }
+                              },
+                            ),
+                            TotalsWidget(
+                              journalEntries: journalState.entries,
+                            ),
+                            const SliverToBoxAdapter(
+                              child: Gap(
+                                size: 32,
+                              ),
+                            )
+                          ],
+                        );
+                      }
+                      if (stashState is StashLoaded &&
+                          stashState.products.isEmpty) {
+                        return const Center(
+                          child: Text('No products in stash'),
+                        );
+                      } else {
+                        return const Center(
+                          child: Text('Something Went Wrong...'),
+                        );
+                      }
+                    },
                   );
                 }
-                if (stashState is StashLoaded && stashState.products.isEmpty) {
+                if (journalState is JournalLoaded &&
+                    journalState.entries.isEmpty) {
                   return const Center(
-                    child: Text('No products in stash'),
+                    child: Text('No journal entries'),
                   );
                 } else {
                   return const Center(
@@ -170,10 +208,16 @@ class _TrendsPageState extends State<TrendsPage> {
               },
             );
           }
-          if (journalState is JournalLoaded && journalState.entries.isEmpty) {
-            return const Center(
-              child: Text('No journal entries'),
-            );
+          if (state is SubscriptionLoaded &&
+              state.customerInfo != null &&
+              state.customerInfo!.entitlements.active.isEmpty) {
+            trendsData = getProductFeelingTrends(mockJournalEntries);
+            List<Product> ratingSortedProducts = mockProducts;
+
+            ratingSortedProducts.sort((a, b) => b.rating!.compareTo(a.rating!));
+            return LockedTrendsPage(
+                trendsData: trendsData,
+                ratingSortedProducts: ratingSortedProducts);
           } else {
             return const Center(
               child: Text('Something Went Wrong...'),
@@ -181,6 +225,154 @@ class _TrendsPageState extends State<TrendsPage> {
           }
         },
       ),
+    );
+  }
+}
+
+class LockedTrendsPage extends StatelessWidget {
+  const LockedTrendsPage({
+    super.key,
+    required this.trendsData,
+    required this.ratingSortedProducts,
+  });
+
+  final Map<String, Map<Feeling, int>> trendsData;
+  final List<Product> ratingSortedProducts;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(alignment: Alignment.center, children: [
+      ExampleTrendsWidgets(
+          trendsData: trendsData, ratingSortedProducts: ratingSortedProducts),
+      Positioned.fill(
+          child: Container(
+        color: Colors.black54,
+      )),
+      // Overlay subscription offer
+      Positioned(
+        child: Container(
+          //  color: Theme.of(context).colorScheme.primaryContainer,
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+            // borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black,
+                blurRadius: 48,
+                offset: Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(80.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  PhosphorIcons.lockOpen(),
+                  size: 64,
+                ),
+                const Gap(size: 16),
+                Text(
+                  'Unlock Trends',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const Gap(size: 8),
+                Text(
+                  'Subscribe to unlock trends and more',
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+                const Gap(size: 16),
+                FilledButton(
+                  onPressed: () async {
+                    final paywallResult = await RevenueCatUI.presentPaywall(
+                      displayCloseButton: true,
+                    );
+                    // await showModalBottomSheet(
+                    //   context: context,
+                    //   isScrollControlled: true,
+                    //   builder: (context) => const SubscriptionOfferSheet(),
+                    // );
+                  },
+                  child: const Text('Subscribe'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    ]);
+  }
+}
+
+class ExampleTrendsWidgets extends StatelessWidget {
+  const ExampleTrendsWidgets({
+    super.key,
+    required this.trendsData,
+    required this.ratingSortedProducts,
+  });
+
+  final Map<String, Map<Feeling, int>> trendsData;
+  final List<Product> ratingSortedProducts;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        const SliverAppBar.medium(
+          title: Text('Trends'),
+          floating: true,
+          snap: true,
+          pinned: true,
+        ),
+        // Example Trends Widgets
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.only(
+              top: 16.0,
+              left: 16.0,
+              right: 24.0,
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  PhosphorIcons.trendUp(),
+                  size: 20,
+                ),
+                const Gap(size: 8),
+                Text(
+                  'Product / Feeling Trends',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ],
+            ),
+          ),
+        ),
+        ProductToFeelingWidget(trendsData: trendsData, mockMode: true),
+        const SliverToBoxAdapter(
+          child: Gap(
+            size: 8,
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: FavoriteTerpenesWidget(
+              favoriteTerpenes: terpenes.take(3).toList()),
+        ),
+        const SliverToBoxAdapter(
+          child: Gap(
+            size: 16,
+          ),
+        ),
+        FavoriteProductsWidget(ratingSortedProducts: ratingSortedProducts),
+
+        TotalsWidget(journalEntries: mockJournalEntries),
+        const SliverToBoxAdapter(
+          child: Gap(
+            size: 32,
+          ),
+        )
+      ],
     );
   }
 }
@@ -415,9 +607,11 @@ class FavoriteTerpenesWidget extends StatelessWidget {
 }
 
 class ProductToFeelingWidget extends StatelessWidget {
+  final bool? mockMode;
   const ProductToFeelingWidget({
     super.key,
     required this.trendsData,
+    this.mockMode,
   });
 
   final Map<String, Map<Feeling, int>> trendsData;
@@ -441,7 +635,8 @@ class ProductToFeelingWidget extends StatelessWidget {
               for (String productName in trendsData.keys)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: FeelingTrendChart(trendsData, productName),
+                  child: FeelingTrendChart(trendsData, productName,
+                      mockMode: mockMode),
                 ),
             ],
           ),

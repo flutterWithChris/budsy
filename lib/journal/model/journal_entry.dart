@@ -1,6 +1,5 @@
 import 'package:budsy/journal/model/feeling.dart';
 import 'package:budsy/stash/model/product.dart';
-import 'package:googleapis/bigquery/v2.dart';
 
 enum EntryType {
   feeling,

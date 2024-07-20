@@ -2,7 +2,6 @@ part of 'auth_bloc.dart';
 
 enum AuthStatus { unknown, authenticated, unauthenticated }
 
-@immutable
 class AuthState {
   const AuthState._({
     this.status = AuthStatus.unknown,

@@ -15,9 +15,10 @@ import 'package:flutter_gutter/flutter_gutter.dart';
 class FeelingTrendChart extends StatefulWidget {
   final Map<String, Map<Feeling, int>> productFeelingTrends;
   final String productName;
+  final bool? mockMode;
 
   const FeelingTrendChart(this.productFeelingTrends, this.productName,
-      {super.key});
+      {this.mockMode, super.key});
 
   @override
   State<FeelingTrendChart> createState() => _FeelingTrendChartState();
@@ -30,12 +31,15 @@ class _FeelingTrendChartState extends State<FeelingTrendChart> {
 
   @override
   Widget build(BuildContext context) {
-    Product product = context
-        .read<StashBloc>()
-        .state
-        .products!
-        .where((element) => element.name == widget.productName)
-        .first;
+    Product product = widget.mockMode == true
+        ? mockProducts
+            .firstWhere((element) => element.name == widget.productName)
+        : context
+            .read<StashBloc>()
+            .state
+            .products!
+            .where((element) => element.name == widget.productName)
+            .first;
 
     Map<Feeling, int> feelingCounts =
         widget.productFeelingTrends[widget.productName] ?? {};

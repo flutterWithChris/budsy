@@ -30,24 +30,21 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
     try {
       emit(SubscriptionLoading());
       await _subscriptionRepository.initPlatformState(event.userId);
+      await _subscriptionRepository.login(event.userId);
+      CustomerInfo? customerInfo =
+          await _subscriptionRepository.getCustomerInfo();
       Offerings? offerings = await _subscriptionRepository.getOfferings();
       if (offerings != null) {
         print(offerings.current);
       } else {
         emit(const SubscriptionError('Failed to get offerings'));
       }
-      Package? package = _subscriptionRepository.getMonthlyProduct(
-        offerings!,
-      );
-      if (package != null) {
-        print(package);
-      } else {
-        emit(const SubscriptionError('Failed to get monthly product'));
-      }
 
-      emit(SubscriptionLoaded(packages: offerings.current!.availablePackages));
-      print(
-          'RevenueCat SDK initialized. Monthly Package: ${package.toString()}');
+      emit(SubscriptionLoaded(
+          packages: offerings!.current!.availablePackages,
+          customerInfo: customerInfo));
+      // print(
+      //     'RevenueCat SDK initialized. Monthly Package: ${package.toString()}');
     } catch (e) {
       print(e);
       emit(const SubscriptionError('Failed to init SDK'));

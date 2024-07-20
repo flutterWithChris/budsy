@@ -66,6 +66,7 @@ class SubscriptionRepository {
       print(offerings);
       if (offerings.current != null &&
           offerings.current!.availablePackages.isNotEmpty) {
+        print('Offerings: ${offerings.current!.availablePackages}');
         return offerings;
       } else {
         print('Offerings / Packages are empty');
@@ -74,6 +75,21 @@ class SubscriptionRepository {
     } catch (e) {
       print(e);
       return null;
+    }
+  }
+
+  // Get Products from offerings
+  List<Package> getAvailablePackages(Offerings offerings) {
+    try {
+      if (offerings.current != null) {
+        return offerings.current!.availablePackages;
+      } else {
+        print('Offerings / Packages are empty');
+        return [];
+      }
+    } catch (e) {
+      print(e);
+      return [];
     }
   }
 

@@ -84,28 +84,6 @@ IconData getIconForFeeling(Feeling feeling,
   }
 
   return PhosphorIconData(codePoint, 'Regular');
-  switch (feeling.name) {
-    case 'happy':
-      return PhosphorIcons.smiley();
-    case 'Creative':
-      return PhosphorIcons.paintBrush();
-    case 'sleepy':
-      return PhosphorIcons.moon();
-    case 'anxious':
-      return PhosphorIcons.smileyNervous();
-    case 'hungry':
-      return PhosphorIcons.bowlFood();
-    case 'energetic':
-      return PhosphorIcons.lightning();
-    case 'focus':
-      return PhosphorIcons.eye();
-    case 'social':
-      return PhosphorIcons.users();
-    case 'calm':
-      return PhosphorIcons.waveSine();
-    default:
-      return PhosphorIcons.smiley();
-  }
 }
 
 // Map<Feeling, IconData> feelingDuotoneIcons = {

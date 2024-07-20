@@ -10,13 +10,14 @@ import 'package:budsy/login/cubit/login_cubit.dart';
 import 'package:budsy/stash/bloc/product_details_bloc.dart';
 import 'package:budsy/stash/bloc/stash_bloc.dart';
 import 'package:budsy/stash/repository/product_repository.dart';
+import 'package:budsy/subscription/bloc/subscription_bloc.dart';
+import 'package:budsy/subscription/subscription_repository.dart';
 import 'package:budsy/trends/cubit/favorite_terpenes_cubit.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:googleapis/servicecontrol/v2.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
@@ -47,6 +48,9 @@ class MyApp extends StatelessWidget {
         ),
         RepositoryProvider(
           create: (context) => FeelingsRepository(),
+        ),
+        RepositoryProvider(
+          create: (context) => SubscriptionRepository(),
         ),
       ],
       child: MultiBlocProvider(
@@ -85,6 +89,11 @@ class MyApp extends StatelessWidget {
             create: (context) => FavoriteTerpenesCubit(
               productRepository: context.read<ProductRepository>(),
             )..loadFavoriteTerpenes(context.read<StashBloc>().state.products!),
+          ),
+          BlocProvider(
+            create: (context) => SubscriptionBloc(
+              subscriptionRepository: context.read<SubscriptionRepository>(),
+            )..add(SubscriptionInit(context.read<AuthBloc>().state.user!.id)),
           )
         ],
         child: MaterialApp.router(
