@@ -101,7 +101,7 @@ class MyApp extends StatelessWidget {
           routerDelegate: goRouter.routerDelegate,
           routeInformationProvider: goRouter.routeInformationProvider,
           title: 'Flutter Demo',
-          key: scaffoldKey,
+          scaffoldMessengerKey: scaffoldKey,
           theme: FlexThemeData.light(
             scheme: FlexScheme.amber,
             surfaceMode: FlexSurfaceMode.highScaffoldLowSurface,

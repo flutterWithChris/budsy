@@ -55,3 +55,5 @@ class PurchaseSubscription extends SubscriptionEvent {
   @override
   List<Object> get props => [package];
 }
+
+class ShowPaywall extends SubscriptionEvent {}

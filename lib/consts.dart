@@ -7,7 +7,8 @@ import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+GlobalKey<ScaffoldMessengerState> scaffoldKey =
+    GlobalKey<ScaffoldMessengerState>();
 
 List<Terpene> _terpenes = [
   Terpene(

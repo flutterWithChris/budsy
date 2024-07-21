@@ -285,15 +285,8 @@ class LockedTrendsPage extends StatelessWidget {
                 ),
                 const Gap(size: 16),
                 FilledButton(
-                  onPressed: () async {
-                    final paywallResult = await RevenueCatUI.presentPaywall(
-                      displayCloseButton: true,
-                    );
-                    // await showModalBottomSheet(
-                    //   context: context,
-                    //   isScrollControlled: true,
-                    //   builder: (context) => const SubscriptionOfferSheet(),
-                    // );
+                  onPressed: () {
+                    context.read<SubscriptionBloc>().add(ShowPaywall());
                   },
                   child: const Text('Subscribe'),
                 ),
