@@ -80,4 +80,13 @@ class AuthRepository {
       rethrow;
     }
   }
+
+  Future<void> signOut() async {
+    try {
+      await _supabase.auth.signOut();
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
+  }
 }

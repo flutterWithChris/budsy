@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:budsy/app/router.dart';
 import 'package:budsy/auth/repository/auth_repository.dart';
 import 'package:meta/meta.dart';
 import 'package:supabase/supabase.dart' as supabase;
@@ -13,6 +14,7 @@ class LoginCubit extends Cubit<LoginState> {
 
   Future<void> signInWithGoogle() => _signInWithGoogle();
   Future<void> signInWithApple() => _signInWithApple();
+  Future<void> signOut() => _onSignOut();
 
   Future<void> _signInWithGoogle() async {
     try {
@@ -31,6 +33,16 @@ class LoginCubit extends Cubit<LoginState> {
           await _authRepository.signInWithApple();
 
       emit(LoginSuccess(authResponse.user!));
+    } catch (e) {
+      emit(LoginFailed());
+    }
+  }
+
+  Future<void> _onSignOut() async {
+    try {
+      await _authRepository.signOut();
+      goRouter.go('/login');
+      emit(LoginInitial());
     } catch (e) {
       emit(LoginFailed());
     }

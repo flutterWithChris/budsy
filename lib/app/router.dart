@@ -1,7 +1,10 @@
 import 'package:budsy/auth/bloc/auth_bloc.dart';
+import 'package:budsy/consts.dart';
 import 'package:budsy/journal/model/journal_entry.dart';
 import 'package:budsy/journal/view/edit_entry_page.dart';
 import 'package:budsy/login/view/login_page.dart';
+import 'package:budsy/onboarding/onboarding_page.dart';
+import 'package:budsy/settings/settings_page.dart';
 import 'package:budsy/stash/model/product.dart';
 import 'package:budsy/stash/view/edit_product.dart';
 import 'package:budsy/stash/view/new_entry.dart';
@@ -12,13 +15,16 @@ import 'package:budsy/journal/view/journal_page.dart';
 import 'package:budsy/stash/view/stash_page.dart';
 import 'package:budsy/stash/view/view_product.dart';
 import 'package:budsy/trends/trends_page.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 GoRouter goRouter = GoRouter(
-  redirect: (context, state) {
+  redirect: (context, state) async {
     bool isAuthenticated =
         context.read<AuthBloc>().state.status == AuthStatus.authenticated;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
     if (!isAuthenticated) {
       return '/login';
@@ -51,6 +57,9 @@ GoRouter goRouter = GoRouter(
         ),
       ],
     ),
+    GoRoute(
+        path: '/onboarding',
+        builder: (context, state) => const OnboardingPage()),
     GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
     // Define a route that handles '/second'
     GoRoute(
@@ -87,6 +96,8 @@ GoRouter goRouter = GoRouter(
     GoRoute(
       path: '/trends',
       builder: (context, state) => const TrendsPage(),
-    )
+    ),
+    GoRoute(
+        path: '/settings', builder: (context, state) => const SettingsPage()),
   ],
 );
