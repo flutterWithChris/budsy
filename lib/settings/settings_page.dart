@@ -1,8 +1,10 @@
 import 'package:budsy/app/system/bottom_nav.dart';
 import 'package:budsy/auth/bloc/auth_bloc.dart';
 import 'package:budsy/login/cubit/login_cubit.dart';
+import 'package:budsy/theme/cubit/theme_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -31,32 +33,36 @@ class SettingsPage extends StatelessWidget {
               ListTile(
                   leading: PhosphorIcon(PhosphorIcons.lightbulb()),
                   title: const Text('Brightness'),
-                  trailing: DropdownButton<ThemeMode>(
-                    value: ThemeMode.system,
-                    items: const [
-                      DropdownMenuItem(
-                          value: ThemeMode.system, child: Text('System')),
-                      DropdownMenuItem(
-                        value: ThemeMode.light,
-                        child: Text('Light'),
-                      ),
-                      DropdownMenuItem(
-                        value: ThemeMode.dark,
-                        child: Text('Dark'),
-                      ),
-                    ],
-                    onChanged: (value) {
-                      // Change theme brightness
+                  trailing: BlocBuilder<ThemeCubit, ThemeState>(
+                    builder: (context, state) {
+                      return DropdownButton<ThemeMode>(
+                        value: state.themeMode ?? ThemeMode.system,
+                        items: const [
+                          DropdownMenuItem(
+                              value: ThemeMode.system, child: Text('System')),
+                          DropdownMenuItem(
+                            value: ThemeMode.light,
+                            child: Text('Light'),
+                          ),
+                          DropdownMenuItem(
+                            value: ThemeMode.dark,
+                            child: Text('Dark'),
+                          ),
+                        ],
+                        onChanged: (value) {
+                          context.read<ThemeCubit>().setThemeMode(value!);
+                        },
+                      );
                     },
                   )),
               // TODO: Implement issue reporting
-              ListTile(
-                leading: const Icon(Icons.bug_report),
-                title: const Text('Have an issue?'),
-                onTap: () {
-                  // Report issue
-                },
-              ),
+              // ListTile(
+              //   leading: const Icon(Icons.bug_report),
+              //   title: const Text('Have an issue?'),
+              //   onTap: () {
+              //     // Report issue
+              //   },
+              // ),
               // TODO: Implement logout
               ListTile(
                 leading: PhosphorIcon(PhosphorIcons.signOut()),
@@ -70,8 +76,37 @@ class SettingsPage extends StatelessWidget {
               ListTile(
                 leading: PhosphorIcon(PhosphorIcons.trashSimple()),
                 title: const Text('Delete Account'),
-                onTap: () {
-                  // Delete account
+                onTap: () async {
+                  await showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Delete Account'),
+                        content: const Text(
+                            'Are you sure you want to delete your account? This action cannot be undone.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Cancel'),
+                          ),
+                          FilledButton(
+                            style: FilledButton.styleFrom(
+                              backgroundColor: Colors.red,
+                            ),
+                            onPressed: () async {
+                              // Delete account
+                              await context.read<LoginCubit>().deleteAccount();
+                              context.pop();
+                            },
+                            child: const Text('Delete',
+                                style: TextStyle(color: Colors.white)),
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 },
               ),
             ]),

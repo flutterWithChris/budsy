@@ -1,6 +1,7 @@
 import 'package:budsy/app/system/bottom_nav.dart';
 import 'package:budsy/login/cubit/login_cubit.dart';
 import 'package:budsy/onboarding/onboarding_page.dart';
+import 'package:budsy/subscription/bloc/subscription_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
@@ -32,9 +33,11 @@ class _LoginPageState extends State<LoginPage> {
 
             WidgetsBinding.instance.addPostFrameCallback((_) async {
               await showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  builder: (context) => const OnboardingPage());
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (context) => const OnboardingPage())
+                  .then((value) =>
+                      context.read<SubscriptionBloc>().add(ShowPaywall()));
 
               setState(() {
                 onboardingShown = true;

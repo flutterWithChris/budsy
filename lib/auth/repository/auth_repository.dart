@@ -89,4 +89,13 @@ class AuthRepository {
       rethrow;
     }
   }
+
+  Future<void> deleteAccount() async {
+    try {
+      await _supabase.auth.admin.deleteUser(_supabase.auth.currentUser!.id);
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
+  }
 }

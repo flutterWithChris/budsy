@@ -48,14 +48,6 @@ class _JournalPageState extends State<JournalPage> {
                   fontSize: 24.0,
                 ),
               ),
-              floating: true,
-              snap: true,
-              actions: [
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.search),
-                ),
-              ],
             ),
             const SliverToBoxAdapter(
               child: SizedBox(
@@ -161,7 +153,7 @@ class _JournalEntryListState extends State<JournalEntryList> {
               Column(
                 children: [
                   for (JournalEntry journalEntry in mockJournalEntries)
-                    FeelingListTile(journalEntry: journalEntry),
+                    EntryListTile(journalEntry: journalEntry),
                 ],
               ),
               Positioned.fill(
@@ -249,7 +241,7 @@ class _JournalEntryListState extends State<JournalEntryList> {
 
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 2.0),
-                  child: FeelingListTile(journalEntry: journalEntry),
+                  child: EntryListTile(journalEntry: journalEntry),
                 );
               },
               childCount: state.entries.length,
@@ -270,15 +262,15 @@ class _JournalEntryListState extends State<JournalEntryList> {
   }
 }
 
-class FeelingListTile extends StatefulWidget {
+class EntryListTile extends StatefulWidget {
   final JournalEntry journalEntry;
-  const FeelingListTile({required this.journalEntry, super.key});
+  const EntryListTile({required this.journalEntry, super.key});
 
   @override
-  State<FeelingListTile> createState() => _FeelingListTileState();
+  State<EntryListTile> createState() => _EntryListTileState();
 }
 
-class _FeelingListTileState extends State<FeelingListTile>
+class _EntryListTileState extends State<EntryListTile>
     with SingleTickerProviderStateMixin {
   late var slidableController = SlidableController(this);
 
@@ -417,13 +409,21 @@ class _FeelingListTileState extends State<FeelingListTile>
                                     size: 16,
                                   ),
                                   label: Text(
-                                    journalEntry.products!.first.name!,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.fade,
-                                    softWrap: false,
-                                    style:
-                                        Theme.of(context).textTheme.bodySmall,
-                                  ),
+                                      journalEntry.products!.first.name!,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.fade,
+                                      softWrap: false,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(
+                                            color: getContrastingColor(
+                                              getColorForProductCategory(
+                                                journalEntry
+                                                    .products!.first.category!,
+                                              ),
+                                            ),
+                                          )),
                                 ),
                               ),
                               if (journalEntry.products!.length > 1)

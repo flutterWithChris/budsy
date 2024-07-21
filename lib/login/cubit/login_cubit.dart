@@ -1,6 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:budsy/app/router.dart';
+import 'package:budsy/app/snackbars.dart';
 import 'package:budsy/auth/repository/auth_repository.dart';
+import 'package:budsy/consts.dart';
 import 'package:budsy/subscription/subscription_repository.dart';
 import 'package:meta/meta.dart';
 import 'package:supabase/supabase.dart' as supabase;
@@ -21,6 +23,7 @@ class LoginCubit extends Cubit<LoginState> {
   Future<void> signInWithGoogle() => _signInWithGoogle();
   Future<void> signInWithApple() => _signInWithApple();
   Future<void> signOut() => _onSignOut();
+  Future<void> deleteAccount() => _onDeleteAccount();
 
   Future<void> _signInWithGoogle() async {
     try {
@@ -62,6 +65,19 @@ class LoginCubit extends Cubit<LoginState> {
     try {
       await _authRepository.signOut();
       goRouter.go('/login');
+      emit(LoginInitial());
+    } catch (e) {
+      emit(LoginFailed());
+    }
+  }
+
+  Future<void> _onDeleteAccount() async {
+    try {
+      await _authRepository.deleteAccount();
+      goRouter.go('/login');
+      scaffoldKey.currentState!.showSnackBar(
+        getSuccessSnackBar('Account deleted.'),
+      );
       emit(LoginInitial());
     } catch (e) {
       emit(LoginFailed());

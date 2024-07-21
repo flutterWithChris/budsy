@@ -149,14 +149,7 @@ class OnboardingPage extends StatelessWidget {
                                   await SharedPreferences.getInstance();
                               await prefs
                                   .setBool('onboardingComplete', true)
-                                  .then((value) => context
-                                      .read<SubscriptionBloc>()
-                                      .add(ShowPaywall()));
-
-                              await Future.delayed(
-                                  const Duration(milliseconds: 500), () {
-                                context.pop();
-                              });
+                                  .then((value) async => context.pop());
                             },
                             child: const Text('Continue'),
                           ),

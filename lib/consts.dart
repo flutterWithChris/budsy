@@ -10,6 +10,10 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 GlobalKey<ScaffoldMessengerState> scaffoldKey =
     GlobalKey<ScaffoldMessengerState>();
 
+// kIsDebug is a constant that is true when the app is running in debug mode.
+// It is used to conditionally enable debug-only features.
+const bool kIsDebug = bool.fromEnvironment('dart.vm.product') == false;
+
 List<Terpene> _terpenes = [
   Terpene(
     id: '1',
