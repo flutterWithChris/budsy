@@ -36,7 +36,6 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
     try {
       emit(SubscriptionLoading());
       await _subscriptionRepository.initPlatformState(event.userId);
-      await _subscriptionRepository.login(event.userId);
       customerInfo = await _subscriptionRepository.getCustomerInfo();
       Offerings? offerings = await _subscriptionRepository.getOfferings();
       if (offerings != null) {
@@ -157,9 +156,6 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
           customerInfo: updatedInfo,
         ));
       } else if (paywallResult == PaywallResult.cancelled) {
-        scaffoldKey.currentState!.showSnackBar(
-          getErrorSnackBar('Purchase cancelled'),
-        );
         emit(SubscriptionLoaded(customerInfo: customerInfo));
       } else {
         scaffoldKey.currentState!.showSnackBar(

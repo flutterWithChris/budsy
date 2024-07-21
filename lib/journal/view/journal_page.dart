@@ -4,8 +4,10 @@ import 'package:budsy/app/snackbars.dart';
 import 'package:budsy/app/system/bottom_nav.dart';
 import 'package:budsy/consts.dart';
 import 'package:budsy/journal/bloc/journal_bloc.dart';
+import 'package:budsy/journal/mock/mock_journal_entries.dart';
 import 'package:budsy/journal/model/feeling.dart';
 import 'package:budsy/journal/model/journal_entry.dart';
+import 'package:budsy/onboarding/onboarding_page.dart';
 import 'package:budsy/stash/bloc/stash_bloc.dart';
 import 'package:budsy/stash/model/product.dart';
 import 'package:budsy/journal/view/add_feeling_page.dart';
@@ -22,53 +24,47 @@ import 'package:jiffy/jiffy.dart';
 import 'package:list_ext/list_ext.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-class JournalPage extends StatelessWidget {
+class JournalPage extends StatefulWidget {
   const JournalPage({super.key});
 
   @override
+  State<JournalPage> createState() => _JournalPageState();
+}
+
+class _JournalPageState extends State<JournalPage> {
+  bool onboardingShown = false;
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: const JournalPageFAB(),
-      bottomNavigationBar: const BottomNavBar(),
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar.medium(
-            title: Text(
-              'Journal',
-              style: GoogleFonts.roboto().copyWith(
-                fontWeight: FontWeight.bold,
-                fontSize: 24.0,
+        floatingActionButton: const JournalPageFAB(),
+        bottomNavigationBar: const BottomNavBar(),
+        body: CustomScrollView(
+          slivers: [
+            SliverAppBar.medium(
+              title: Text(
+                'Journal',
+                style: GoogleFonts.roboto().copyWith(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24.0,
+                ),
+              ),
+              floating: true,
+              snap: true,
+              actions: [
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.search),
+                ),
+              ],
+            ),
+            const SliverToBoxAdapter(
+              child: SizedBox(
+                height: 4.0,
               ),
             ),
-            floating: true,
-            snap: true,
-            actions: [
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.search),
-              ),
-            ],
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-              child: Row(
-                children: [
-                  Text(
-                    'Today',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(),
-                  ),
-                  const Gap(size: 4.0),
-                  const Icon(Icons.chevron_right_rounded)
-                ],
-              ),
-            ),
-          ),
-          const JournalEntryList(),
-        ],
-      ),
-    );
+            const JournalEntryList(),
+          ],
+        ));
   }
 }
 
@@ -85,10 +81,50 @@ class _JournalPageFABState extends State<JournalPageFAB> {
   final _fabKey = GlobalKey<ExpandableFabState>();
   @override
   Widget build(BuildContext context) {
-    return FloatingActionButton(
-      // key: _fabKey,
-      onPressed: () async => context.push('/add-entry'),
-      child: const Icon(Icons.add),
+    return BlocBuilder<JournalBloc, JournalState>(
+      builder: (context, state) {
+        if (state is JournalLoading) {
+          return const SizedBox();
+        }
+        if (state is JournalLoaded && state.entries.isNotEmpty) {
+          return FloatingActionButton(
+            // key: _fabKey,
+            onPressed: () async => context.push('/add-entry'),
+            child: const Icon(Icons.add),
+          );
+        }
+        if (state is JournalLoaded && state.entries.isEmpty) {
+          return BlocBuilder<StashBloc, StashState>(
+            builder: (context, state) {
+              if (state is StashLoading) {
+                return const SizedBox();
+              }
+              if (state is StashLoaded && state.products.isEmpty) {
+                return FloatingActionButton(
+                  // key: _fabKey,
+                  onPressed: () async {
+                    // show snackbar, prompt user to add a product
+                    ScaffoldMessenger.of(context).showSnackBar(getErrorSnackBar(
+                      'Add a product to your stash first!',
+                    ));
+                  },
+                  child: const Icon(Icons.add),
+                );
+              }
+              if (state is StashLoaded && state.products.isNotEmpty) {
+                return FloatingActionButton(
+                  // key: _fabKey,
+                  onPressed: () async => context.push('/add-entry'),
+                  child: const Icon(Icons.add),
+                );
+              } else {
+                return const SizedBox();
+              }
+            },
+          );
+        }
+        return const SizedBox();
+      },
     );
   }
 }
@@ -117,6 +153,88 @@ class _JournalEntryListState extends State<JournalEntryList> {
             ),
           );
         }
+        if (state is JournalLoaded && state.entries.isEmpty) {
+          return SliverToBoxAdapter(
+              child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Column(
+                children: [
+                  for (JournalEntry journalEntry in mockJournalEntries)
+                    FeelingListTile(journalEntry: journalEntry),
+                ],
+              ),
+              Positioned.fill(
+                  child: Container(
+                color: Colors.black.withOpacity(0.5),
+              )),
+              Positioned(
+                child: Container(
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    // borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black,
+                        blurRadius: 48,
+                        offset: Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(80.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        PhosphorIcon(
+                          PhosphorIcons.warningCircle(PhosphorIconsStyle.fill),
+                          size: 48,
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.only(top: 16.0),
+                          child: Center(
+                            child: Text('No Entries Yet'),
+                          ),
+                        ),
+                        BlocBuilder<StashBloc, StashState>(
+                          builder: (context, state) {
+                            if (state is StashLoading) {
+                              return const CircularProgressIndicator();
+                            }
+                            if (state is StashLoaded &&
+                                state.products.isNotEmpty) {
+                              return TextButton(
+                                onPressed: () async {
+                                  // show snackbar, prompt user to add a product
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(getErrorSnackBar(
+                                    'Add a product to your stash first!',
+                                  ));
+                                },
+                                child: const Text('Add an Entry'),
+                              );
+                            }
+                            if (state is StashLoaded &&
+                                state.products.isNotEmpty) {
+                              return TextButton(
+                                onPressed: () async {
+                                  await context.push('/new-entry');
+                                },
+                                child: const Text('Add an Entry'),
+                              );
+                            }
+                            return const Text('Something went wrong');
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ));
+        }
         if (state is JournalLoaded && state.entries.isNotEmpty) {
           print('Journal Loaded & Entries not empty');
           return SliverList(
@@ -135,16 +253,6 @@ class _JournalEntryListState extends State<JournalEntryList> {
                 );
               },
               childCount: state.entries.length,
-            ),
-          );
-        }
-        if (state is JournalLoaded && state.entries.isEmpty) {
-          return const SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Center(
-                child: Text('No journal entries found'),
-              ),
             ),
           );
         } else {

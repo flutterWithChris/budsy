@@ -3,6 +3,7 @@ import 'package:budsy/app/icons.dart';
 import 'package:budsy/app/system/bottom_nav.dart';
 import 'package:budsy/stash/bloc/product_details_bloc.dart';
 import 'package:budsy/stash/bloc/stash_bloc.dart';
+import 'package:budsy/stash/mock/mock_products.dart';
 import 'package:budsy/stash/model/product.dart';
 import 'package:custom_rating_bar/custom_rating_bar.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
@@ -40,8 +41,83 @@ class StashPage extends StatelessWidget {
           }
           if (state is StashLoaded) {
             if (state.products.isEmpty) {
-              return const Center(
-                child: Text('No products found'),
+              return CustomScrollView(
+                slivers: [
+                  SliverAppBar.medium(
+                    title: Text(
+                      'Stash',
+                      style: GoogleFonts.roboto().copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24.0,
+                      ),
+                    ),
+                  ),
+                  SliverFillRemaining(
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 8),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              for (Product product in mockProducts)
+                                Opacity(
+                                    opacity: 0.8,
+                                    child: ProductCard(product: product)),
+                            ],
+                          ),
+                        ),
+                        Positioned.fill(
+                            child: Container(
+                          color: Colors.black.withOpacity(0.5),
+                        )),
+                        Positioned(
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              // borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black,
+                                  blurRadius: 48,
+                                  offset: Offset(0, 8),
+                                ),
+                              ],
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(80.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  PhosphorIcon(
+                                    PhosphorIcons.warningCircle(
+                                        PhosphorIconsStyle.fill),
+                                    size: 48,
+                                  ),
+                                  const Padding(
+                                    padding: EdgeInsets.only(top: 16.0),
+                                    child: Center(
+                                      child: Text('No products found'),
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      await context.push('/new-entry');
+                                    },
+                                    child: const Text('Add a product'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               );
             } else {
               return CustomScrollView(
@@ -157,48 +233,7 @@ class StashList extends StatelessWidget {
 
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
-            child: Card(
-              child: InkWell(
-                onTap: () {
-                  context.read<ProductDetailsBloc>().add(
-                        FetchProductDetails(product),
-                      );
-                  context.push('/stash/product/${product.id}', extra: product);
-                },
-                child: ListTile(
-                  leading: IconButton.filledTonal(
-                    onPressed: () {},
-                    style: IconButton.styleFrom(
-                        backgroundColor:
-                            getColorForProductCategory(product.category!)),
-                    icon: PhosphorIcon(getIconForCategory(product.category!)),
-                  ),
-                  title: Text(
-                    product.name!,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  subtitle: Text(product.type!.name.capitalize),
-                  trailing: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      IgnorePointer(
-                        child: RatingBar(
-                          initialRating: product.rating?.toDouble() ?? 0.0,
-                          size: 14,
-                          filledIcon:
-                              PhosphorIcons.star(PhosphorIconsStyle.fill),
-                          emptyIcon: PhosphorIcons.star(),
-                          onRatingChanged: (rating) {},
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+            child: ProductCard(product: product),
           );
         },
         childCount: archived == true
@@ -207,6 +242,59 @@ class StashList extends StatelessWidget {
                 .where((product) => product.archived != true)
                 .toList()
                 .length,
+      ),
+    );
+  }
+}
+
+class ProductCard extends StatelessWidget {
+  const ProductCard({
+    super.key,
+    required this.product,
+  });
+
+  final Product product;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: InkWell(
+        onTap: () {
+          context.read<ProductDetailsBloc>().add(
+                FetchProductDetails(product),
+              );
+          context.push('/stash/product/${product.id}', extra: product);
+        },
+        child: ListTile(
+          leading: IconButton.filledTonal(
+            onPressed: () {},
+            style: IconButton.styleFrom(
+                backgroundColor: getColorForProductCategory(product.category!)),
+            icon: PhosphorIcon(getIconForCategory(product.category!)),
+          ),
+          title: Text(
+            product.name!,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          subtitle: Text(product.type!.name.capitalize),
+          trailing: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              IgnorePointer(
+                child: RatingBar(
+                  initialRating: product.rating?.toDouble() ?? 0.0,
+                  size: 14,
+                  filledIcon: PhosphorIcons.star(PhosphorIconsStyle.fill),
+                  emptyIcon: PhosphorIcons.star(),
+                  onRatingChanged: (rating) {},
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

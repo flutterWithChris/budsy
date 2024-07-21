@@ -4,7 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
 class SubscriptionRepository {
-  Future<void> initPlatformState(String userId) async {
+  Future<void> initPlatformState(String? userId) async {
     await Purchases.setLogLevel(LogLevel.debug);
 
     try {
@@ -18,8 +18,9 @@ class SubscriptionRepository {
           dotenv.env['REVCAT_IOS_API_KEY']!,
         );
       }
-
-      await Purchases.configure(configuration..appUserID = userId);
+      userId != null
+          ? await Purchases.configure(configuration..appUserID = userId)
+          : await Purchases.configure(configuration);
     } catch (e) {
       print(e);
     }

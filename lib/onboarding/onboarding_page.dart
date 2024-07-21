@@ -1,5 +1,10 @@
+import 'package:budsy/subscription/bloc/subscription_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gutter/flutter_gutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OnboardingPage extends StatelessWidget {
   const OnboardingPage({super.key});
@@ -8,7 +13,7 @@ class OnboardingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
         expand: false,
-        initialChildSize: 0.8,
+        initialChildSize: 0.6,
         builder: (context, controller) {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -33,7 +38,7 @@ class OnboardingPage extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             PhosphorIcon(
-                              PhosphorIcons.magnifyingGlass(),
+                              PhosphorIcons.star(),
                               size: 48,
                             ),
                             const SizedBox(width: 16),
@@ -42,7 +47,7 @@ class OnboardingPage extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text('Gain Insight',
+                                  Text('Keepin\' It Real',
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleMedium
@@ -52,7 +57,7 @@ class OnboardingPage extends StatelessWidget {
                                     children: [
                                       Flexible(
                                         child: Text(
-                                            'Discover which strains & products work best for you',
+                                            'See your favorite, or not-so-favorite strains & products at a glance.',
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .bodyMedium),
@@ -70,7 +75,7 @@ class OnboardingPage extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             PhosphorIcon(
-                              PhosphorIcons.star(),
+                              PhosphorIcons.notepad(),
                               size: 48,
                             ),
                             const SizedBox(width: 16),
@@ -79,7 +84,7 @@ class OnboardingPage extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text('Save Time & Money',
+                                  Text('Track Your Highs & Lows',
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleMedium
@@ -87,7 +92,7 @@ class OnboardingPage extends StatelessWidget {
                                               fontWeight: FontWeight.bold)),
                                   Flexible(
                                     child: Text(
-                                        'Know what works before your next pickup',
+                                        'Log your experiences & feelings to find what works best for you.',
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyMedium),
@@ -103,7 +108,7 @@ class OnboardingPage extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             PhosphorIcon(
-                              PhosphorIcons.chartDonut(),
+                              PhosphorIcons.magnifyingGlass(),
                               size: 48,
                             ),
                             const SizedBox(width: 16),
@@ -111,13 +116,18 @@ class OnboardingPage extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text('See Trends',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium
-                                        ?.copyWith(
-                                            fontWeight: FontWeight.bold)),
-                                Text('Optimize your highs, ditch the lows.',
+                                Row(
+                                  children: [
+                                    Text('Discover Your Preferences',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium
+                                            ?.copyWith(
+                                                fontWeight: FontWeight.bold)),
+                                  ],
+                                ),
+                                Text(
+                                    'Find out what you like & why you like it.',
                                     style:
                                         Theme.of(context).textTheme.bodyMedium),
                               ],
@@ -134,10 +144,21 @@ class OnboardingPage extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 32),
                           child: FilledButton(
-                            onPressed: () {
-                              // Navigate to next page
+                            onPressed: () async {
+                              SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
+                              await prefs
+                                  .setBool('onboardingComplete', true)
+                                  .then((value) => context
+                                      .read<SubscriptionBloc>()
+                                      .add(ShowPaywall()));
+
+                              await Future.delayed(
+                                  const Duration(milliseconds: 500), () {
+                                context.pop();
+                              });
                             },
-                            child: const Text('Get Started'),
+                            child: const Text('Continue'),
                           ),
                         ),
                       ),

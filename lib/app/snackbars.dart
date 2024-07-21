@@ -14,7 +14,7 @@ SnackBar getSuccessSnackBar(String message) {
   );
 }
 
-SnackBar getErrorSnackBar(String message) {
+SnackBar getErrorSnackBar(String message, {Widget? action}) {
   return SnackBar(
     content: Row(
       children: [
@@ -22,6 +22,12 @@ SnackBar getErrorSnackBar(String message) {
         const Gap(size: 8),
         Text(message ?? 'An error occurred',
             style: const TextStyle(color: Colors.white)),
+        if (action != null)
+          Row(
+            children: [
+              action ?? Container(),
+            ],
+          ),
       ],
     ),
     backgroundColor: Colors.red,

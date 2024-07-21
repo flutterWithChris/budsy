@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
@@ -27,6 +28,8 @@ void main() async {
     url: dotenv.env['SUPABASE_URL']!,
     anonKey: dotenv.env['SUPABASE_PUBLIC_KEY']!,
   );
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setBool('onboardingComplete', false);
   runApp(const MyApp());
 }
 
@@ -61,8 +64,9 @@ class MyApp extends StatelessWidget {
             ),
           ),
           BlocProvider(
-            create: (context) =>
-                LoginCubit(authRepository: context.read<AuthRepository>()),
+            create: (context) => LoginCubit(
+                authRepository: context.read<AuthRepository>(),
+                subscriptionRepository: context.read<SubscriptionRepository>()),
           ),
           BlocProvider(
             create: (context) => StashBloc(
@@ -93,7 +97,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(
             create: (context) => SubscriptionBloc(
               subscriptionRepository: context.read<SubscriptionRepository>(),
-            )..add(SubscriptionInit(context.read<AuthBloc>().state.user!.id)),
+            )..add(SubscriptionInit(context.read<AuthBloc>().state.user?.id)),
           )
         ],
         child: MaterialApp.router(

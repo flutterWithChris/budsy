@@ -4,16 +4,16 @@ sealed class SubscriptionEvent extends Equatable {
   const SubscriptionEvent();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class SubscriptionInit extends SubscriptionEvent {
-  final String userId;
+  final String? userId;
 
   const SubscriptionInit(this.userId);
 
   @override
-  List<Object> get props => [userId];
+  List<Object?> get props => [userId];
 }
 
 class SubscriptionLogin extends SubscriptionEvent {
@@ -22,7 +22,7 @@ class SubscriptionLogin extends SubscriptionEvent {
   const SubscriptionLogin(this.userId);
 
   @override
-  List<Object> get props => [userId];
+  List<Object?> get props => [userId];
 }
 
 class SubscriptionLogout extends SubscriptionEvent {}
