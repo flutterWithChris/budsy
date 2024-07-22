@@ -49,7 +49,6 @@ class LoginCubit extends Cubit<LoginState> {
           await _authRepository.signInWithApple();
 
       if (authResponse.user == null) {
-        print('Auth User null');
         emit(LoginFailed());
         return;
       }

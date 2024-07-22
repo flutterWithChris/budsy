@@ -16,7 +16,6 @@ class TerpeneChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('Terpenes: $terpenes');
     return AspectRatio(
       aspectRatio: 1.0,
       child: Card(
@@ -46,7 +45,6 @@ class TerpeneChart extends StatelessWidget {
                     enable: true,
                     color: Theme.of(context).colorScheme.surface,
                     builder: (data, point, series, pointIndex, seriesIndex) {
-                      print('Data: $data');
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(

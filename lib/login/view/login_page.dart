@@ -32,7 +32,6 @@ class _LoginPageState extends State<LoginPage> {
                   true && // CHeck if bottom sheet is not already open
               ModalRoute.of(context)!.isCurrent &&
               onboardingShown == false) {
-            print('onboarding not complete');
             // Make sure to not show this during the build process
 
             WidgetsBinding.instance.addPostFrameCallback((_) async {

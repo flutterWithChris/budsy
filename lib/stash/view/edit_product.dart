@@ -49,7 +49,6 @@ class _EditProductPageState extends State<EditProductPage> {
   Product? _productDraft;
   @override
   void initState() {
-    print('Product: ${widget.product.toString()}');
     _productDraft = widget.product;
     selectedCannabinoids =
         context.read<ProductDetailsBloc>().state.cannabinoids ?? [];
@@ -124,8 +123,6 @@ class _EditProductPageState extends State<EditProductPage> {
 
   @override
   Widget build(BuildContext context) {
-    print('selectedCannabinoids: $selectedCannabinoids');
-    print('requiredCannabinoids: $requiredCannabinoids');
     return Scaffold(
         bottomNavigationBar: const BottomNavBar(),
         body: Column(
@@ -1086,7 +1083,6 @@ class _CannabinoidTextFieldsState extends State<CannabinoidTextFields> {
                 expandedInsets: EdgeInsets.zero,
                 dropdownMenuEntries:
                     context.read<StashBloc>().allCannabinoids!.map((c) {
-                  print('Cannabinoid: $c');
                   return DropdownMenuEntry(
                     label: c.name!,
                     value: c,

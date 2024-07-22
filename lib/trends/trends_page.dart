@@ -705,7 +705,6 @@ Map<String, Map<Feeling, int>> getProductFeelingTrends(
       }
     }
   }
-  print('productFeelingTrends: $productFeelingTrends');
   return productFeelingTrends;
 }
 
@@ -756,6 +755,5 @@ Map<Terpene, int> getFavoriteTerpenes(
       }
     }
   }
-  print('favoriteTerpenes: $favoriteTerpenes');
   return favoriteTerpenes;
 }

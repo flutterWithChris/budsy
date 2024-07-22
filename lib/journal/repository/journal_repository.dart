@@ -97,7 +97,6 @@ class JournalRepository {
           .eq('id', entry.id!)
           .select();
       JournalEntry responseEntry = JournalEntry.fromJson(response.first);
-      print('Updated entry: $responseEntry');
       return responseEntry;
     } catch (e) {
       print(e);

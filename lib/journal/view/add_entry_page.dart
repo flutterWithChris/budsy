@@ -77,7 +77,6 @@ class _AddEntryPageState extends State<AddEntryPage> {
                             setState(() {
                               selectedProducts = value;
                             });
-                            print('Selected Products: $selectedProducts');
                           },
                           headerListBuilder: (context, selectedItems, enabled) {
                             return Wrap(

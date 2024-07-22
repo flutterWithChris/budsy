@@ -11,7 +11,6 @@ class ProductsCubit extends Cubit<ProductsState> {
   void _onLoadProducts() async {
     emit(ProductsLoading());
     try {
-      print('Loading products');
       // List<Product>? products = await _productsRepository.getProducts();
       // print(products);
       // if (products == null) {

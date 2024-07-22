@@ -8,7 +8,6 @@ class ProfileRepository {
     try {
       final response =
           await _supabaseClient.from('users').select().eq('id', userId);
-      print('Load User Response: $response');
       return User.fromJson(response.first);
     } catch (e) {
       throw Exception('Failed to load user: $e');
@@ -19,8 +18,6 @@ class ProfileRepository {
     try {
       final response =
           await _supabaseClient.from('users').upsert(user.toJson()).select();
-      print('***User created***');
-      print('Create User Response: $response');
       return User.fromJson(response.first);
     } catch (e) {
       throw Exception('Failed to create user: $e');

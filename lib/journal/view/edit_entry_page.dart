@@ -48,7 +48,6 @@ class _EditEntryPageState extends State<EditEntryPage> {
 
   @override
   Widget build(BuildContext context) {
-    print('Editing Entry: ${widget.journalEntry.id}');
     return Scaffold(
         body: CustomScrollView(
       // controller: controller,
@@ -86,7 +85,6 @@ class _EditEntryPageState extends State<EditEntryPage> {
                       //           .map((e) => e.id)
                       //           .contains(element.id);
                       //     }).toList();
-                      //     print('Selected Products: $selectedProducts');
                       //   });
                       // }
                     },
@@ -102,7 +100,6 @@ class _EditEntryPageState extends State<EditEntryPage> {
                         );
                       }
                       if (state is StashLoaded && state.products.isNotEmpty) {
-                        print('Loaded');
                         if (selectedProducts.isEmpty) {
                           selectedProducts = state.products.where((element) {
                             return widget.journalEntry.products != null &&
@@ -488,11 +485,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                                         products: selectedProducts,
                                         type: EntryType.feeling,
                                       );
-                                      print('Updated Entry: $updatedEntry');
-                                      print(
-                                          'Updated Products: $selectedProducts');
-                                      print(
-                                          'Updated Feelings: $selectedFeelings');
+                                  
 
                                       context.read<JournalBloc>().add(
                                           UpdateJournalEntry(updatedEntry));

@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:budsy/app/snackbars.dart';
+import 'package:budsy/consts.dart';
 import 'package:budsy/stash/model/cannabinoid.dart';
 import 'package:budsy/stash/model/product.dart';
 import 'package:budsy/stash/model/terpene.dart';
@@ -17,31 +19,28 @@ class ProductRepository {
           .from('products')
           .upsert(product.toJson())
           .select();
-      print('Response: $response');
       Product createdProduct = Product.fromJson(response.first);
-      print('Created Product: $createdProduct');
 
       return createdProduct;
     } catch (e) {
-      print('Error adding product: $e');
+      scaffoldKey.currentState!.showSnackBar(
+        getErrorSnackBar('Error creating product!')
+      );
       return null;
     }
   }
 
   // Fetch products for a specific user
   Future<List<Product>?> fetchProducts(String userId) async {
-    print('Fetching products for user $userId');
     try {
       final response = await _supabaseClient
           .from('products')
           .select('*')
           .eq('user_id', userId);
 
-      print('Response: $response');
 
       return response.map((product) => Product.fromJson(product)).toList();
     } catch (e) {
-      print('Error fetching products: $e');
       return null;
     }
   }
@@ -57,7 +56,6 @@ class ProductRepository {
 
       return Product.fromJson(response.first);
     } catch (e) {
-      print('Error updating product: $e');
       return product;
     }
   }
@@ -67,7 +65,7 @@ class ProductRepository {
     try {
       await _supabaseClient.from('products').delete().eq('id', productId);
     } catch (e) {
-      print('Error deleting product: $e');
+      scaffoldKey.currentState!.showSnackBar(getErrorSnackBar('Error deleting product!'));
     }
   }
 
@@ -81,7 +79,7 @@ class ProductRepository {
 
       return Product.fromJson(response.first);
     } catch (e) {
-      print('Error fetching product: $e');
+      scaffoldKey.currentState!.showSnackBar(getErrorSnackBar('Error fetching product!'));
       return null;
     }
   }
@@ -94,21 +92,16 @@ class ProductRepository {
           .select('cannabinoids(*), amount')
           .eq('product_id', productId);
 
-      print('Cannabinoids response: $response');
-      print(
-          'Cannabinoids Amount: ${response.map((cannabinoid) => cannabinoid['amount'])}');
-
+     
       List<Cannabinoid> cannabinoids = response
           .map((cannabinoid) =>
               Cannabinoid.fromJson(cannabinoid['cannabinoids'])
                   .copyWith(amount: cannabinoid['amount']))
           .toList();
 
-      print('Cannabinoids: $cannabinoids');
 
       return cannabinoids;
     } catch (e) {
-      print('Error fetching cannabinoids: $e');
       return null;
     }
   }
@@ -128,7 +121,6 @@ class ProductRepository {
 
       return terpenes;
     } catch (e) {
-      print('Error fetching terpenes: $e');
       return null;
     }
   }
@@ -143,7 +135,6 @@ class ProductRepository {
 
       return response.map((image) => image['image_url'] as String).toList();
     } catch (e) {
-      print('Error fetching images: $e');
       return null;
     }
   }
@@ -157,7 +148,6 @@ class ProductRepository {
           .map((cannabinoid) => Cannabinoid.fromJson(cannabinoid))
           .toList();
     } catch (e) {
-      print('Error fetching cannabinoids: $e');
       return null;
     }
   }
@@ -169,7 +159,6 @@ class ProductRepository {
 
       return response.map((terpene) => Terpene.fromJson(terpene)).toList();
     } catch (e) {
-      print('Error fetching terpenes: $e');
       return null;
     }
   }
@@ -219,7 +208,6 @@ class ProductRepository {
       }
 
       if (url == null) {
-        print('Error uploading image');
         return;
       }
 
@@ -228,7 +216,7 @@ class ProductRepository {
           .map((image) => {'product_id': productId, 'image_url': url})
           .toList();
     } catch (e) {
-      print('Error uploading image: $e');
+      
     }
   }
 }

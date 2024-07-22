@@ -60,7 +60,6 @@ class _QrScanScreenState extends State<QrScanScreen>
       controller: controller,
       onDetect: (barcodes) async {
         try {
-          print('Detected: ${barcodes.barcodes.first.toString()}');
           context.pop();
           // final directory = await getApplicationDocumentsDirectory();
           // final filePath = '${directory.path}/lab_report.pdf';
@@ -70,7 +69,6 @@ class _QrScanScreenState extends State<QrScanScreen>
           // Response<dynamic> response =
           //     await dio.download(barcodes.barcodes.first.toString(), filePath);
           // print(response.data);
-          // print('Downloaded to $filePath');
         } catch (e) {
           print(e);
         }

@@ -544,7 +544,6 @@ class TerpeneEmptyCard extends StatelessWidget {
                       enable: true,
                       color: Theme.of(context).colorScheme.surface,
                       builder: (data, point, series, pointIndex, seriesIndex) {
-                        print('Data: $data');
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Container(

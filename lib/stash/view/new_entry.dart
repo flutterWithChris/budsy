@@ -130,8 +130,6 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('selectedCannabinoids: $selectedCannabinoids');
-    print('selectedTerpenes: $selectedTerpenes');
     return Scaffold(
         bottomNavigationBar: const BottomNavBar(),
         appBar: AppBar(

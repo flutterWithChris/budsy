@@ -59,8 +59,6 @@ class _FeelingTrendChartState extends State<FeelingTrendChart> {
                   longPressDuration: const Duration(seconds: 1),
                   touchCallback: (event, response) {
                     if (event is FlTapDownEvent) {
-                      print('Tapped');
-                      print(response?.touchedSection?.touchedSectionIndex);
                       setState(() {
                         showTitle = true;
                         touchedIndex =
@@ -71,7 +69,6 @@ class _FeelingTrendChartState extends State<FeelingTrendChart> {
                       });
                     } else if (event is FlTapUpEvent ||
                         event is FlLongPressEnd) {
-                      print('Tap Up');
                       setState(() {
                         showTitle = false;
                         touchedIndex = 0;

@@ -35,7 +35,6 @@ class FavoriteTerpenesCubit extends Cubit<FavoriteTerpenesState> {
       }
       List<Terpene> sortedTerpenes = favoriteTerpenes.keys.toList()
         ..sort((a, b) => favoriteTerpenes[b]!.compareTo(favoriteTerpenes[a]!));
-      print('Sorted Terpenes: $sortedTerpenes');
 
       emit(FavoriteTerpenesLoaded(sortedTerpenes.take(3).toList()));
     } catch (e) {

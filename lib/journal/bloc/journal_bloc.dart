@@ -23,7 +23,6 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
   void _onLoadJournal(LoadJournal event, Emitter<JournalState> emit) async {
     emit(JournalLoading());
     try {
-      print('Loading journal entries');
       List<JournalEntry>? entries = await _journalRepository.getEntries();
       print(entries);
       if (entries == null) {
@@ -41,7 +40,6 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
       AddJournalEntry event, Emitter<JournalState> emit) async {
     emit(JournalLoading());
     try {
-      print('Adding journal entry');
       JournalEntry? entry = await _journalRepository.addEntry(event.entry);
 
       if (entry == null) {
@@ -52,7 +50,6 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
       List<Future<void>> addFutures = [];
 
       if (event.entry.products != null && event.entry.products!.isNotEmpty) {
-        print('Adding products to entry');
         for (var product in event.entry.products!) {
           addFutures.add(_journalRepository.addProductToEntry(
             entry.id!,
@@ -63,7 +60,6 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
       }
 
       if (event.entry.feelings != null && event.entry.feelings!.isNotEmpty) {
-        print('Adding feelings to entry');
         for (var feeling in event.entry.feelings!) {
           addFutures.add(_journalRepository.addFeelingToEntry(
             entry.id!,
@@ -88,7 +84,6 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
       UpdateJournalEntry event, Emitter<JournalState> emit) async {
     emit(JournalLoading());
     try {
-      print('Updating journal entry');
       JournalEntry? entry = await _journalRepository.updateEntry(event.entry);
       if (entry == null) {
         emit(const JournalError('Failed to update journal entry'));
@@ -104,9 +99,7 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
           entry.id!, Supabase.instance.client.auth.currentUser!.id);
 
       if (event.entry.products != null && event.entry.products!.isNotEmpty) {
-        print('Adding products to entry');
         for (var product in event.entry.products!) {
-          print('Adding product ${product.name} to entry ${entry.id}');
           updateFutures.add(_journalRepository.addProductToEntry(
             entry.id!,
             product.id!,
@@ -116,7 +109,6 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
       }
 
       if (event.entry.feelings != null && event.entry.feelings!.isNotEmpty) {
-        print('Adding feelings to entry');
         for (var feeling in event.entry.feelings!) {
           updateFutures.add(_journalRepository.addFeelingToEntry(
             entry.id!,
@@ -142,7 +134,6 @@ class JournalBloc extends Bloc<JournalEvent, JournalState> {
       DeleteJournalEntry event, Emitter<JournalState> emit) async {
     emit(JournalLoading());
     try {
-      print('Deleting journal entry');
       await _journalRepository.deleteEntry(event.entryId);
       emit(JournalEntryDeleted());
       add(LoadJournal());

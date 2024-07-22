@@ -27,7 +27,6 @@ class _AddFeelingPageState extends State<AddFeelingPage> {
   @override
   Widget build(BuildContext context) {
     PhosphorIconData icon = PhosphorIcons.warning();
-    print('$icon: ${icon.fontFamily}:${icon.codePoint}');
 
     return Padding(
       padding:

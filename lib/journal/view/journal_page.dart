@@ -238,12 +238,10 @@ class _JournalEntryListState extends State<JournalEntryList> {
           ));
         }
         if (state is JournalLoaded && state.entries.isNotEmpty) {
-          print('Journal Loaded & Entries not empty');
           return SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
                 List<JournalEntry> journalEntries = state.entries;
-                print('Journal Entries In Widget: $journalEntries');
                 journalEntries.sort(
                   (a, b) => b.createdAt!.compareTo(a.createdAt!),
                 );
@@ -662,7 +660,6 @@ class ViewEntrySheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<ProductCategory> productCategories = [];
-    print('Entry ${entry.id} Products: ${entry.products}');
     // Add product categories to list if they don't already exist
     for (Product product in entry.products!) {
       if (!productCategories.contains(product.category)) {
