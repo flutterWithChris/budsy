@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:budsy/consts.dart';
+import 'package:canjo/consts.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

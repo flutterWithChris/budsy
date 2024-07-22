@@ -1,4 +1,4 @@
-import 'package:budsy/journal/model/journal_entry.dart';
+import 'package:canjo/journal/model/journal_entry.dart';
 import 'package:flutter/material.dart';
 
 class ViewJournalEntrySheet extends StatelessWidget {

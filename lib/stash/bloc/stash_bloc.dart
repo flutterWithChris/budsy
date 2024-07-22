@@ -1,10 +1,10 @@
 import 'package:bloc/bloc.dart';
-import 'package:budsy/auth/bloc/auth_bloc.dart';
-import 'package:budsy/consts.dart';
-import 'package:budsy/stash/model/cannabinoid.dart';
-import 'package:budsy/stash/model/product.dart';
-import 'package:budsy/stash/model/terpene.dart';
-import 'package:budsy/stash/repository/product_repository.dart';
+import 'package:canjo/auth/bloc/auth_bloc.dart';
+import 'package:canjo/consts.dart';
+import 'package:canjo/stash/model/cannabinoid.dart';
+import 'package:canjo/stash/model/product.dart';
+import 'package:canjo/stash/model/terpene.dart';
+import 'package:canjo/stash/repository/product_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';

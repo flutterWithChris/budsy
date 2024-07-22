@@ -1,7 +1,7 @@
-import 'package:budsy/app/system/bottom_nav.dart';
-import 'package:budsy/auth/bloc/auth_bloc.dart';
-import 'package:budsy/login/cubit/login_cubit.dart';
-import 'package:budsy/theme/cubit/theme_cubit.dart';
+import 'package:canjo/app/system/bottom_nav.dart';
+import 'package:canjo/auth/bloc/auth_bloc.dart';
+import 'package:canjo/login/cubit/login_cubit.dart';
+import 'package:canjo/theme/cubit/theme_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';

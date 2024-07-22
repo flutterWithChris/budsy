@@ -1,5 +1,5 @@
-import 'package:budsy/journal/model/feeling.dart';
-import 'package:budsy/stash/model/product.dart';
+import 'package:canjo/journal/model/feeling.dart';
+import 'package:canjo/stash/model/product.dart';
 
 enum EntryType {
   feeling,

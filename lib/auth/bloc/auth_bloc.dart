@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:budsy/app/router.dart';
-import 'package:budsy/auth/repository/auth_repository.dart';
+import 'package:canjo/app/router.dart';
+import 'package:canjo/auth/repository/auth_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
 part 'auth_event.dart';

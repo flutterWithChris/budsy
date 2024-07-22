@@ -1,14 +1,14 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:budsy/app/icons.dart';
-import 'package:budsy/app/system/bottom_nav.dart';
-import 'package:budsy/consts.dart';
-import 'package:budsy/stash/bloc/stash_bloc.dart';
-import 'package:budsy/stash/model/cannabinoid.dart';
-import 'package:budsy/stash/model/product.dart';
-import 'package:budsy/stash/model/terpene.dart';
-import 'package:budsy/lab_reports/lab_report.dart';
+import 'package:canjo/app/icons.dart';
+import 'package:canjo/app/system/bottom_nav.dart';
+import 'package:canjo/consts.dart';
+import 'package:canjo/stash/bloc/stash_bloc.dart';
+import 'package:canjo/stash/model/cannabinoid.dart';
+import 'package:canjo/stash/model/product.dart';
+import 'package:canjo/stash/model/terpene.dart';
+import 'package:canjo/lab_reports/lab_report.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

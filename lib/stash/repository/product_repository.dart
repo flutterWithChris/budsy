@@ -1,10 +1,10 @@
 import 'dart:io';
 
-import 'package:budsy/app/snackbars.dart';
-import 'package:budsy/consts.dart';
-import 'package:budsy/stash/model/cannabinoid.dart';
-import 'package:budsy/stash/model/product.dart';
-import 'package:budsy/stash/model/terpene.dart';
+import 'package:canjo/app/snackbars.dart';
+import 'package:canjo/consts.dart';
+import 'package:canjo/stash/model/cannabinoid.dart';
+import 'package:canjo/stash/model/product.dart';
+import 'package:canjo/stash/model/terpene.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
@@ -216,7 +216,7 @@ class ProductRepository {
           .map((image) => {'product_id': productId, 'image_url': url})
           .toList();
     } catch (e) {
-      
+
     }
   }
 }

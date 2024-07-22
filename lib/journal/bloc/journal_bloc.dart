@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
-import 'package:budsy/journal/model/feeling.dart';
-import 'package:budsy/journal/model/journal_entry.dart';
-import 'package:budsy/journal/repository/journal_repository.dart';
+import 'package:canjo/journal/model/feeling.dart';
+import 'package:canjo/journal/model/journal_entry.dart';
+import 'package:canjo/journal/repository/journal_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 

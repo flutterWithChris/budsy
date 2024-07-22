@@ -1,6 +1,6 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
-import 'package:budsy/stash/model/cannabinoid.dart';
-import 'package:budsy/stash/model/terpene.dart';
+import 'package:canjo/stash/model/cannabinoid.dart';
+import 'package:canjo/stash/model/terpene.dart';
 
 enum ProductCategory { flower, concentrate, edible, topical, cartridge, other }
 

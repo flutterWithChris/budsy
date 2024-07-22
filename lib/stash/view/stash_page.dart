@@ -1,10 +1,10 @@
-import 'package:budsy/app/colors.dart';
-import 'package:budsy/app/icons.dart';
-import 'package:budsy/app/system/bottom_nav.dart';
-import 'package:budsy/stash/bloc/product_details_bloc.dart';
-import 'package:budsy/stash/bloc/stash_bloc.dart';
-import 'package:budsy/stash/mock/mock_products.dart';
-import 'package:budsy/stash/model/product.dart';
+import 'package:canjo/app/colors.dart';
+import 'package:canjo/app/icons.dart';
+import 'package:canjo/app/system/bottom_nav.dart';
+import 'package:canjo/stash/bloc/product_details_bloc.dart';
+import 'package:canjo/stash/bloc/stash_bloc.dart';
+import 'package:canjo/stash/mock/mock_products.dart';
+import 'package:canjo/stash/model/product.dart';
 import 'package:custom_rating_bar/custom_rating_bar.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';

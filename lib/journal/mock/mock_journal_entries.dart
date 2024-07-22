@@ -1,9 +1,9 @@
 import 'dart:math';
 
-import 'package:budsy/consts.dart';
-import 'package:budsy/journal/mock/mock_feelings.dart';
-import 'package:budsy/stash/mock/mock_products.dart';
-import 'package:budsy/journal/model/journal_entry.dart';
+import 'package:canjo/consts.dart';
+import 'package:canjo/journal/mock/mock_feelings.dart';
+import 'package:canjo/stash/mock/mock_products.dart';
+import 'package:canjo/journal/model/journal_entry.dart';
 
 List<JournalEntry> mockJournalEntries = [
   JournalEntry(

@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:budsy/consts.dart';
+import 'package:canjo/consts.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 

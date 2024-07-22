@@ -1,4 +1,4 @@
-import 'package:budsy/profile/model/user.dart';
+import 'package:canjo/profile/model/user.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 
 class ProfileRepository {

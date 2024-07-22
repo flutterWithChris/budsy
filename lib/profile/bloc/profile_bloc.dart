@@ -1,12 +1,12 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:budsy/app/snackbars.dart';
-import 'package:budsy/auth/bloc/auth_bloc.dart';
-import 'package:budsy/consts.dart';
-import 'package:budsy/login/cubit/login_cubit.dart';
-import 'package:budsy/profile/model/user.dart';
-import 'package:budsy/profile/repository/profile_repository.dart';
+import 'package:canjo/app/snackbars.dart';
+import 'package:canjo/auth/bloc/auth_bloc.dart';
+import 'package:canjo/consts.dart';
+import 'package:canjo/login/cubit/login_cubit.dart';
+import 'package:canjo/profile/model/user.dart';
+import 'package:canjo/profile/repository/profile_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 

@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:budsy/stash/model/product.dart';
+import 'package:canjo/stash/model/product.dart';
 import 'package:equatable/equatable.dart';
 
 part 'products_state.dart';

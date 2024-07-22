@@ -1,7 +1,7 @@
-import 'package:budsy/consts.dart';
-import 'package:budsy/stash/model/cannabinoid.dart';
-import 'package:budsy/stash/model/product.dart';
-import 'package:budsy/stash/model/terpene.dart';
+import 'package:canjo/consts.dart';
+import 'package:canjo/stash/model/cannabinoid.dart';
+import 'package:canjo/stash/model/product.dart';
+import 'package:canjo/stash/model/terpene.dart';
 
 List<Product> mockProducts = [
   Product(
@@ -16,7 +16,7 @@ List<Product> mockProducts = [
     weight: 1.0,
     unit: FlowerUnit.gram,
     dispensary: 'The Green Door',
-    brand: 'Budsy Farms',
+    brand: 'canjo Farms',
     // cannabinoids: [
     //   cannabinoids[0].copyWith(amount: 0.2),
     //   cannabinoids[1].copyWith(amount: 0.1),
@@ -40,7 +40,7 @@ List<Product> mockProducts = [
       weight: 1.0,
       unit: FlowerUnit.gram,
       dispensary: 'The Green Door',
-      brand: 'Budsy Farms',
+      brand: 'canjo Farms',
       // cannabinoids: [
       //   cannabinoids[0].copyWith(amount: 0.17),
       //   cannabinoids[1].copyWith(amount: 0.02),
@@ -62,7 +62,7 @@ List<Product> mockProducts = [
       weight: 1.0,
       unit: FlowerUnit.gram,
       dispensary: 'The Green Door',
-      brand: 'Budsy Farms',
+      brand: 'canjo Farms',
       type: FlowerType.hybrid,
       // cannabinoids: [
       //   cannabinoids[0].copyWith(amount: 0.27),
@@ -85,7 +85,7 @@ List<Product> mockProducts = [
     weight: 1.0,
     unit: FlowerUnit.gram,
     dispensary: 'The Green Door',
-    brand: 'Budsy Farms',
+    brand: 'canjo Farms',
     type: FlowerType.hybrid,
     // cannabinoids: [
     //   cannabinoids[0].copyWith(amount: 0.2),
@@ -110,7 +110,7 @@ List<Product> mockProducts = [
       weight: 1.0,
       unit: FlowerUnit.gram,
       dispensary: 'The Green Door',
-      brand: 'Budsy Farms',
+      brand: 'canjo Farms',
       type: FlowerType.hybrid,
       // cannabinoids: [
       //   cannabinoids[0].copyWith(amount: 0.2),

@@ -1,4 +1,4 @@
-import 'package:budsy/journal/model/feeling.dart';
+import 'package:canjo/journal/model/feeling.dart';
 
 List<Feeling> mockFeelings = [
   Feeling(

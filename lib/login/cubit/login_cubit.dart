@@ -1,9 +1,9 @@
 import 'package:bloc/bloc.dart';
-import 'package:budsy/app/router.dart';
-import 'package:budsy/app/snackbars.dart';
-import 'package:budsy/auth/repository/auth_repository.dart';
-import 'package:budsy/consts.dart';
-import 'package:budsy/subscription/subscription_repository.dart';
+import 'package:canjo/app/router.dart';
+import 'package:canjo/app/snackbars.dart';
+import 'package:canjo/auth/repository/auth_repository.dart';
+import 'package:canjo/consts.dart';
+import 'package:canjo/subscription/subscription_repository.dart';
 import 'package:meta/meta.dart';
 import 'package:supabase/supabase.dart' as supabase;
 import 'package:supabase_flutter/supabase_flutter.dart';

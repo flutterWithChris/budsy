@@ -1,10 +1,10 @@
 import 'dart:io';
 
-import 'package:budsy/app/snackbars.dart';
-import 'package:budsy/app/system/bottom_nav.dart';
-import 'package:budsy/login/cubit/login_cubit.dart';
-import 'package:budsy/onboarding/onboarding_page.dart';
-import 'package:budsy/subscription/bloc/subscription_bloc.dart';
+import 'package:canjo/app/snackbars.dart';
+import 'package:canjo/app/system/bottom_nav.dart';
+import 'package:canjo/login/cubit/login_cubit.dart';
+import 'package:canjo/onboarding/onboarding_page.dart';
+import 'package:canjo/subscription/bloc/subscription_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';

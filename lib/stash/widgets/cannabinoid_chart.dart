@@ -1,6 +1,6 @@
-import 'package:budsy/app/colors.dart';
-import 'package:budsy/stash/bloc/product_details_bloc.dart';
-import 'package:budsy/stash/model/cannabinoid.dart';
+import 'package:canjo/app/colors.dart';
+import 'package:canjo/stash/bloc/product_details_bloc.dart';
+import 'package:canjo/stash/model/cannabinoid.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

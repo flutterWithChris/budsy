@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
-import 'package:budsy/journal/model/feeling.dart';
-import 'package:budsy/journal/repository/feelings_repository.dart';
+import 'package:canjo/journal/model/feeling.dart';
+import 'package:canjo/journal/repository/feelings_repository.dart';
 import 'package:equatable/equatable.dart';
 
 part 'feelings_state.dart';

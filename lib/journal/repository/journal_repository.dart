@@ -1,6 +1,6 @@
-import 'package:budsy/journal/model/feeling.dart';
-import 'package:budsy/journal/model/journal_entry.dart';
-import 'package:budsy/stash/model/product.dart';
+import 'package:canjo/journal/model/feeling.dart';
+import 'package:canjo/journal/model/journal_entry.dart';
+import 'package:canjo/stash/model/product.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class JournalRepository {

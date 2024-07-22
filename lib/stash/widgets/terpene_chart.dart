@@ -1,6 +1,6 @@
-import 'package:budsy/app/colors.dart';
-import 'package:budsy/app/icons.dart';
-import 'package:budsy/stash/model/terpene.dart';
+import 'package:canjo/app/colors.dart';
+import 'package:canjo/app/icons.dart';
+import 'package:canjo/stash/model/terpene.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';

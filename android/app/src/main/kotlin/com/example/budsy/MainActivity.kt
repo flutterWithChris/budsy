@@ -1,4 +1,4 @@
-package com.example.budsy
+package com.example.canjo
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 
