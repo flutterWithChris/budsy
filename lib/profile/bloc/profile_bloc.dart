@@ -28,7 +28,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         _loginCubit = loginCubit,
         super(ProfileInitial()) {
     _authBlocSubscription = _authBloc.stream.listen((authState) {
-      if (authState.status == AuthStatus.authenticated) {
+      if (authState.status == AuthStatus.authenticated && state is ProfileLoading == false) {
         add(LoadProfile());
       }
     });
