@@ -37,7 +37,7 @@ class _ViewProductPageState extends State<ViewProductPage> {
         body: CustomScrollView(
           slivers: [
             SliverAppBar.medium(
-              title: Row(
+              title: const Row(
                 children: [
                   Text(
                     'Product',
@@ -86,10 +86,11 @@ class _ViewProductPageState extends State<ViewProductPage> {
                           child: Column(
                             children: [
                               if (product.images.isNotNullOrEmpty)
-                              Padding(
-                                padding: EdgeInsets.all(8),
-                                child: Image.network(state.product.images!.first),
-                              ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8),
+                                  child: Image.network(
+                                      state.product.images!.first),
+                                ),
                               Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 8.0),
@@ -397,7 +398,7 @@ class _ViewProductPageState extends State<ViewProductPage> {
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Flexible(child: TerpeneEmptyCard()),
+                          Flexible(child: LoadingTerpeneCard()),
                         ],
                       ),
                     );
@@ -439,7 +440,7 @@ class _ViewProductPageState extends State<ViewProductPage> {
                               terpenes: state.terpenes,
                             ))
                           else
-                            const Flexible(child: TerpeneEmptyCard()),
+                            const Flexible(child: SizedBox()),
                         ],
                       ),
                     );
@@ -523,8 +524,8 @@ class AddCannabinoidsCard extends StatelessWidget {
   }
 }
 
-class TerpeneEmptyCard extends StatelessWidget {
-  const TerpeneEmptyCard({
+class LoadingTerpeneCard extends StatelessWidget {
+  const LoadingTerpeneCard({
     super.key,
   });
 
@@ -604,6 +605,47 @@ class TerpeneEmptyCard extends StatelessWidget {
                         curve: Curves.easeInOutSine,
                         color: Theme.of(context).colorScheme.tertiary,
                       )),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class EmptyTerpeneCard extends StatelessWidget {
+  const EmptyTerpeneCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AspectRatio(
+      aspectRatio: 1.0,
+      child: Card(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            // Example of a terpene chart
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 16.0, top: 16.0),
+                child: Row(
+                  children: [
+                    PhosphorIcon(PhosphorIcons.leaf(), size: 20),
+                    const Gap(size: 8.0),
+                    Text('Terpenes',
+                        style: Theme.of(context).textTheme.titleMedium),
+                  ],
+                ),
+              ),
+            ),
+            const Expanded(
+              flex: 7,
+              child: Padding(
+                padding: EdgeInsets.only(top: 8.0),
+                child: Center(
+                  child: Text('No terpenes added'),
+                ),
+              ),
             ),
           ],
         ),

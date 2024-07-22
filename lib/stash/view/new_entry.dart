@@ -28,7 +28,8 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
   String? _filePath;
   LabReport? labReport;
   final bool _isProcessing = false;
-  IconData? _selectedCategoryIcon;
+  IconData _selectedCategoryIcon =
+      PhosphorIcons.plant(PhosphorIconsStyle.duotone);
   IconData? _selectedTypeIcon;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _costController = TextEditingController();
@@ -40,7 +41,7 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
     name: null,
     images: [],
     description: null,
-    category: null,
+    category: ProductCategory.flower,
     type: null,
     price: null,
     weight: null,
@@ -57,6 +58,7 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
   List<Cannabinoid>? requiredCannabinoids;
   List<Terpene> selectedTerpenes = [];
   List<Terpene> allTerpenes = [];
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
   void initState() {
     selectedCannabinoids = context
@@ -135,107 +137,112 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
         appBar: AppBar(
           title: const Text('Add To Stash'),
         ),
-        body: Column(
-          children: [
-            Expanded(
-              child: CustomScrollView(slivers: [
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 16.0, horizontal: 16.0),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            _imageFile != null
-                                ? Flexible(
-                                    child: Padding(
-                                      padding:
-                                          const EdgeInsets.only(right: 16.0),
-                                      child: AspectRatio(
-                                        aspectRatio: 1,
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(16),
-                                          child: Image.file(
-                                            File(_imageFile!.path),
-                                            fit: BoxFit.cover,
+        body: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              Expanded(
+                child: CustomScrollView(slivers: [
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 16.0, horizontal: 16.0),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              _imageFile != null
+                                  ? Flexible(
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 16.0),
+                                        child: AspectRatio(
+                                          aspectRatio: 1,
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(16),
+                                            child: Image.file(
+                                              File(_imageFile!.path),
+                                              fit: BoxFit.cover,
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  )
-                                : Flexible(
-                                    child: Padding(
-                                      padding:
-                                          const EdgeInsets.only(right: 16.0),
-                                      child: AspectRatio(
-                                        aspectRatio: 1,
-                                        child: Card(
-                                          // decoration: BoxDecoration(
-                                          //   borderRadius: BorderRadius.circular(16),
-                                          //   border: Border.all(
-                                          //     color: Theme.of(context)
-                                          //         .colorScheme
-                                          //         .onSurface,
-                                          //   ),
-                                          // ),
-                                          child: InkWell(
-                                            onTap: () async {
-                                              try {
-                                                await showImagePicker(context)
-                                                    .then((value) async {
-                                                  if (value != null) {
-                                                    final filePath = value.path;
-                                                    setState(() {
-                                                      _filePath = filePath;
-                                                      _imageFile = value;
-                                                    });
+                                    )
+                                  : Flexible(
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 16.0),
+                                        child: AspectRatio(
+                                          aspectRatio: 1,
+                                          child: Card(
+                                            // decoration: BoxDecoration(
+                                            //   borderRadius: BorderRadius.circular(16),
+                                            //   border: Border.all(
+                                            //     color: Theme.of(context)
+                                            //         .colorScheme
+                                            //         .onSurface,
+                                            //   ),
+                                            // ),
+                                            child: InkWell(
+                                              onTap: () async {
+                                                try {
+                                                  await showImagePicker(context)
+                                                      .then((value) async {
+                                                    if (value != null) {
+                                                      final filePath =
+                                                          value.path;
+                                                      setState(() {
+                                                        _filePath = filePath;
+                                                        _imageFile = value;
+                                                      });
 
-                                                    _product =
-                                                        _product.copyWith(
-                                                      images: [filePath],
-                                                    );
-                                                    print(
-                                                        'Product: ${_product.toString()}');
-                                                  }
-                                                });
-                                              } catch (e) {
-                                                print(e);
-                                              }
-                                            },
-                                            child: Center(
-                                              child: IconButton(
-                                                onPressed: () async {
-                                                  try {
-                                                    await showImagePicker(
-                                                            context)
-                                                        .then((value) async {
-                                                      if (value != null) {
-                                                        final filePath =
-                                                            value.path;
-                                                        setState(() {
-                                                          _filePath = filePath;
-                                                          _imageFile = value;
-                                                        });
+                                                      _product =
+                                                          _product.copyWith(
+                                                        images: [filePath],
+                                                      );
+                                                      print(
+                                                          'Product: ${_product.toString()}');
+                                                    }
+                                                  });
+                                                } catch (e) {
+                                                  print(e);
+                                                }
+                                              },
+                                              child: Center(
+                                                child: IconButton(
+                                                  onPressed: () async {
+                                                    try {
+                                                      await showImagePicker(
+                                                              context)
+                                                          .then((value) async {
+                                                        if (value != null) {
+                                                          final filePath =
+                                                              value.path;
+                                                          setState(() {
+                                                            _filePath =
+                                                                filePath;
+                                                            _imageFile = value;
+                                                          });
 
-                                                        _product =
-                                                            _product.copyWith(
-                                                          images: [filePath],
-                                                        );
-                                                        print(
-                                                            'Product: ${_product.toString()}');
-                                                      }
-                                                    });
-                                                  } catch (e) {
-                                                    print(e);
-                                                  }
-                                                },
-                                                icon: PhosphorIcon(
-                                                  PhosphorIcons.imageSquare(
-                                                      PhosphorIconsStyle
-                                                          .duotone),
-                                                  size: 32,
+                                                          _product =
+                                                              _product.copyWith(
+                                                            images: [filePath],
+                                                          );
+                                                          print(
+                                                              'Product: ${_product.toString()}');
+                                                        }
+                                                      });
+                                                    } catch (e) {
+                                                      print(e);
+                                                    }
+                                                  },
+                                                  icon: PhosphorIcon(
+                                                    PhosphorIcons.imageSquare(
+                                                        PhosphorIconsStyle
+                                                            .duotone),
+                                                    size: 32,
+                                                  ),
                                                 ),
                                               ),
                                             ),
@@ -243,51 +250,261 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                                         ),
                                       ),
                                     ),
+                              Flexible(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        // _imageFile != null
+                                        //     ? const SizedBox()
+                                        //     : IconButton.filled(
+                                        //         onPressed: () async {
+                                        //           try {
+                                        //             await showImagePicker(context);
+                                        //           } catch (e) {
+                                        //             print(e);
+                                        //           }
+                                        //         },
+                                        //         icon: const Icon(Icons.camera)),
+                                        // _imageFile != null
+                                        //     ? const SizedBox()
+                                        //     : const Gap(size: 8),
+                                        Expanded(
+                                            flex: 5,
+                                            child: TextFormField(
+                                              validator: (value) {
+                                                if (value == null ||
+                                                    value.isEmpty) {
+                                                  return 'Please enter a name';
+                                                }
+                                                return null;
+                                              },
+                                              controller: _nameController,
+                                              onChanged: (value) =>
+                                                  setState(() {
+                                                _product = _product.copyWith(
+                                                    name: value);
+                                              }),
+                                              textCapitalization:
+                                                  TextCapitalization.words,
+                                              decoration: const InputDecoration(
+                                                label: Text('Name'),
+                                                hintText:
+                                                    'Jack Herer, Dreamberry Gummies, etc.',
+                                                floatingLabelBehavior:
+                                                    FloatingLabelBehavior
+                                                        .always,
+                                              ),
+                                            )),
+                                      ],
+                                    ),
+                                    const Gap(size: 16),
+                                    DropdownMenu(
+                                      initialSelection: _product.category,
+                                      //  errorText: 'Please select a category',
+                                      menuStyle: MenuStyle(
+                                        shape: WidgetStatePropertyAll(
+                                          RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(16),
+                                          ),
+                                        ),
+                                      ),
+                                      onSelected: (value) {
+                                        setState(() {
+                                          if (value != null) {
+                                            _product = _product.copyWith(
+                                                category: value);
+                                            print(
+                                                'Product: ${_product.toString()}');
+                                            switch (value) {
+                                              case ProductCategory.flower:
+                                                _selectedCategoryIcon =
+                                                    PhosphorIcons.plant(
+                                                        PhosphorIconsStyle
+                                                            .duotone);
+                                                break;
+                                              case ProductCategory.edible:
+                                                _selectedCategoryIcon =
+                                                    PhosphorIcons.cookie(
+                                                        PhosphorIconsStyle
+                                                            .duotone);
+                                                break;
+                                              case ProductCategory.concentrate:
+                                                _selectedCategoryIcon =
+                                                    PhosphorIcons.drop(
+                                                        PhosphorIconsStyle
+                                                            .duotone);
+                                                break;
+                                              case ProductCategory.cartridge:
+                                                _selectedCategoryIcon =
+                                                    PhosphorIcons.cloud(
+                                                        PhosphorIconsStyle
+                                                            .duotone);
+                                                break;
+                                              case ProductCategory.topical:
+                                                _selectedCategoryIcon =
+                                                    PhosphorIcons.jarLabel(
+                                                        PhosphorIconsStyle
+                                                            .duotone);
+                                                break;
+                                              default:
+                                                _selectedCategoryIcon =
+                                                    PhosphorIcons.question(
+                                                        PhosphorIconsStyle
+                                                            .duotone);
+                                            }
+                                          }
+                                        });
+                                      },
+                                      label: const Text('Category'),
+                                      leadingIcon: _selectedCategoryIcon == null
+                                          ? null
+                                          : PhosphorIcon(_selectedCategoryIcon),
+                                      expandedInsets: EdgeInsets.zero,
+                                      dropdownMenuEntries: [
+                                        DropdownMenuEntry(
+                                          leadingIcon: PhosphorIcon(
+                                              PhosphorIcons.plant(
+                                                  PhosphorIconsStyle.duotone)),
+                                          label: 'Flower',
+                                          value: ProductCategory.flower,
+                                        ),
+                                        DropdownMenuEntry(
+                                          leadingIcon: PhosphorIcon(
+                                              PhosphorIcons.cookie(
+                                                  PhosphorIconsStyle.duotone)),
+                                          label: 'Edible',
+                                          value: ProductCategory.edible,
+                                        ),
+                                        DropdownMenuEntry(
+                                          leadingIcon: PhosphorIcon(
+                                              PhosphorIcons.drop(
+                                                  PhosphorIconsStyle.duotone)),
+                                          label: 'Concentrate',
+                                          value: ProductCategory.concentrate,
+                                        ),
+                                        DropdownMenuEntry(
+                                          leadingIcon: PhosphorIcon(
+                                              PhosphorIcons.cloud(
+                                                  PhosphorIconsStyle.duotone)),
+                                          label: 'Vape',
+                                          value: ProductCategory.cartridge,
+                                        ),
+                                        DropdownMenuEntry(
+                                          leadingIcon: PhosphorIcon(
+                                              PhosphorIcons.jarLabel(
+                                                  PhosphorIconsStyle.duotone)),
+                                          label: 'Topical',
+                                          value: ProductCategory.topical,
+                                        ),
+                                      ],
+                                    ),
+                                    const Gap(size: 16),
+                                    DropdownMenu(
+                                      expandedInsets: EdgeInsets.zero,
+                                      label: const Text('Type'),
+                                      leadingIcon: _selectedTypeIcon == null
+                                          ? null
+                                          : PhosphorIcon(_selectedTypeIcon!),
+                                      onSelected: (value) {
+                                        setState(() {
+                                          if (value != null) {
+                                            _product =
+                                                _product.copyWith(type: value);
+                                            print(
+                                                'Product: ${_product.toString()}');
+                                            switch (value) {
+                                              case FlowerType.sativa:
+                                                _selectedTypeIcon =
+                                                    PhosphorIcons.lightning(
+                                                        PhosphorIconsStyle
+                                                            .duotone);
+                                                break;
+                                              case FlowerType.indica:
+                                                _selectedTypeIcon =
+                                                    PhosphorIcons.waves(
+                                                        PhosphorIconsStyle
+                                                            .duotone);
+                                                break;
+                                              case FlowerType.hybrid:
+                                                _selectedTypeIcon =
+                                                    PhosphorIcons.intersect(
+                                                        PhosphorIconsStyle
+                                                            .duotone);
+                                                break;
+                                              default:
+                                                _selectedTypeIcon = null;
+                                            }
+                                          }
+                                        });
+                                      },
+                                      dropdownMenuEntries: [
+                                        DropdownMenuEntry(
+                                          leadingIcon: PhosphorIcon(
+                                              PhosphorIcons.lightning(
+                                                  PhosphorIconsStyle.duotone)),
+                                          label: 'Sativa',
+                                          value: FlowerType.sativa,
+                                        ),
+                                        DropdownMenuEntry(
+                                          leadingIcon: PhosphorIcon(
+                                              PhosphorIcons.waves(
+                                                  PhosphorIconsStyle.duotone)),
+                                          label: 'Indica',
+                                          value: FlowerType.indica,
+                                        ),
+                                        DropdownMenuEntry(
+                                          leadingIcon: PhosphorIcon(
+                                              PhosphorIcons.intersect(
+                                                  PhosphorIconsStyle.duotone)),
+                                          label: 'Hybrid',
+                                          value: FlowerType.hybrid,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Gap(size: 16),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  keyboardType:
+                                      const TextInputType.numberWithOptions(
+                                          signed: true),
+                                  textInputAction: TextInputAction.done,
+                                  controller: _costController,
+                                  validator: (value) {
+                                    if (value != null &&
+                                        double.tryParse(value) == null) {
+                                      return 'Please enter a valid number';
+                                    }
+                                    return null;
+                                  },
+                                  decoration: const InputDecoration(
+                                    label: Text('Cost'),
+                                    hintText: '100, 50, 25, etc.',
+                                    floatingLabelBehavior:
+                                        FloatingLabelBehavior.always,
+                                    prefixIcon: Padding(
+                                      padding: EdgeInsets.only(left: 8.0),
+                                      child: Text('\$'),
+                                    ),
+                                    prefixIconConstraints: BoxConstraints(
+                                        minWidth: 20, minHeight: 0),
                                   ),
-                            Flexible(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      // _imageFile != null
-                                      //     ? const SizedBox()
-                                      //     : IconButton.filled(
-                                      //         onPressed: () async {
-                                      //           try {
-                                      //             await showImagePicker(context);
-                                      //           } catch (e) {
-                                      //             print(e);
-                                      //           }
-                                      //         },
-                                      //         icon: const Icon(Icons.camera)),
-                                      // _imageFile != null
-                                      //     ? const SizedBox()
-                                      //     : const Gap(size: 8),
-                                      Expanded(
-                                          flex: 5,
-                                          child: TextField(
-                                            controller: _nameController,
-                                            onChanged: (value) => setState(() {
-                                              _product = _product.copyWith(
-                                                  name: value);
-                                            }),
-                                            textCapitalization:
-                                                TextCapitalization.words,
-                                            decoration: const InputDecoration(
-                                              label: Text('Name'),
-                                              hintText:
-                                                  'Jack Herer, Dreamberry Gummies, etc.',
-                                              floatingLabelBehavior:
-                                                  FloatingLabelBehavior.always,
-                                            ),
-                                          )),
-                                    ],
-                                  ),
-                                  const Gap(size: 16),
-                                  DropdownMenu(
+                                ),
+                              ),
+                              const Gap(size: 16),
+                              Expanded(
+                                child: DropdownMenu(
                                     menuStyle: MenuStyle(
                                       shape: WidgetStatePropertyAll(
                                         RoundedRectangleBorder(
@@ -296,515 +513,309 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                                         ),
                                       ),
                                     ),
-                                    onSelected: (value) {
-                                      setState(() {
-                                        if (value != null) {
-                                          _product = _product.copyWith(
-                                              category: value);
-                                          print(
-                                              'Product: ${_product.toString()}');
-                                          switch (value) {
-                                            case ProductCategory.flower:
-                                              _selectedCategoryIcon =
-                                                  PhosphorIcons.plant(
-                                                      PhosphorIconsStyle
-                                                          .duotone);
-                                              break;
-                                            case ProductCategory.edible:
-                                              _selectedCategoryIcon =
-                                                  PhosphorIcons.cookie(
-                                                      PhosphorIconsStyle
-                                                          .duotone);
-                                              break;
-                                            case ProductCategory.concentrate:
-                                              _selectedCategoryIcon =
-                                                  PhosphorIcons.drop(
-                                                      PhosphorIconsStyle
-                                                          .duotone);
-                                              break;
-                                            case ProductCategory.cartridge:
-                                              _selectedCategoryIcon =
-                                                  PhosphorIcons.cloud(
-                                                      PhosphorIconsStyle
-                                                          .duotone);
-                                              break;
-                                            case ProductCategory.topical:
-                                              _selectedCategoryIcon =
-                                                  PhosphorIcons.jarLabel(
-                                                      PhosphorIconsStyle
-                                                          .duotone);
-                                              break;
-                                            default:
-                                              _selectedCategoryIcon = null;
-                                          }
-                                        }
-                                      });
-                                    },
-                                    label: const Text('Category'),
-                                    leadingIcon: _selectedCategoryIcon == null
-                                        ? null
-                                        : PhosphorIcon(_selectedCategoryIcon!),
+                                    onSelected: (value) => setState(() {
+                                          _flowerUnit = value;
+                                        }),
                                     expandedInsets: EdgeInsets.zero,
-                                    dropdownMenuEntries: [
+                                    dropdownMenuEntries: const [
                                       DropdownMenuEntry(
-                                        leadingIcon: PhosphorIcon(
-                                            PhosphorIcons.plant(
-                                                PhosphorIconsStyle.duotone)),
-                                        label: 'Flower',
-                                        value: ProductCategory.flower,
+                                        label: 'Per Product',
+                                        value: FlowerUnit.per,
                                       ),
                                       DropdownMenuEntry(
-                                        leadingIcon: PhosphorIcon(
-                                            PhosphorIcons.cookie(
-                                                PhosphorIconsStyle.duotone)),
-                                        label: 'Edible',
-                                        value: ProductCategory.edible,
+                                        label: 'Gram (1g)',
+                                        value: FlowerUnit.gram,
                                       ),
                                       DropdownMenuEntry(
-                                        leadingIcon: PhosphorIcon(
-                                            PhosphorIcons.drop(
-                                                PhosphorIconsStyle.duotone)),
-                                        label: 'Concentrate',
-                                        value: ProductCategory.concentrate,
+                                        label: 'Eighth (3.5g)',
+                                        value: FlowerUnit.eighth,
                                       ),
                                       DropdownMenuEntry(
-                                        leadingIcon: PhosphorIcon(
-                                            PhosphorIcons.cloud(
-                                                PhosphorIconsStyle.duotone)),
-                                        label: 'Vape',
-                                        value: ProductCategory.cartridge,
+                                        label: 'Quarter (7g)',
+                                        value: FlowerUnit.quarter,
                                       ),
                                       DropdownMenuEntry(
-                                        leadingIcon: PhosphorIcon(
-                                            PhosphorIcons.jarLabel(
-                                                PhosphorIconsStyle.duotone)),
-                                        label: 'Topical',
-                                        value: ProductCategory.topical,
+                                        label: 'Half (14g)',
+                                        value: FlowerUnit.half,
+                                      ),
+                                      DropdownMenuEntry(
+                                        label: 'Ounce (28g)',
+                                        value: FlowerUnit.ounce,
                                       ),
                                     ],
-                                  ),
-                                  const Gap(size: 16),
-                                  DropdownMenu(
-                                    expandedInsets: EdgeInsets.zero,
-                                    label: const Text('Type'),
-                                    leadingIcon: _selectedTypeIcon == null
-                                        ? null
-                                        : PhosphorIcon(_selectedTypeIcon!),
-                                    onSelected: (value) {
-                                      setState(() {
-                                        if (value != null) {
-                                          _product =
-                                              _product.copyWith(type: value);
-                                          print(
-                                              'Product: ${_product.toString()}');
-                                          switch (value) {
-                                            case FlowerType.sativa:
-                                              _selectedTypeIcon =
-                                                  PhosphorIcons.lightning(
-                                                      PhosphorIconsStyle
-                                                          .duotone);
-                                              break;
-                                            case FlowerType.indica:
-                                              _selectedTypeIcon =
-                                                  PhosphorIcons.waves(
-                                                      PhosphorIconsStyle
-                                                          .duotone);
-                                              break;
-                                            case FlowerType.hybrid:
-                                              _selectedTypeIcon =
-                                                  PhosphorIcons.intersect(
-                                                      PhosphorIconsStyle
-                                                          .duotone);
-                                              break;
-                                            default:
-                                              _selectedTypeIcon = null;
-                                          }
-                                        }
-                                      });
-                                    },
-                                    dropdownMenuEntries: [
-                                      DropdownMenuEntry(
-                                        leadingIcon: PhosphorIcon(
-                                            PhosphorIcons.lightning(
-                                                PhosphorIconsStyle.duotone)),
-                                        label: 'Sativa',
-                                        value: FlowerType.sativa,
-                                      ),
-                                      DropdownMenuEntry(
-                                        leadingIcon: PhosphorIcon(
-                                            PhosphorIcons.waves(
-                                                PhosphorIconsStyle.duotone)),
-                                        label: 'Indica',
-                                        value: FlowerType.indica,
-                                      ),
-                                      DropdownMenuEntry(
-                                        leadingIcon: PhosphorIcon(
-                                            PhosphorIcons.intersect(
-                                                PhosphorIconsStyle.duotone)),
-                                        label: 'Hybrid',
-                                        value: FlowerType.hybrid,
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                    label: const Text('Unit')),
                               ),
-                            ),
-                          ],
-                        ),
-                        const Gap(size: 16),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextFormField(
-                                keyboardType:
-                                    const TextInputType.numberWithOptions(
-                                        signed: true),
-                                textInputAction: TextInputAction.done,
-                                controller: _costController,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter a cost';
-                                  } else if (double.tryParse(value) == null) {
-                                    return 'Please enter a valid number';
-                                  }
-                                  return null;
-                                },
-                                decoration: const InputDecoration(
-                                  label: Text('Cost'),
-                                  hintText: '100, 50, 25, etc.',
-                                  floatingLabelBehavior:
-                                      FloatingLabelBehavior.always,
-                                  prefixIcon: Padding(
-                                    padding: EdgeInsets.only(left: 8.0),
-                                    child: Text('\$'),
-                                  ),
-                                  prefixIconConstraints: BoxConstraints(
-                                      minWidth: 20, minHeight: 0),
-                                ),
-                              ),
-                            ),
-                            const Gap(size: 16),
-                            Expanded(
-                              child: DropdownMenu(
-                                  menuStyle: MenuStyle(
-                                    shape: WidgetStatePropertyAll(
-                                      RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
-                                    ),
-                                  ),
-                                  onSelected: (value) => setState(() {
-                                        _flowerUnit = value;
-                                      }),
-                                  expandedInsets: EdgeInsets.zero,
-                                  dropdownMenuEntries: const [
-                                    DropdownMenuEntry(
-                                      label: 'Gram (1g)',
-                                      value: FlowerUnit.gram,
-                                    ),
-                                    DropdownMenuEntry(
-                                      label: 'Eighth (3.5g)',
-                                      value: FlowerUnit.eighth,
-                                    ),
-                                    DropdownMenuEntry(
-                                      label: 'Quarter (7g)',
-                                      value: FlowerUnit.quarter,
-                                    ),
-                                    DropdownMenuEntry(
-                                      label: 'Half (14g)',
-                                      value: FlowerUnit.half,
-                                    ),
-                                    DropdownMenuEntry(
-                                      label: 'Ounce (28g)',
-                                      value: FlowerUnit.ounce,
-                                    ),
-                                  ],
-                                  label: const Text('Unit')),
-                            ),
-                          ],
-                        ),
-                        const Gap(size: 16),
-                        const Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                textCapitalization: TextCapitalization.words,
-                                decoration: InputDecoration(
-                                  labelText: 'Dispensary',
-                                  hintText: 'Green Thumb, The Green Door, etc',
-                                  floatingLabelBehavior:
-                                      FloatingLabelBehavior.always,
-                                ),
-                              ),
-                            ),
-                            Gap(size: 16),
-                            Expanded(
-                              child: TextField(
-                                textCapitalization: TextCapitalization.words,
-                                decoration: InputDecoration(
-                                  labelText: 'Brand',
-                                  hintText: 'Cookies, Bloom Farms, etc.',
-                                  floatingLabelBehavior:
-                                      FloatingLabelBehavior.always,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const Gap(size: 16),
-                        // if (requiredCannabinoids != null)
-                        //   for (Cannabinoid cannabinoid in selectedCannabinoids)
-                        //     CannabinoidTextFields(
-                        //         cannabinoid: cannabinoid,
-                        //         selectedCannabinoids: selectedCannabinoids),
-                        Row(
-                          children: [
-                            PhosphorIcon(
-                              PhosphorIcons.hexagon(
-                                PhosphorIconsStyle.duotone,
-                              ),
-                              size: 20,
-                            ),
-                            const Gap(size: 8),
-                            Text(
-                              'Cannabinoids',
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                          ],
-                        ),
-                        const Gap(size: 8),
-                        // Dropdown for Cannabinoids
-                        for (Cannabinoid cannabinoid in selectedCannabinoids)
-                          CannabinoidTextFields(
-                            cannabinoid: cannabinoid,
-                            onSelectCannabinoid: (selectedCannabinoid) {
-                              if (selectedCannabinoid == null) {
-                                return;
-                              }
-                              if (selectedCannabinoids.any(
-                                  (c) => c.name == selectedCannabinoid.name)) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                        'You have already added this cannabinoid'),
-                                  ),
-                                );
-                                return;
-                              }
-                              setState(() {
-                                selectedCannabinoids.remove(cannabinoid);
-                                selectedCannabinoids.add(selectedCannabinoid);
-                              });
-                            },
-                            onUpdateValue: (value) {
-                              if (value == null) {
-                                return;
-                              }
-                              setState(() {
-                                selectedCannabinoids.remove(cannabinoid);
-                                selectedCannabinoids.add(
-                                  cannabinoid.copyWith(
-                                      amount: double.tryParse(value)),
-                                );
-                              });
-                            },
-                            onRemoveCannabinoid: () {
-                              setState(() {
-                                selectedCannabinoids.remove(cannabinoid);
-                              });
-                            },
+                            ],
                           ),
-                        const Gap(size: 8),
+                          const Gap(size: 16),
+                          const Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  textCapitalization: TextCapitalization.words,
+                                  decoration: InputDecoration(
+                                    labelText: 'Dispensary',
+                                    hintText:
+                                        'Green Thumb, The Green Door, etc',
+                                    floatingLabelBehavior:
+                                        FloatingLabelBehavior.always,
+                                  ),
+                                ),
+                              ),
+                              Gap(size: 16),
+                              Expanded(
+                                child: TextField(
+                                  textCapitalization: TextCapitalization.words,
+                                  decoration: InputDecoration(
+                                    labelText: 'Brand',
+                                    hintText: 'Cookies, Bloom Farms, etc.',
+                                    floatingLabelBehavior:
+                                        FloatingLabelBehavior.always,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Gap(size: 16),
+                          // if (requiredCannabinoids != null)
+                          //   for (Cannabinoid cannabinoid in selectedCannabinoids)
+                          //     CannabinoidTextFields(
+                          //         cannabinoid: cannabinoid,
+                          //         selectedCannabinoids: selectedCannabinoids),
+                          Row(
+                            children: [
+                              PhosphorIcon(
+                                PhosphorIcons.hexagon(
+                                  PhosphorIconsStyle.duotone,
+                                ),
+                                size: 20,
+                              ),
+                              const Gap(size: 8),
+                              Text(
+                                'Cannabinoids',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                            ],
+                          ),
+                          const Gap(size: 8),
+                          // Dropdown for Cannabinoids
+                          for (Cannabinoid cannabinoid in selectedCannabinoids)
+                            CannabinoidTextFields(
+                              cannabinoid: cannabinoid,
+                              onSelectCannabinoid: (selectedCannabinoid) {
+                                if (selectedCannabinoid == null) {
+                                  return;
+                                }
+                                if (selectedCannabinoids.any((c) =>
+                                    c.name == selectedCannabinoid.name)) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                          'You have already added this cannabinoid'),
+                                    ),
+                                  );
+                                  return;
+                                }
+                                setState(() {
+                                  selectedCannabinoids.remove(cannabinoid);
+                                  selectedCannabinoids.add(selectedCannabinoid);
+                                });
+                              },
+                              onUpdateValue: (value) {
+                                if (value == null) {
+                                  return;
+                                }
+                                setState(() {
+                                  selectedCannabinoids.remove(cannabinoid);
+                                  selectedCannabinoids.add(
+                                    cannabinoid.copyWith(
+                                        amount: double.tryParse(value)),
+                                  );
+                                });
+                              },
+                              onRemoveCannabinoid: () {
+                                setState(() {
+                                  selectedCannabinoids.remove(cannabinoid);
+                                });
+                              },
+                            ),
+                          const Gap(size: 8),
 
-                        OutlinedButton.icon(
-                          onPressed: () {
-                            setState(() {
-                              if (selectedCannabinoids.length >=
-                                  context
-                                      .read<StashBloc>()
-                                      .allCannabinoids!
-                                      .length) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                        'You have already added all available cannabinoids'),
-                                  ),
-                                );
-                                return;
-                              }
-                              selectedCannabinoids.add(context
-                                  .read<StashBloc>()
-                                  .allCannabinoids!
-                                  .where((cannabinoid) =>
-                                      selectedCannabinoids
-                                          .contains(cannabinoid) ==
-                                      false)
-                                  .toList()
-                                  .first); // Add the next cannabinoid in the list
-                            });
-                          },
-                          icon: PhosphorIcon(
-                            PhosphorIcons.hexagon(PhosphorIconsStyle.duotone),
-                          ),
-                          label: const Text('Add Cannabinoid'),
-                        ),
-                        const Gap(size: 8),
-                        Row(
-                          children: [
-                            PhosphorIcon(
-                              PhosphorIcons.leaf(PhosphorIconsStyle.duotone),
-                              size: 20,
-                            ),
-                            const Gap(size: 8),
-                            Text('Terpenes',
-                                style: Theme.of(context).textTheme.titleMedium),
-                          ],
-                        ),
-                        const Gap(size: 8),
-                        // Terpene entry fields
-                        for (Terpene terpene in selectedTerpenes)
-                          TerpeneSelectionFields(
-                            allTerpenes: allTerpenes,
-                            terpene: terpene,
-                            onSelectTerpene: (selectedTerpene) {
-                              if (selectedTerpene == null) {
-                                return;
-                              }
+                          OutlinedButton.icon(
+                            onPressed: () {
                               setState(() {
-                                selectedTerpenes.remove(terpene);
-                                selectedTerpenes.add(selectedTerpene);
+                                if (selectedCannabinoids.length >=
+                                    context
+                                        .read<StashBloc>()
+                                        .allCannabinoids!
+                                        .length) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                          'You have already added all available cannabinoids'),
+                                    ),
+                                  );
+                                  return;
+                                }
+                                selectedCannabinoids.add(context
+                                    .read<StashBloc>()
+                                    .allCannabinoids!
+                                    .where((cannabinoid) =>
+                                        selectedCannabinoids
+                                            .contains(cannabinoid) ==
+                                        false)
+                                    .toList()
+                                    .first); // Add the next cannabinoid in the list
                               });
-                            },
-                            onUpdateValue: (value) {
-                              if (value == null) {
-                                return;
-                              }
-                              setState(() {
-                                selectedTerpenes.remove(terpene);
-                                selectedTerpenes.add(
-                                  terpene.copyWith(
-                                      amount: double.tryParse(value)),
-                                );
-                              });
-                            },
-                            onRemoveTerpene: () {
-                              setState(() {
-                                selectedTerpenes.remove(terpene);
-                              });
-                            },
-                          ),
-                        const Gap(size: 8),
-                        OutlinedButton.icon(
-                          onPressed: _addTerpene,
-                          icon: PhosphorIcon(
-                            PhosphorIcons.leaf(PhosphorIconsStyle.duotone),
-                          ),
-                          label: const Text('Add Terpene'),
-                        ),
-                        _isProcessing
-                            ? const CircularProgressIndicator.adaptive()
-                            : Text(labReport?.toString() ?? ''),
-                      ],
-                    ),
-                  ),
-                ),
-              ]),
-            ),
-            Card(
-              margin: EdgeInsets.zero,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(0),
-              ),
-              // decoration: BoxDecoration(
-              //   color: Theme.of(context).colorScheme.surface,
-              //   boxShadow: [
-              //     BoxShadow(
-              //       color: Theme.of(context)
-              //           .colorScheme
-              //           .onSurface
-              //           .withOpacity(0.1),
-              //       offset: const Offset(0, -2),
-              //       blurRadius: 4,
-              //     ),
-              //   ],
-              // ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 8.0,
-                  horizontal: 16.0,
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: BlocConsumer<StashBloc, StashState>(
-                        listenWhen: (previous, current) =>
-                            previous is StashLoading &&
-                                current is StashLoaded ||
-                            current is StashError,
-                        listener: (context, state) async {
-                          if (state is StashError) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                    'Error adding product: ${state.message}'),
-                              ),
-                            );
-                            await Future.delayed(const Duration(seconds: 2));
-                            context.pop();
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Product added to stash'),
-                              ),
-                            );
-                            await Future.delayed(const Duration(seconds: 2));
-                            context.pop();
-                          }
-                        },
-                        builder: (context, state) {
-                          if (state is StashLoading) {
-                            return FilledButton.tonal(
-                              onPressed: () {},
-                              child: const CircularProgressIndicator.adaptive(),
-                            );
-                          }
-                          return FilledButton.icon(
-                            onPressed: () async {
-                              Product product = Product(
-                                id: null,
-                                name: _nameController.value.text,
-                                description: null,
-                                category: _product.category,
-                                type: _product.type,
-                                price: double.tryParse(_costController.text),
-                                weight: null,
-                                unit: _flowerUnit,
-                                dispensary: _dispensaryController.text,
-                                brand: _brandController.text,
-                                cannabinoids: [
-                                  ...requiredCannabinoids ?? [],
-                                  ...selectedCannabinoids
-                                ],
-                                terpenes: selectedTerpenes,
-                              );
-                              context.read<StashBloc>().add(AddToStash(product,
-                                  _imageFile != null ? [_imageFile!] : []));
-                              // GoRouter.of(context).go('/stash');
                             },
                             icon: PhosphorIcon(
-                              PhosphorIcons.plusCircle(
-                                  PhosphorIconsStyle.regular),
+                              PhosphorIcons.hexagon(PhosphorIconsStyle.duotone),
                             ),
-                            label: const Text('Add To Stash'),
-                          );
-                        },
+                            label: const Text('Add Cannabinoid'),
+                          ),
+                          const Gap(size: 8),
+                          Row(
+                            children: [
+                              PhosphorIcon(
+                                PhosphorIcons.leaf(PhosphorIconsStyle.duotone),
+                                size: 20,
+                              ),
+                              const Gap(size: 8),
+                              Text('Terpenes',
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium),
+                            ],
+                          ),
+                          const Gap(size: 8),
+                          // Terpene entry fields
+                          for (Terpene terpene in selectedTerpenes)
+                            TerpeneSelectionFields(
+                              allTerpenes: allTerpenes,
+                              terpene: terpene,
+                              onSelectTerpene: (selectedTerpene) {
+                                if (selectedTerpene == null) {
+                                  return;
+                                }
+                                setState(() {
+                                  selectedTerpenes.remove(terpene);
+                                  selectedTerpenes.add(selectedTerpene);
+                                });
+                              },
+                              onUpdateValue: (value) {
+                                if (value == null) {
+                                  return;
+                                }
+                                setState(() {
+                                  selectedTerpenes.remove(terpene);
+                                  selectedTerpenes.add(
+                                    terpene.copyWith(
+                                        amount: double.tryParse(value)),
+                                  );
+                                });
+                              },
+                              onRemoveTerpene: () {
+                                setState(() {
+                                  selectedTerpenes.remove(terpene);
+                                });
+                              },
+                            ),
+                          const Gap(size: 8),
+                          OutlinedButton.icon(
+                            onPressed: _addTerpene,
+                            icon: PhosphorIcon(
+                              PhosphorIcons.leaf(PhosphorIconsStyle.duotone),
+                            ),
+                            label: const Text('Add Terpene'),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: BlocConsumer<StashBloc, StashState>(
+                              listenWhen: (previous, current) =>
+                                  previous is StashLoading &&
+                                      current is StashLoaded ||
+                                  current is StashError,
+                              listener: (context, state) async {
+                                if (state is StashError) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                          'Error adding product: ${state.message}'),
+                                    ),
+                                  );
+                                  await Future.delayed(
+                                      const Duration(seconds: 2));
+                                  context.pop();
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Product added to stash'),
+                                    ),
+                                  );
+                                  await Future.delayed(
+                                      const Duration(seconds: 2));
+                                  context.pop();
+                                }
+                              },
+                              builder: (context, state) {
+                                if (state is StashLoading) {
+                                  return FilledButton.tonal(
+                                    onPressed: () {},
+                                    child: const CircularProgressIndicator
+                                        .adaptive(),
+                                  );
+                                }
+                                return FilledButton.icon(
+                                  onPressed: () async {
+                                    Product product = Product(
+                                      id: null,
+                                      name: _nameController.value.text,
+                                      description: null,
+                                      category: _product.category,
+                                      type: _product.type,
+                                      price:
+                                          double.tryParse(_costController.text),
+                                      weight: null,
+                                      unit: _flowerUnit,
+                                      dispensary: _dispensaryController.text,
+                                      brand: _brandController.text,
+                                      cannabinoids: [
+                                        ...requiredCannabinoids ?? [],
+                                        ...selectedCannabinoids
+                                      ],
+                                      terpenes: selectedTerpenes,
+                                    );
+                                    context.read<StashBloc>().add(AddToStash(
+                                        product,
+                                        _imageFile != null
+                                            ? [_imageFile!]
+                                            : []));
+                                    // GoRouter.of(context).go('/stash');
+                                  },
+                                  icon: PhosphorIcon(
+                                    PhosphorIcons.plusCircle(
+                                        PhosphorIconsStyle.regular),
+                                  ),
+                                  label: const Text('Add To Stash'),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ]),
               ),
-            ),
-          ],
+            ],
+          ),
         ));
   }
 
@@ -957,6 +968,7 @@ class _TerpeneSelectionFieldsState extends State<TerpeneSelectionFields> {
               textAlign: TextAlign.end,
               controller: _valueController,
               onChanged: widget.onUpdateValue,
+              onTapOutside: (event) => FocusScope.of(context).unfocus(),
               decoration: const InputDecoration(
                 labelText: 'Value',
                 suffixText: '%',
@@ -1060,6 +1072,7 @@ class _CannabinoidTextFieldsState extends State<CannabinoidTextFields> {
           Expanded(
             flex: 3,
             child: TextField(
+              onTapOutside: (event) => FocusScope.of(context).unfocus(),
               controller: _valueController,
               onChanged: widget.onUpdateValue,
               decoration: const InputDecoration(

@@ -9,7 +9,7 @@ enum ProductCategory { flower, concentrate, edible, topical, cartridge, other }
 
 enum FlowerType { sativa, indica, hybrid }
 
-enum FlowerUnit { gram, eighth, quarter, half, ounce, other }
+enum FlowerUnit { gram, eighth, quarter, half, ounce, per }
 
 class Product with CustomDropdownListFilter {
   final String? id;
