@@ -7,6 +7,8 @@ import 'package:budsy/journal/cubit/feelings_cubit.dart';
 import 'package:budsy/journal/repository/feelings_repository.dart';
 import 'package:budsy/journal/repository/journal_repository.dart';
 import 'package:budsy/login/cubit/login_cubit.dart';
+import 'package:budsy/profile/bloc/profile_bloc.dart';
+import 'package:budsy/profile/repository/profile_repository.dart';
 import 'package:budsy/stash/bloc/product_details_bloc.dart';
 import 'package:budsy/stash/bloc/stash_bloc.dart';
 import 'package:budsy/stash/repository/product_repository.dart';
@@ -58,6 +60,9 @@ class MyApp extends StatelessWidget {
         RepositoryProvider(
           create: (context) => SubscriptionRepository(),
         ),
+        RepositoryProvider(
+          create: (context) => ProfileRepository(),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -100,9 +105,17 @@ class MyApp extends StatelessWidget {
           BlocProvider(
             lazy: false,
             create: (context) => SubscriptionBloc(
-              subscriptionRepository: context.read<SubscriptionRepository>(),
-              loginCubit: context.read<LoginCubit>()
-            )..add(SubscriptionInit(context.read<AuthBloc>().state.user?.id)),
+                subscriptionRepository: context.read<SubscriptionRepository>(),
+                loginCubit: context.read<LoginCubit>())
+              ..add(SubscriptionInit(context.read<AuthBloc>().state.user?.id)),
+          ),
+          BlocProvider(
+            lazy: false,
+            create: (context) => ProfileBloc(
+              profileRepository: context.read<ProfileRepository>(),
+              authBloc: context.read<AuthBloc>(),
+              loginCubit: context.read<LoginCubit>(),
+            ),
           ),
           BlocProvider(
             create: (context) => ThemeCubit(),

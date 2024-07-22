@@ -458,7 +458,9 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                           children: [
                             Expanded(
                               child: TextFormField(
-                                keyboardType: TextInputType.numberWithOptions(signed: true),
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                        signed: true),
                                 textInputAction: TextInputAction.done,
                                 controller: _costController,
                                 validator: (value) {
@@ -962,7 +964,7 @@ class _TerpeneSelectionFieldsState extends State<TerpeneSelectionFields> {
                 suffixText: '%',
                 floatingLabelBehavior: FloatingLabelBehavior.always,
               ),
-              keyboardType: TextInputType.numberWithOptions(signed: true),
+              keyboardType: const TextInputType.numberWithOptions(signed: true),
               textInputAction: TextInputAction.done,
             ),
           ),
