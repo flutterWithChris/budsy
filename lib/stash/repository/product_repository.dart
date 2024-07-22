@@ -23,9 +23,8 @@ class ProductRepository {
 
       return createdProduct;
     } catch (e) {
-      scaffoldKey.currentState!.showSnackBar(
-        getErrorSnackBar('Error creating product!')
-      );
+      scaffoldKey.currentState!
+          .showSnackBar(getErrorSnackBar('Error creating product!'));
       return null;
     }
   }
@@ -37,7 +36,6 @@ class ProductRepository {
           .from('products')
           .select('*')
           .eq('user_id', userId);
-
 
       return response.map((product) => Product.fromJson(product)).toList();
     } catch (e) {
@@ -65,7 +63,8 @@ class ProductRepository {
     try {
       await _supabaseClient.from('products').delete().eq('id', productId);
     } catch (e) {
-      scaffoldKey.currentState!.showSnackBar(getErrorSnackBar('Error deleting product!'));
+      scaffoldKey.currentState!
+          .showSnackBar(getErrorSnackBar('Error deleting product!'));
     }
   }
 
@@ -79,7 +78,8 @@ class ProductRepository {
 
       return Product.fromJson(response.first);
     } catch (e) {
-      scaffoldKey.currentState!.showSnackBar(getErrorSnackBar('Error fetching product!'));
+      scaffoldKey.currentState!
+          .showSnackBar(getErrorSnackBar('Error fetching product!'));
       return null;
     }
   }
@@ -92,17 +92,27 @@ class ProductRepository {
           .select('cannabinoids(*), amount')
           .eq('product_id', productId);
 
-     
       List<Cannabinoid> cannabinoids = response
           .map((cannabinoid) =>
               Cannabinoid.fromJson(cannabinoid['cannabinoids'])
                   .copyWith(amount: cannabinoid['amount']))
           .toList();
 
-
       return cannabinoids;
     } catch (e) {
       return null;
+    }
+  }
+
+  // Remove cannabinoids from a product
+  Future<void> removeProductCannabinoids(String productId) async {
+    try {
+      await _supabaseClient
+          .from('product_cannabinoids')
+          .delete()
+          .eq('product_id', productId);
+    } catch (e) {
+      return;
     }
   }
 
@@ -192,6 +202,18 @@ class ProductRepository {
     await _supabaseClient.from('product_terpenes').upsert(data);
   }
 
+  // Remove terpenes from a product
+  Future<void> removeProductTerpenes(String productId) async {
+    try {
+      await _supabaseClient
+          .from('product_terpenes')
+          .delete()
+          .eq('product_id', productId);
+    } catch (e) {
+      return;
+    }
+  }
+
   // Add images to a product
   Future<void> addProductImages(String productId, List<XFile> images) async {
     try {
@@ -215,8 +237,18 @@ class ProductRepository {
       final List<Map<String, dynamic>> data = images
           .map((image) => {'product_id': productId, 'image_url': url})
           .toList();
-    } catch (e) {
+    } catch (e) {}
+  }
 
+  // Remove images from a product
+  Future<void> removeProductImages(String productId) async {
+    try {
+      await _supabaseClient
+          .from('product_images')
+          .delete()
+          .eq('product_id', productId);
+    } catch (e) {
+      return;
     }
   }
 }
