@@ -58,7 +58,7 @@ class StashPage extends StatelessWidget {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              for (Product product in mockProducts)
+                              for (Product product in mockProducts.take(5))
                                 Opacity(
                                     opacity: 0.8,
                                     child: ProductCard(product: product)),
@@ -67,16 +67,21 @@ class StashPage extends StatelessWidget {
                         ),
                         Positioned.fill(
                             child: Container(
-                          color: Colors.black.withOpacity(0.5),
+                          color: 
+                          Theme.of(context).brightness == Brightness.dark
+                          ? Colors.black.withOpacity(0.5)
+                          : Colors.white54
                         )),
                         Positioned(
                           child: Container(
-                            decoration: const BoxDecoration(
+                            decoration:  BoxDecoration(
                               shape: BoxShape.circle,
                               // borderRadius: BorderRadius.circular(16),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black,
+                                  color: Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.black
+                                  : Colors.white,
                                   blurRadius: 48,
                                   offset: Offset(0, 8),
                                 ),

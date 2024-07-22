@@ -246,7 +246,10 @@ class LockedTrendsPage extends StatelessWidget {
             child: Padding(
           padding: const EdgeInsets.only(top: 120),
           child: Container(
-            color: Colors.black54,
+            color: 
+            Theme.of(context).brightness == Brightness.dark
+            ? Colors.black54
+            : Colors.white54
           ),
         )),
       ),
@@ -257,12 +260,15 @@ class LockedTrendsPage extends StatelessWidget {
             padding: const EdgeInsets.only(top: 120),
             child: Container(
               //  color: Theme.of(context).colorScheme.primaryContainer,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 // borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black,
+                    color: 
+                   Theme.of(context).brightness == Brightness.dark
+                    ? Colors.black
+                    : Colors.white,
                     blurRadius: 60,
                     offset: Offset(0, 8),
                   ),

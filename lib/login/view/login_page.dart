@@ -49,7 +49,6 @@ class _LoginPageState extends State<LoginPage> {
           }
           return BlocListener<LoginCubit, LoginState>(
             listener: (context, state) {
-              Navigator.of(context, rootNavigator: true).pop();
               if (state is LoginFailed) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   getErrorSnackBar('Error logging in!')
