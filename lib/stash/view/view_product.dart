@@ -301,7 +301,7 @@ class _ViewProductPageState extends State<ViewProductPage> {
                                             ),
                                             Text(
                                                 product.unit != null
-                                                    ? '\$${product.price!.toStringAsFixed(0)}/${product.unit?.name}'
+                                                    ? '\$${product.price!.toStringAsFixed(0)}/${product.unit?.name[0]}'
                                                     : '\$${product.price!.toStringAsFixed(0)}',
                                                 style: Theme.of(context)
                                                     .textTheme
