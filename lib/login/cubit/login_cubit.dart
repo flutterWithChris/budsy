@@ -49,6 +49,7 @@ class LoginCubit extends Cubit<LoginState> {
           await _authRepository.signInWithApple();
 
       if (authResponse.user == null) {
+        print('Auth User null');
         emit(LoginFailed());
         return;
       }
@@ -57,6 +58,7 @@ class LoginCubit extends Cubit<LoginState> {
 
       emit(LoginSuccess(authResponse.user!));
     } catch (e) {
+      print(e);
       emit(LoginFailed());
     }
   }

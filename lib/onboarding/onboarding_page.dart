@@ -112,25 +112,29 @@ class OnboardingPage extends StatelessWidget {
                               size: 48,
                             ),
                             const SizedBox(width: 16),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text('Discover Your Preferences',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium
-                                            ?.copyWith(
-                                                fontWeight: FontWeight.bold)),
-                                  ],
-                                ),
-                                Text(
-                                    'Find out what you like & why you like it.',
-                                    style:
-                                        Theme.of(context).textTheme.bodyMedium),
-                              ],
+                            Flexible(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text('Discover Your Preferences',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleMedium
+                                              ?.copyWith(
+                                                  fontWeight: FontWeight.bold)),
+                                    ],
+                                  ),
+                                  Flexible(
+                                    child: Text(
+                                        'Find out what you like & why you like it.',
+                                        style:
+                                            Theme.of(context).textTheme.bodyMedium),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),

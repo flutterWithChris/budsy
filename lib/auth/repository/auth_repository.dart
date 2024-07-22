@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -51,35 +52,46 @@ class AuthRepository {
   Stream<supabase.AuthState> get authStateChanges =>
       _supabase.auth.onAuthStateChange;
 
-  Future<supabase.AuthResponse> signInWithApple() async {
-    try {
-      final rawNonce = _supabase.auth.generateRawNonce();
-      final hashedNonce = sha256.convert(utf8.encode(rawNonce)).toString();
+ Future<supabase.AuthResponse> signInWithApple() async {
+  try {
+    // Generate a random nonce for security purposes
+    final rawNonce = _generateNonce();
+    final hashedNonce = sha256.convert(utf8.encode(rawNonce)).toString();
 
-      final credential = await SignInWithApple.getAppleIDCredential(
-        scopes: [
-          AppleIDAuthorizationScopes.email,
-          AppleIDAuthorizationScopes.fullName,
-        ],
-        nonce: hashedNonce,
-      );
+    // Request Apple ID credential with email and full name scopes
+    final credential = await SignInWithApple.getAppleIDCredential(
+      scopes: [
+        AppleIDAuthorizationScopes.email,
+        AppleIDAuthorizationScopes.fullName,
+      ],
+      nonce: hashedNonce,
+    );
 
-      final idToken = credential.identityToken;
-      if (idToken == null) {
-        throw const supabase.AuthException(
-            'Could not find ID Token from generated credential.');
-      }
-
-      return _supabase.auth.signInWithIdToken(
-        provider: supabase.OAuthProvider.apple,
-        idToken: idToken,
-        nonce: rawNonce,
-      );
-    } catch (e) {
-      print(e);
-      rethrow;
+    // Extract the ID token from the credential
+    final idToken = credential.identityToken;
+    if (idToken == null) {
+      throw const supabase.AuthException(
+          'Could not find ID Token from generated credential.');
     }
+
+    // Sign in to Supabase with the ID token and the original raw nonce
+    return _supabase.auth.signInWithIdToken(
+      provider: supabase.OAuthProvider.apple,
+      idToken: idToken,
+      nonce: rawNonce,
+    );
+  } catch (e) {
+    print(e);
+    rethrow;
   }
+}
+
+// Helper function to generate a random nonce
+String _generateNonce([int length = 32]) {
+  const charset = '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
+  final random = Random.secure();
+  return List.generate(length, (_) => charset[random.nextInt(charset.length)]).join();
+}
 
   Future<void> signOut() async {
     try {

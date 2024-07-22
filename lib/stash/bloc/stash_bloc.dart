@@ -33,6 +33,7 @@ class StashBloc extends Bloc<StashEvent, StashState> {
 
   void _onFetchStash(FetchStash event, Emitter<StashState> emit) async {
     emit(StashLoading());
+    print('***Fetching Stash***');
     try {
       List<Product>? products;
 
@@ -48,12 +49,13 @@ class StashBloc extends Bloc<StashEvent, StashState> {
       print('All Cannabinoids: $allCannabinoids');
       print('All Terpenes: ${allTerpenes?.length}');
       print('Products: $products');
-      if (products == null) {
-        emit(const StashError('Error fetching stash'));
-        return;
-      }
-      emit(StashLoaded(products!));
+      // if (products == null) {
+      //   emit(const StashError('Error fetching stash'));
+      //   return;
+      // }
+      emit(StashLoaded(products ?? []));
     } catch (e) {
+      print(e);
       emit(StashError(e.toString()));
     }
   }

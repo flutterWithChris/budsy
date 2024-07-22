@@ -98,8 +98,10 @@ class MyApp extends StatelessWidget {
             )..loadFavoriteTerpenes(context.read<StashBloc>().state.products!),
           ),
           BlocProvider(
+            lazy: false,
             create: (context) => SubscriptionBloc(
               subscriptionRepository: context.read<SubscriptionRepository>(),
+              loginCubit: context.read<LoginCubit>()
             )..add(SubscriptionInit(context.read<AuthBloc>().state.user?.id)),
           ),
           BlocProvider(

@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:budsy/app/snackbars.dart';
 import 'package:budsy/consts.dart';
+import 'package:budsy/login/cubit/login_cubit.dart';
 import 'package:budsy/subscription/subscription_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
@@ -13,9 +16,12 @@ part 'subscription_state.dart';
 
 class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
   final SubscriptionRepository _subscriptionRepository;
+  final LoginCubit _loginCubit;
+  StreamSubscription? _loginStateStream;
   CustomerInfo? customerInfo;
-  SubscriptionBloc({required SubscriptionRepository subscriptionRepository})
+  SubscriptionBloc({required SubscriptionRepository subscriptionRepository, required LoginCubit loginCubit})
       : _subscriptionRepository = subscriptionRepository,
+        _loginCubit = loginCubit,
         super(SubscriptionLoading()) {
     on<SubscriptionInit>(_onSubscriptionInit);
     on<SubscriptionLogin>(_onSubscriptionLogin);
@@ -23,6 +29,13 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
     on<SubscriptionGetCustomerInfo>(_onSubscriptionGetCustomerInfo);
     on<PurchaseSubscription>(_onPurchaseSubscription);
     on<ShowPaywall>(_onShowPaywall);
+
+   
+    _loginStateStream = _loginCubit.stream.listen((state) {
+      if (state is LoginSuccess) {
+        add(SubscriptionLogin(state.user.id));
+      }
+    });
 
     // Listen to customer info update
     _subscriptionRepository.setListenCustomerInfoFunction((customerInfo) {
@@ -168,5 +181,12 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
       emit(const SubscriptionError('Failed to show paywall'));
       emit(const SubscriptionError('Failed to get offerings'));
     }
+  }
+
+  @override
+  Future<void> close() {
+    // TODO: implement close
+    _loginStateStream?.cancel();
+    return super.close();
   }
 }

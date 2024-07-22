@@ -46,10 +46,6 @@ class StashPage extends StatelessWidget {
                   SliverAppBar.medium(
                     title: Text(
                       'Stash',
-                      style: GoogleFonts.roboto().copyWith(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 24.0,
-                      ),
                     ),
                   ),
                   SliverFillRemaining(

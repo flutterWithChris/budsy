@@ -85,9 +85,6 @@ class _TrendsPageState extends State<TrendsPage> {
                           slivers: [
                             const SliverAppBar.medium(
                               title: Text('Trends'),
-                              floating: true,
-                              snap: true,
-                              pinned: true,
                             ),
                             SliverToBoxAdapter(
                               child: Padding(
@@ -244,53 +241,64 @@ class LockedTrendsPage extends StatelessWidget {
     return Stack(alignment: Alignment.center, children: [
       ExampleTrendsWidgets(
           trendsData: trendsData, ratingSortedProducts: ratingSortedProducts),
-      Positioned.fill(
-          child: Container(
-        color: Colors.black54,
-      )),
+      SafeArea(
+        child: Positioned.fill(
+            child: Padding(
+            padding: const EdgeInsets.only(top: 120),
+              child: Container(
+                        color: Colors.black54,
+                      ),
+            )),
+      ),
       // Overlay subscription offer
-      Positioned(
-        child: Container(
-          //  color: Theme.of(context).colorScheme.primaryContainer,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            // borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black,
-                blurRadius: 48,
-                offset: Offset(0, 8),
-              ),
-            ],
-          ),
+      SafeArea(
+        child: Positioned(
           child: Padding(
-            padding: const EdgeInsets.all(80.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  PhosphorIcons.lockOpen(),
-                  size: 64,
+            padding: const EdgeInsets.only(top: 120),
+            child: Container(
+              //  color: Theme.of(context).colorScheme.primaryContainer,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                // borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black,
+                    blurRadius: 60,
+                    offset: Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(80.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      PhosphorIcons.lockOpen(),
+                      size: 64,
+                    ),
+                    const Gap(size: 16),
+                    Text(
+                      'Unlock Trends',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const Gap(size: 8),
+                    Text(
+                      'Subscribe to unlock trends and more',
+                      style: Theme.of(context).textTheme.titleSmall,
+                      textAlign: TextAlign.center,
+                    ),
+                    const Gap(size: 16),
+                    FilledButton(
+                      onPressed: () {
+                        context.read<SubscriptionBloc>().add(ShowPaywall());
+                      },
+                      child: const Text('Subscribe'),
+                    ),
+                  ],
                 ),
-                const Gap(size: 16),
-                Text(
-                  'Unlock Trends',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const Gap(size: 8),
-                Text(
-                  'Subscribe to unlock trends and more',
-                  style: Theme.of(context).textTheme.titleSmall,
-                ),
-                const Gap(size: 16),
-                FilledButton(
-                  onPressed: () {
-                    context.read<SubscriptionBloc>().add(ShowPaywall());
-                  },
-                  child: const Text('Subscribe'),
-                ),
-              ],
+              ),
             ),
           ),
         ),
@@ -315,9 +323,7 @@ class ExampleTrendsWidgets extends StatelessWidget {
       slivers: [
         const SliverAppBar.medium(
           title: Text('Trends'),
-          floating: true,
-          snap: true,
-          pinned: true,
+       
         ),
         // Example Trends Widgets
         SliverToBoxAdapter(

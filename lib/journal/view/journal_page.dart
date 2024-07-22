@@ -43,10 +43,6 @@ class _JournalPageState extends State<JournalPage> {
             SliverAppBar.medium(
               title: Text(
                 'Journal',
-                style: GoogleFonts.roboto().copyWith(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24.0,
-                ),
               ),
             ),
             const SliverToBoxAdapter(
@@ -146,7 +142,7 @@ class _JournalEntryListState extends State<JournalEntryList> {
           );
         }
         if (state is JournalLoaded && state.entries.isEmpty) {
-          return SliverToBoxAdapter(
+          return SliverFillRemaining(
               child: Stack(
             alignment: Alignment.center,
             children: [
@@ -158,70 +154,84 @@ class _JournalEntryListState extends State<JournalEntryList> {
               ),
               Positioned.fill(
                   child: Container(
-                color: Colors.black.withOpacity(0.5),
+                color: 
+                Theme.of(context).brightness == Brightness.dark
+                ? Colors.black.withOpacity(0.5)
+                : Colors.white.withOpacity(0.5)
               )),
-              Positioned(
-                child: Container(
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    // borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black,
-                        blurRadius: 48,
-                        offset: Offset(0, 8),
-                      ),
-                    ],
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(80.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        PhosphorIcon(
-                          PhosphorIcons.warningCircle(PhosphorIconsStyle.fill),
-                          size: 48,
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.only(top: 16.0),
-                          child: Center(
-                            child: Text('No Entries Yet'),
+              Positioned.fill(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      decoration:  BoxDecoration(
+                        shape: BoxShape.circle,
+                        // borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: 
+                            Theme.of(context).brightness == Brightness.dark
+                            ? Colors.black
+                            : Colors.white,
+                            blurRadius: 48,
+                            offset: Offset(0, 8),
                           ),
+                        ],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(80.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            PhosphorIcon(
+                              PhosphorIcons.warningCircle(PhosphorIconsStyle.fill),
+                              size: 48,
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.only(top: 16.0),
+                              child: Center(
+                                child: Text('No Entries Yet'),
+                              ),
+                            ),
+                            BlocBuilder<StashBloc, StashState>(
+                              builder: (context, state) {
+                                if (state is StashError){
+                                  return Text(state.message);
+                                }
+                                if (state is StashLoading) {
+                                  return const CircularProgressIndicator();
+                                }
+                                if (state is StashLoaded &&
+                                    state.products.isEmpty) {
+                                  return TextButton(
+                                    onPressed: () async {
+                                      // show snackbar, prompt user to add a product
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(getErrorSnackBar(
+                                        'Add a product to your stash first!',
+                                      ));
+                                    },
+                                    child: const Text('Add an Entry'),
+                                  );
+                                }
+                                if (state is StashLoaded &&
+                                    state.products.isNotEmpty) {
+                                  return TextButton(
+                                    onPressed: () async {
+                                      await context.push('/new-entry');
+                                    },
+                                    child: const Text('Add an Entry'),
+                                  );
+                                }
+                                return const Text('Something went wrong');
+                              },
+                            ),
+                          ],
                         ),
-                        BlocBuilder<StashBloc, StashState>(
-                          builder: (context, state) {
-                            if (state is StashLoading) {
-                              return const CircularProgressIndicator();
-                            }
-                            if (state is StashLoaded &&
-                                state.products.isNotEmpty) {
-                              return TextButton(
-                                onPressed: () async {
-                                  // show snackbar, prompt user to add a product
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(getErrorSnackBar(
-                                    'Add a product to your stash first!',
-                                  ));
-                                },
-                                child: const Text('Add an Entry'),
-                              );
-                            }
-                            if (state is StashLoaded &&
-                                state.products.isNotEmpty) {
-                              return TextButton(
-                                onPressed: () async {
-                                  await context.push('/new-entry');
-                                },
-                                child: const Text('Add an Entry'),
-                              );
-                            }
-                            return const Text('Something went wrong');
-                          },
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ),
             ],
