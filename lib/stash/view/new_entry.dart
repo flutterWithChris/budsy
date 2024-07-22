@@ -768,7 +768,7 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                               child: const CircularProgressIndicator.adaptive(),
                             );
                           }
-                          return FilledButton.tonalIcon(
+                          return FilledButton.icon(
                             onPressed: () async {
                               Product product = Product(
                                 id: null,

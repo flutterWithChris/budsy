@@ -83,30 +83,30 @@ class _AddEntryPageState extends State<AddEntryPage> {
                               runSpacing: 8,
                               children: [
                                 for (var item in selectedItems)
-                                  Flexible(
-                                    child: Container(
-                                      margin: const EdgeInsets.only(right: 8),
-                                      padding: const EdgeInsets.all(8),
-                                      decoration: BoxDecoration(
-                                        color: getColorForProductCategory(
-                                            item.category!),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(
-                                              getIconForCategory(
-                                                  item.category!),
-                                              size: 16),
-                                          const SizedBox(width: 8),
-                                          Text(
-                                            item.name!,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ],
-                                      ),
+                                  Container(
+                                    margin: const EdgeInsets.only(right: 8),
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: getColorForProductCategory(
+                                          item.category!),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                            getIconForCategory(
+                                                item.category!),
+                                            size: 16,
+                                            color: getContrastingColor(getColorForProductCategory(item.category!)),),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          item.name!,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(color: getContrastingColor(getColorForProductCategory(item.category!))),
+                                        ),
+                                      ],
                                     ),
                                   ),
                               ],
@@ -406,6 +406,9 @@ class _AddEntryPageState extends State<AddEntryPage> {
                       // ),
                       TextField(
                         controller: notesController,
+                        textCapitalization: TextCapitalization.sentences,
+                        textInputAction: TextInputAction.done,
+                        onTapOutside: (event) => FocusScope.of(context).unfocus(),
                         decoration: InputDecoration(
                           labelText: 'Notes',
                           hintText: 'Add notes',
@@ -428,38 +431,44 @@ class _AddEntryPageState extends State<AddEntryPage> {
                           }
                           if (state is FeelingsLoaded &&
                               state.feelings.isNotEmpty) {
-                            return ElevatedButton(
-                              onPressed: () {
-                                if (selectedFeelings.isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    getErrorSnackBar(
-                                        'Please select at least one feeling'),
-                                  );
-                                }
-                                if (selectedProducts.isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      getErrorSnackBar(
-                                          'Please select at least one product'));
-                                }
-
-                                if (selectedFeelings.isEmpty ||
-                                    selectedProducts.isEmpty) {
-                                  return;
-                                }
-
-                                JournalEntry entry = JournalEntry(
-                                  feelings: selectedFeelings,
-                                  products: selectedProducts,
-                                  notes: notesController.value.text.isNotEmpty
-                                      ? notesController.value.text
-                                      : null,
-                                  type: EntryType.feeling,
-                                );
-                                context
-                                    .read<JournalBloc>()
-                                    .add(AddJournalEntry(entry));
-                              },
-                              child: const Text('Add Entry'),
+                            return Row(
+                              children: [
+                                Expanded(
+                                  child: FilledButton(
+                                    onPressed: () {
+                                      if (selectedFeelings.isEmpty) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          getErrorSnackBar(
+                                              'Please select at least one feeling'),
+                                        );
+                                      }
+                                      if (selectedProducts.isEmpty) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                            getErrorSnackBar(
+                                                'Please select at least one product'));
+                                      }
+                                  
+                                      if (selectedFeelings.isEmpty ||
+                                          selectedProducts.isEmpty) {
+                                        return;
+                                      }
+                                  
+                                      JournalEntry entry = JournalEntry(
+                                        feelings: selectedFeelings,
+                                        products: selectedProducts,
+                                        notes: notesController.value.text.isNotEmpty
+                                            ? notesController.value.text
+                                            : null,
+                                        type: EntryType.feeling,
+                                      );
+                                      context
+                                          .read<JournalBloc>()
+                                          .add(AddJournalEntry(entry));
+                                    },
+                                    child: const Text('Add Entry'),
+                                  ),
+                                ),
+                              ],
                             );
                           }
                           if (state is FeelingsLoaded &&

@@ -95,6 +95,22 @@ class StashBloc extends Bloc<StashEvent, StashState> {
     try {
       emit(StashLoading());
       Product product = await _productRepository.updateProduct(event.product);
+      if (event.product.cannabinoids != null) {
+      await _productRepository.removeProductCannabinoids(
+            product.id!);
+        await _productRepository.addProductCannabinoids(
+            product.id!, event.product.cannabinoids!);
+      }
+      if (event.product.terpenes != null) {
+        await _productRepository.removeProductTerpenes(
+            product.id!);
+        await _productRepository.addProductTerpenes(
+            product.id!, event.product.terpenes!);
+      }
+      if (event.images.isNotEmpty) {
+        await _productRepository.removeProductImages(product.id!);
+        await _productRepository.addProductImages(product.id!, event.images);
+      }
       emit(ProductUpdated(product));
       add(FetchStash(_authBloc.state.user!.id));
     } catch (e) {

@@ -72,6 +72,9 @@ IconData getIconForFeeling(Feeling feeling,
   }
 
   List<String> parts = feeling.icon!.split(':');
+  if (parts.length < 2){
+    return PhosphorIcons.questionMark();
+  }
   String fontFamily = parts[0];
   int codePoint = int.parse(parts[1]);
 

@@ -16,6 +16,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:list_ext/list_ext.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -40,10 +41,6 @@ class _ViewProductPageState extends State<ViewProductPage> {
                 children: [
                   Text(
                     'Product',
-                    style: GoogleFonts.roboto().copyWith(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24.0,
-                    ),
                   ),
                 ],
               ),
@@ -81,15 +78,18 @@ class _ViewProductPageState extends State<ViewProductPage> {
                       return const Center(child: CircularProgressIndicator());
                     }
                     if (state is ProductDetailsLoaded) {
-                      Product product = state is ProductDetailsLoaded
-                          ? state.product
-                          : widget.product;
+                      Product product = state.product;
                       return Card(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16.0, vertical: 16.0),
                           child: Column(
                             children: [
+                              if (product.images.isNotNullOrEmpty)
+                              Padding(
+                                padding: EdgeInsets.all(8),
+                                child: Image.network(state.product.images!.first),
+                              ),
                               Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 8.0),

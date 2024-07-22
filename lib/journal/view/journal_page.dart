@@ -219,7 +219,7 @@ class _JournalEntryListState extends State<JournalEntryList> {
                                     state.products.isNotEmpty) {
                                   return TextButton(
                                     onPressed: () async {
-                                      await context.push('/new-entry');
+                                      await context.push('/add-entry');
                                     },
                                     child: const Text('Add an Entry'),
                                   );

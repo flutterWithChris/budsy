@@ -35,9 +35,14 @@ class TrendsPage extends StatefulWidget {
 
 class _TrendsPageState extends State<TrendsPage> {
   Map<String, Map<Feeling, int>> trendsData = {};
+  Map<String, Map<Feeling, int>> mockTrendsData = {};
   Map<Terpene, int> favoriteTerpenes = {};
+  List<Product> mockRatingSortedProducts = [];
   @override
   void initState() {
+    mockTrendsData = getProductFeelingTrends(mockJournalEntries);
+    mockRatingSortedProducts = mockProducts;
+    mockRatingSortedProducts.sort((a, b) => b.rating!.compareTo(a.rating!));
     super.initState();
   }
 
@@ -201,20 +206,15 @@ class _TrendsPageState extends State<TrendsPage> {
                   return const Center(
                     child: Text('Something Went Wrong...'),
                   );
-                }
+                } 
               },
             );
           }
           if (state is SubscriptionLoaded &&
               state.customerInfo != null &&
               state.customerInfo!.entitlements.active.isEmpty) {
-            trendsData = getProductFeelingTrends(mockJournalEntries);
-            List<Product> ratingSortedProducts = mockProducts;
-
-            ratingSortedProducts.sort((a, b) => b.rating!.compareTo(a.rating!));
-            return LockedTrendsPage(
-                trendsData: trendsData,
-                ratingSortedProducts: ratingSortedProducts);
+           
+            return const LockedTrendsPage();
           } else {
             return const Center(
               child: Text('Something Went Wrong...'),
@@ -226,21 +226,24 @@ class _TrendsPageState extends State<TrendsPage> {
   }
 }
 
-class LockedTrendsPage extends StatelessWidget {
+class LockedTrendsPage extends StatefulWidget {
   const LockedTrendsPage({
     super.key,
-    required this.trendsData,
-    required this.ratingSortedProducts,
+
   });
 
-  final Map<String, Map<Feeling, int>> trendsData;
-  final List<Product> ratingSortedProducts;
+ 
+
+  @override
+  State<LockedTrendsPage> createState() => _LockedTrendsPageState();
+}
+
+class _LockedTrendsPageState extends State<LockedTrendsPage> {
 
   @override
   Widget build(BuildContext context) {
     return Stack(alignment: Alignment.center, children: [
-      ExampleTrendsWidgets(
-          trendsData: trendsData, ratingSortedProducts: ratingSortedProducts),
+      ExampleTrendsWidgets(),
       Positioned.fill(
           child: Padding(
         padding: const EdgeInsets.only(top: 120),
@@ -309,16 +312,27 @@ class LockedTrendsPage extends StatelessWidget {
   }
 }
 
-class ExampleTrendsWidgets extends StatelessWidget {
+class ExampleTrendsWidgets extends StatefulWidget {
   const ExampleTrendsWidgets({
     super.key,
-    required this.trendsData,
-    required this.ratingSortedProducts,
   });
 
-  final Map<String, Map<Feeling, int>> trendsData;
-  final List<Product> ratingSortedProducts;
+  @override
+  State<ExampleTrendsWidgets> createState() => _ExampleTrendsWidgetsState();
+}
 
+class _ExampleTrendsWidgetsState extends State<ExampleTrendsWidgets> {
+  Map<String, Map<Feeling, int>> mockTrendsData = {};
+  List<Product> mockRatingSortedProducts = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    mockTrendsData = getProductFeelingTrends(mockJournalEntries);
+    mockRatingSortedProducts = mockProducts;
+    mockRatingSortedProducts.sort((a, b) => b.rating!.compareTo(a.rating!));
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
@@ -349,7 +363,7 @@ class ExampleTrendsWidgets extends StatelessWidget {
             ),
           ),
         ),
-        ProductToFeelingWidget(trendsData: trendsData, mockMode: true),
+        ProductToFeelingWidget(trendsData: mockTrendsData, mockMode: true),
         const SliverToBoxAdapter(
           child: Gap(
             size: 8,
@@ -364,7 +378,7 @@ class ExampleTrendsWidgets extends StatelessWidget {
             size: 16,
           ),
         ),
-        FavoriteProductsWidget(ratingSortedProducts: ratingSortedProducts),
+        FavoriteProductsWidget(ratingSortedProducts: mockRatingSortedProducts),
 
         TotalsWidget(journalEntries: mockJournalEntries),
         const SliverToBoxAdapter(
