@@ -10,6 +10,7 @@ import 'package:budsy/stash/model/product.dart';
 import 'package:budsy/stash/model/terpene.dart';
 import 'package:budsy/lab_reports/lab_report.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:go_router/go_router.dart';
@@ -457,7 +458,8 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                           children: [
                             Expanded(
                               child: TextFormField(
-                                keyboardType: TextInputType.number,
+                                keyboardType: TextInputType.numberWithOptions(signed: true),
+                                textInputAction: TextInputAction.done,
                                 controller: _costController,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
@@ -960,7 +962,8 @@ class _TerpeneSelectionFieldsState extends State<TerpeneSelectionFields> {
                 suffixText: '%',
                 floatingLabelBehavior: FloatingLabelBehavior.always,
               ),
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.numberWithOptions(signed: true),
+              textInputAction: TextInputAction.done,
             ),
           ),
           Flexible(
