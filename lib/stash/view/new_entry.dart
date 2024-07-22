@@ -1,12 +1,10 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:budsy/app/icons.dart';
 import 'package:budsy/app/system/bottom_nav.dart';
 import 'package:budsy/consts.dart';
 import 'package:budsy/stash/bloc/stash_bloc.dart';
-import 'package:budsy/stash/mock/mock_products.dart';
 import 'package:budsy/stash/model/cannabinoid.dart';
 import 'package:budsy/stash/model/product.dart';
 import 'package:budsy/stash/model/terpene.dart';
@@ -69,22 +67,23 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
     super.initState();
   }
 
-void _addCannabinoid() {
-  setState(() {
-    if (selectedCannabinoids.length >= context.read<StashBloc>().allCannabinoids!.length) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('You have already added all available cannabinoids'),
-      ));
-      return;
-    }
-    selectedCannabinoids.add(context
-        .read<StashBloc>()
-        .allCannabinoids!
-        .where((cannabinoid) => !selectedCannabinoids.contains(cannabinoid))
-        .toList()
-        .first);
-  });
-}
+  void _addCannabinoid() {
+    setState(() {
+      if (selectedCannabinoids.length >=
+          context.read<StashBloc>().allCannabinoids!.length) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('You have already added all available cannabinoids'),
+        ));
+        return;
+      }
+      selectedCannabinoids.add(context
+          .read<StashBloc>()
+          .allCannabinoids!
+          .where((cannabinoid) => !selectedCannabinoids.contains(cannabinoid))
+          .toList()
+          .first);
+    });
+  }
 
   // void _updateCannabinoid(Cannabinoid cannabinoid, double value) {
   //   setState(() {
@@ -131,7 +130,7 @@ void _addCannabinoid() {
   @override
   Widget build(BuildContext context) {
     print('selectedCannabinoids: $selectedCannabinoids');
-    print('requiredCannabinoids: $requiredCannabinoids');
+    print('selectedTerpenes: $selectedTerpenes');
     return Scaffold(
         bottomNavigationBar: const BottomNavBar(),
         appBar: AppBar(
@@ -575,8 +574,44 @@ void _addCannabinoid() {
                         // Dropdown for Cannabinoids
                         for (Cannabinoid cannabinoid in selectedCannabinoids)
                           CannabinoidTextFields(
-                              cannabinoid: cannabinoid,
-                              selectedCannabinoids: selectedCannabinoids),
+                            cannabinoid: cannabinoid,
+                            onSelectCannabinoid: (selectedCannabinoid) {
+                              if (selectedCannabinoid == null) {
+                                return;
+                              }
+                              if (selectedCannabinoids.any(
+                                  (c) => c.name == selectedCannabinoid.name)) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                        'You have already added this cannabinoid'),
+                                  ),
+                                );
+                                return;
+                              }
+                              setState(() {
+                                selectedCannabinoids.remove(cannabinoid);
+                                selectedCannabinoids.add(selectedCannabinoid);
+                              });
+                            },
+                            onUpdateValue: (value) {
+                              if (value == null) {
+                                return;
+                              }
+                              setState(() {
+                                selectedCannabinoids.remove(cannabinoid);
+                                selectedCannabinoids.add(
+                                  cannabinoid.copyWith(
+                                      amount: double.tryParse(value)),
+                                );
+                              });
+                            },
+                            onRemoveCannabinoid: () {
+                              setState(() {
+                                selectedCannabinoids.remove(cannabinoid);
+                              });
+                            },
+                          ),
                         const Gap(size: 8),
 
                         OutlinedButton.icon(
@@ -627,9 +662,34 @@ void _addCannabinoid() {
                         // Terpene entry fields
                         for (Terpene terpene in selectedTerpenes)
                           TerpeneSelectionFields(
-                            selectedTerpenes: selectedTerpenes,
                             allTerpenes: allTerpenes,
                             terpene: terpene,
+                            onSelectTerpene: (selectedTerpene) {
+                              if (selectedTerpene == null) {
+                                return;
+                              }
+                              setState(() {
+                                selectedTerpenes.remove(terpene);
+                                selectedTerpenes.add(selectedTerpene);
+                              });
+                            },
+                            onUpdateValue: (value) {
+                              if (value == null) {
+                                return;
+                              }
+                              setState(() {
+                                selectedTerpenes.remove(terpene);
+                                selectedTerpenes.add(
+                                  terpene.copyWith(
+                                      amount: double.tryParse(value)),
+                                );
+                              });
+                            },
+                            onRemoveTerpene: () {
+                              setState(() {
+                                selectedTerpenes.remove(terpene);
+                              });
+                            },
                           ),
                         const Gap(size: 8),
                         OutlinedButton.icon(
@@ -815,14 +875,18 @@ void _addCannabinoid() {
 }
 
 class TerpeneSelectionFields extends StatefulWidget {
-  final List<Terpene> selectedTerpenes;
-  final List<Terpene> allTerpenes;
   final Terpene terpene;
+  final List<Terpene> allTerpenes;
+  final Function(Terpene? terpene) onSelectTerpene;
+  final Function(String? value) onUpdateValue;
+  final Function() onRemoveTerpene;
 
   const TerpeneSelectionFields({
-    required this.selectedTerpenes,
-    required this.allTerpenes,
     required this.terpene,
+    required this.allTerpenes,
+    required this.onSelectTerpene,
+    required this.onUpdateValue,
+    required this.onRemoveTerpene,
     super.key,
   });
 
@@ -842,7 +906,6 @@ class _TerpeneSelectionFieldsState extends State<TerpeneSelectionFields> {
   @override
   Widget build(BuildContext context) {
     Terpene terpene = widget.terpene;
-    List<Terpene> selectedTerpenes = widget.selectedTerpenes;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0, top: 8.0),
@@ -859,22 +922,11 @@ class _TerpeneSelectionFieldsState extends State<TerpeneSelectionFields> {
                   ),
                 ),
               ),
-              inputDecorationTheme: Theme.of(context).inputDecorationTheme.copyWith(
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-              ),
-              onSelected: (value) {
-                setState(() {
-                  if (value != null) {
-                    if (value != terpene){
-                      print('Removing Terpene');
-                      selectedTerpenes.remove(terpene);
-                    }
-                
-                      selectedTerpenes.add(value);
-                    print('Selected Terpenes: ${selectedTerpenes.toString()}');
-                  }
-                });
-              },
+              inputDecorationTheme:
+                  Theme.of(context).inputDecorationTheme.copyWith(
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                      ),
+              onSelected: widget.onSelectTerpene,
               leadingIcon: PhosphorIcon(getIconForTerpene(terpene), size: 20),
               label: const Text('Terpene'),
               expandedInsets: EdgeInsets.zero,
@@ -902,18 +954,7 @@ class _TerpeneSelectionFieldsState extends State<TerpeneSelectionFields> {
             child: TextField(
               textAlign: TextAlign.end,
               controller: _valueController,
-              onChanged: (value) {
-                setState(() {
-                  double terpeneValue = double.tryParse(value) ?? 0.0;
-                  int index = selectedTerpenes.indexWhere(
-                      (element) => element.name == terpene.name);
-                  if (index != -1) {
-                    selectedTerpenes[index] = terpene.copyWith(amount: terpeneValue);
-                  } else {
-                    selectedTerpenes.add(terpene.copyWith(amount: terpeneValue));
-                  }
-                });
-              },
+              onChanged: widget.onUpdateValue,
               decoration: const InputDecoration(
                 labelText: 'Value',
                 suffixText: '%',
@@ -929,11 +970,7 @@ class _TerpeneSelectionFieldsState extends State<TerpeneSelectionFields> {
                 IconButton.outlined(
                   padding: EdgeInsets.zero,
                   alignment: Alignment.center,
-                  onPressed: () {
-                    setState(() {
-                      selectedTerpenes.remove(terpene);
-                    });
-                  },
+                  onPressed: widget.onRemoveTerpene,
                   icon: const Icon(Icons.remove_circle_outline_rounded),
                 ),
               ],
@@ -947,11 +984,15 @@ class _TerpeneSelectionFieldsState extends State<TerpeneSelectionFields> {
 
 class CannabinoidTextFields extends StatefulWidget {
   final Cannabinoid cannabinoid;
-  final List<Cannabinoid> selectedCannabinoids;
-  
-  CannabinoidTextFields({
+  final Function(Cannabinoid? selectedCannabinoid) onSelectCannabinoid;
+  final Function(String? string) onUpdateValue;
+  final Function() onRemoveCannabinoid;
+
+  const CannabinoidTextFields({
     required this.cannabinoid,
-    required this.selectedCannabinoids,
+    required this.onSelectCannabinoid,
+    required this.onUpdateValue,
+    required this.onRemoveCannabinoid,
     super.key,
   });
 
@@ -961,7 +1002,7 @@ class CannabinoidTextFields extends StatefulWidget {
 
 class _CannabinoidTextFieldsState extends State<CannabinoidTextFields> {
   final TextEditingController _valueController = TextEditingController();
-  
+
   @override
   void initState() {
     super.initState();
@@ -971,8 +1012,7 @@ class _CannabinoidTextFieldsState extends State<CannabinoidTextFields> {
   @override
   Widget build(BuildContext context) {
     Cannabinoid cannabinoid = widget.cannabinoid;
-    List<Cannabinoid> selectedCannabinoids = widget.selectedCannabinoids;
-    
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0, top: 8.0),
       child: Row(
@@ -988,21 +1028,15 @@ class _CannabinoidTextFieldsState extends State<CannabinoidTextFields> {
                   ),
                 ),
               ),
-              inputDecorationTheme: Theme.of(context).inputDecorationTheme.copyWith(
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-              ),
-              onSelected: (cannabinoid) {
-                setState(() {
-                  int index = selectedCannabinoids.indexWhere(
-                      (element) => element.name == widget.cannabinoid.name);
-                  if (index != -1) {
-                    selectedCannabinoids[index] = cannabinoid!;
-                  }
-                });
-              },
+              inputDecorationTheme:
+                  Theme.of(context).inputDecorationTheme.copyWith(
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                      ),
+              onSelected: widget.onSelectCannabinoid,
               label: const Text('Cannabinoid'),
               expandedInsets: EdgeInsets.zero,
-              dropdownMenuEntries: context.read<StashBloc>().allCannabinoids!.map((c) {
+              dropdownMenuEntries:
+                  context.read<StashBloc>().allCannabinoids!.map((c) {
                 return DropdownMenuEntry(
                   label: c.name!,
                   value: c,
@@ -1024,43 +1058,28 @@ class _CannabinoidTextFieldsState extends State<CannabinoidTextFields> {
             flex: 3,
             child: TextField(
               controller: _valueController,
-              onChanged: (value) {
-                setState(() {
-                  int index = selectedCannabinoids.indexWhere(
-                      (element) => element.name == cannabinoid.name);
-                  if (index != -1) {
-                    selectedCannabinoids[index] = cannabinoid.copyWith(
-                      amount: double.tryParse(value),
-                    );
-                  }
-                });
-              },
+              onChanged: widget.onUpdateValue,
               decoration: const InputDecoration(
                 labelText: 'Value',
                 suffixText: '%',
                 floatingLabelBehavior: FloatingLabelBehavior.always,
               ),
-              keyboardType: TextInputType.numberWithOptions(signed: true),
+              keyboardType: const TextInputType.numberWithOptions(signed: true),
               textInputAction: TextInputAction.done,
             ),
           ),
-          if (cannabinoid.name != 'THC' && cannabinoid.name != 'CBD')
-            Flexible(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  IconButton(
-                    alignment: Alignment.center,
-                    onPressed: () {
-                      setState(() {
-                        selectedCannabinoids.remove(cannabinoid);
-                      });
-                    },
-                    icon: const Icon(Icons.remove_circle_outline_rounded),
-                  ),
-                ],
-              ),
+          Flexible(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                IconButton(
+                  alignment: Alignment.center,
+                  onPressed: widget.onRemoveCannabinoid,
+                  icon: const Icon(Icons.remove_circle_outline_rounded),
+                ),
+              ],
             ),
+          ),
         ],
       ),
     );
