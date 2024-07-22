@@ -28,7 +28,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         _loginCubit = loginCubit,
         super(ProfileInitial()) {
     _authBlocSubscription = _authBloc.stream.listen((authState) {
-      if (authState.status == AuthStatus.authenticated && state is ProfileLoading == false) {
+      if (authState.status == AuthStatus.authenticated &&
+          state is ProfileLoading == false) {
         add(LoadProfile());
       }
     });
@@ -55,6 +56,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     try {
       final user = await _profileRepository
           .getUser(sb.Supabase.instance.client.auth.currentUser!.id);
+      if (user == null) {
+        emit(const ProfileError(message: 'Failed to load user'));
+        return;
+      }
       emit(ProfileLoaded(user: user));
     } catch (e) {
       print(e);

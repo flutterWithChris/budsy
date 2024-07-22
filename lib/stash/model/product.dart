@@ -1,6 +1,9 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
+
 import 'package:canjo/stash/model/cannabinoid.dart';
 import 'package:canjo/stash/model/terpene.dart';
+
+import 'package:list_ext/list_ext.dart';
 
 enum ProductCategory { flower, concentrate, edible, topical, cartridge, other }
 
@@ -60,8 +63,8 @@ class Product with CustomDropdownListFilter {
           : null,
       price: json['price'],
       unit: json['unit'] != null
-          ? FlowerUnit.values
-              .firstWhere((e) => e.toString() == 'FlowerUnit.${json['unit']}')
+          ? FlowerUnit.values.firstWhereOrNull(
+              (e) => e.toString() == 'FlowerUnit.${json['unit']}')
           : null,
       dispensary: json['dispensary'],
       brand: json['brand'],

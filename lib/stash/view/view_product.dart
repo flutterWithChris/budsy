@@ -121,55 +121,62 @@ class _ViewProductPageState extends State<ViewProductPage> {
                                                 : null,
                                           ),
                                           const Gap(size: 16.0),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Text(
-                                                    product.name!,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .titleMedium
-                                                        ?.copyWith(),
-                                                  ),
-                                                  const Gap(size: 16.0),
-                                                  product.images != null
-                                                      ? CircleAvatar(
-                                                          radius: 14,
-                                                          backgroundColor:
-                                                              getColorForProductCategory(widget
+                                          Flexible(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Flexible(
+                                                      child: Text(
+                                                        product.name!,
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .titleMedium
+                                                            ?.copyWith(),
+                                                      ),
+                                                    ),
+                                                    const Gap(size: 16.0),
+                                                    product.images != null
+                                                        ? CircleAvatar(
+                                                            radius: 14,
+                                                            backgroundColor:
+                                                                getColorForProductCategory(widget
+                                                                        .product
+                                                                        .category ??
+                                                                    ProductCategory
+                                                                        .other),
+                                                            child: Icon(
+                                                              getIconForCategory(widget
                                                                       .product
                                                                       .category ??
                                                                   ProductCategory
                                                                       .other),
-                                                          child: Icon(
-                                                            getIconForCategory(widget
-                                                                    .product
-                                                                    .category ??
-                                                                ProductCategory
-                                                                    .other),
-                                                            size: 14.0,
-                                                            color: Colors.white,
-                                                          ),
-                                                        )
-                                                      : const SizedBox.shrink(),
-                                                ],
-                                              ),
-                                              Wrap(
-                                                spacing: 8.0,
-                                                children: [
-                                                  Text(
-                                                    product.brand!,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodySmall,
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
+                                                              size: 14.0,
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                          )
+                                                        : const SizedBox
+                                                            .shrink(),
+                                                  ],
+                                                ),
+                                                Wrap(
+                                                  spacing: 8.0,
+                                                  children: [
+                                                    Text(
+                                                      product.brand!,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodySmall,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -211,33 +218,34 @@ class _ViewProductPageState extends State<ViewProductPage> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     // Dispensary
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              PhosphorIcon(
-                                                  getIconForCategory(
-                                                      product.category!),
-                                                  size: 14.0),
-                                              const Gap(size: 8.0),
-                                              Text('Type',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .titleSmall),
-                                            ],
-                                          ),
-                                          Text(product.type!.name.capitalize,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyMedium),
-                                        ],
+                                    if (product.type != null)
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                PhosphorIcon(
+                                                    getIconForCategory(
+                                                        product.category!),
+                                                    size: 14.0),
+                                                const Gap(size: 8.0),
+                                                Text('Type',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .titleSmall),
+                                              ],
+                                            ),
+                                            Text(product.type!.name.capitalize,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium),
+                                          ],
+                                        ),
                                       ),
-                                    ),
                                     // FlowerType
                                     if (product.dispensary?.isNotEmpty ?? false)
                                       Expanded(
@@ -292,7 +300,9 @@ class _ViewProductPageState extends State<ViewProductPage> {
                                               ],
                                             ),
                                             Text(
-                                                '\$${product.price!.toStringAsFixed(0)}/${product.unit?.name[0]}',
+                                                product.unit != null
+                                                    ? '\$${product.price!.toStringAsFixed(0)}/${product.unit?.name}'
+                                                    : '\$${product.price!.toStringAsFixed(0)}',
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .bodyMedium),
@@ -394,8 +404,15 @@ class _ViewProductPageState extends State<ViewProductPage> {
                   }
                   if (state is ProductDetailsLoaded) {
                     if (state.cannabinoids.isEmpty && state.terpenes.isEmpty) {
-                      return const Text(
-                          'No cannabinoids or terpene data added.');
+                      return const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('No cannabinoid or terpene data added.'),
+                          ],
+                        ),
+                      );
                     }
                     return Padding(
                       padding: const EdgeInsets.symmetric(
@@ -436,8 +453,7 @@ class _ViewProductPageState extends State<ViewProductPage> {
                 builder: (context, state) {
                   if (state is ProductDetailsLoaded) {
                     if (state.cannabinoids.isEmpty && state.terpenes.isEmpty) {
-                      return const Text(
-                          'No cannabinoids or terpene data added.');
+                      return const SizedBox();
                     }
                     return Padding(
                       padding: const EdgeInsets.symmetric(

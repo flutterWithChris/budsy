@@ -4,7 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 class ProfileRepository {
   final sb.SupabaseClient _supabaseClient = sb.Supabase.instance.client;
 
-  Future<User> getUser(String userId) async {
+  Future<User?> getUser(String userId) async {
     try {
       final response =
           await _supabaseClient.from('users').select().eq('id', userId);
