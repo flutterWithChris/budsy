@@ -244,11 +244,11 @@ class LockedTrendsPage extends StatelessWidget {
       SafeArea(
         child: Positioned.fill(
             child: Padding(
-            padding: const EdgeInsets.only(top: 120),
-              child: Container(
-                        color: Colors.black54,
-                      ),
-            )),
+          padding: const EdgeInsets.only(top: 120),
+          child: Container(
+            color: Colors.black54,
+          ),
+        )),
       ),
       // Overlay subscription offer
       SafeArea(
@@ -323,7 +323,6 @@ class ExampleTrendsWidgets extends StatelessWidget {
       slivers: [
         const SliverAppBar.medium(
           title: Text('Trends'),
-       
         ),
         // Example Trends Widgets
         SliverToBoxAdapter(
