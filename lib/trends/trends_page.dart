@@ -241,69 +241,65 @@ class LockedTrendsPage extends StatelessWidget {
     return Stack(alignment: Alignment.center, children: [
       ExampleTrendsWidgets(
           trendsData: trendsData, ratingSortedProducts: ratingSortedProducts),
-      SafeArea(
-        child: Positioned.fill(
-            child: Padding(
+      Positioned.fill(
+          child: Padding(
+        padding: const EdgeInsets.only(top: 120),
+        child: Container(
+          color: 
+          Theme.of(context).brightness == Brightness.dark
+          ? Colors.black54
+          : Colors.white54
+        ),
+      )),
+      // Overlay subscription offer
+      Positioned(
+        child: Padding(
           padding: const EdgeInsets.only(top: 120),
           child: Container(
-            color: 
-            Theme.of(context).brightness == Brightness.dark
-            ? Colors.black54
-            : Colors.white54
-          ),
-        )),
-      ),
-      // Overlay subscription offer
-      SafeArea(
-        child: Positioned(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 120),
-            child: Container(
-              //  color: Theme.of(context).colorScheme.primaryContainer,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                // borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: 
-                   Theme.of(context).brightness == Brightness.dark
-                    ? Colors.black
-                    : Colors.white,
-                    blurRadius: 60,
-                    offset: Offset(0, 8),
+            //  color: Theme.of(context).colorScheme.primaryContainer,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              // borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: 
+                 Theme.of(context).brightness == Brightness.dark
+                  ? Colors.black
+                  : Colors.white,
+                  blurRadius: 60,
+                  offset: Offset(0, 8),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(80.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    PhosphorIcons.lockOpen(),
+                    size: 64,
+                  ),
+                  const Gap(size: 16),
+                  Text(
+                    'Unlock Trends',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const Gap(size: 8),
+                  Text(
+                    'Subscribe to unlock trends and more',
+                    style: Theme.of(context).textTheme.titleSmall,
+                    textAlign: TextAlign.center,
+                  ),
+                  const Gap(size: 16),
+                  FilledButton(
+                    onPressed: () {
+                      context.read<SubscriptionBloc>().add(ShowPaywall());
+                    },
+                    child: const Text('Subscribe'),
                   ),
                 ],
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(80.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      PhosphorIcons.lockOpen(),
-                      size: 64,
-                    ),
-                    const Gap(size: 16),
-                    Text(
-                      'Unlock Trends',
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    const Gap(size: 8),
-                    Text(
-                      'Subscribe to unlock trends and more',
-                      style: Theme.of(context).textTheme.titleSmall,
-                      textAlign: TextAlign.center,
-                    ),
-                    const Gap(size: 16),
-                    FilledButton(
-                      onPressed: () {
-                        context.read<SubscriptionBloc>().add(ShowPaywall());
-                      },
-                      child: const Text('Subscribe'),
-                    ),
-                  ],
-                ),
               ),
             ),
           ),
