@@ -268,10 +268,11 @@ class ProductCard extends StatelessWidget {
         },
         child: ListTile(
           leading: IconButton.filledTonal(
+            
             onPressed: () {},
             style: IconButton.styleFrom(
                 backgroundColor: getColorForProductCategory(product.category!)),
-            icon: PhosphorIcon(getIconForCategory(product.category!)),
+            icon: PhosphorIcon(getIconForCategory(product.category!), color: getContrastingColor(getColorForProductCategory(product.category!)),),
           ),
           title: Text(
             product.name!,
