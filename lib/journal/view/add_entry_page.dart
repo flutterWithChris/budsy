@@ -293,33 +293,32 @@ class _AddEntryPageState extends State<AddEntryPage> {
                                   spacing: 8,
                                   children: [
                                     for (var feeling in selectedFeelings)
-                                      Flexible(
-                                          child: Chip(
+                                      Chip(
                                         color: WidgetStatePropertyAll(
-                                            getColorForFeeling(feeling)),
+                                        getColorForFeeling(feeling)),
                                         visualDensity: VisualDensity.compact,
                                         label: Text(
-                                          feeling.name!.capitalize,
-                                          style: TextStyle(
-                                            color: getContrastingColor(
-                                              getColorForFeeling(feeling),
-                                            ),
-                                          ),
+                                      feeling.name!.capitalize,
+                                      style: TextStyle(
+                                        color: getContrastingColor(
+                                          getColorForFeeling(feeling),
                                         ),
-                                        avatar: feeling.icon != null &&
-                                                feeling.icon!.isNotEmpty
-                                            ? PhosphorIcon(
-                                                getIconForFeeling(feeling),
-                                                size: 16,
-                                                color: getContrastingColor(
-                                                    getColorForFeeling(
-                                                        feeling)),
-                                              )
-                                            : null,
-                                        side: BorderSide.none,
-                                        backgroundColor:
-                                            getColorForFeeling(feeling),
-                                      )),
+                                      ),
+                                             ),
+                                             avatar: feeling.icon != null &&
+                                            feeling.icon!.isNotEmpty
+                                        ? PhosphorIcon(
+                                            getIconForFeeling(feeling),
+                                            size: 16,
+                                            color: getContrastingColor(
+                                                getColorForFeeling(
+                                                    feeling)),
+                                          )
+                                        : null,
+                                                                              side: BorderSide.none,
+                                                                              backgroundColor:
+                                        getColorForFeeling(feeling),
+                                                                            ),
                                   ],
                                 );
                               },
