@@ -37,7 +37,7 @@ class ProductDetailsBloc
           await _productRepository.fetchTerpenes(productId) ?? [];
       List<String> images =
           await _productRepository.fetchProductImages(productId) ?? [];
-
+      print('Images: $images');
       emit(ProductDetailsLoaded(
           product: product,
           images: images,

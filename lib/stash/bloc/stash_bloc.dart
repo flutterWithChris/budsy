@@ -9,6 +9,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:meta/meta.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 part 'stash_event.dart';
 part 'stash_state.dart';
@@ -45,7 +46,7 @@ class StashBloc extends Bloc<StashEvent, StashState> {
         allCannabinoids = value[1] as List<Cannabinoid>?;
         allTerpenes = value[2] as List<Terpene>?;
       });
- 
+
       emit(StashLoaded(products ?? []));
     } catch (e) {
       print(e);
@@ -70,7 +71,10 @@ class StashBloc extends Bloc<StashEvent, StashState> {
             product.id!, event.product.terpenes!);
       }
       if (event.images.isNotEmpty) {
-        await _productRepository.addProductImages(product.id!, event.images);
+        await _productRepository.addProductImages(
+            Supabase.instance.client.auth.currentUser!.id,
+            product.id!,
+            event.images);
       }
       emit(ProductAdded(product));
       add(FetchStash(_authBloc.state.user!.id));
@@ -96,20 +100,21 @@ class StashBloc extends Bloc<StashEvent, StashState> {
       emit(StashLoading());
       Product product = await _productRepository.updateProduct(event.product);
       if (event.product.cannabinoids != null) {
-      await _productRepository.removeProductCannabinoids(
-            product.id!);
+        await _productRepository.removeProductCannabinoids(product.id!);
         await _productRepository.addProductCannabinoids(
             product.id!, event.product.cannabinoids!);
       }
       if (event.product.terpenes != null) {
-        await _productRepository.removeProductTerpenes(
-            product.id!);
+        await _productRepository.removeProductTerpenes(product.id!);
         await _productRepository.addProductTerpenes(
             product.id!, event.product.terpenes!);
       }
       if (event.images.isNotEmpty) {
         await _productRepository.removeProductImages(product.id!);
-        await _productRepository.addProductImages(product.id!, event.images);
+        await _productRepository.addProductImages(
+            Supabase.instance.client.auth.currentUser!.id,
+            product.id!,
+            event.images);
       }
       emit(ProductUpdated(product));
       add(FetchStash(_authBloc.state.user!.id));

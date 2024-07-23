@@ -149,12 +149,36 @@ class _EditProductPageState extends State<EditProductPage> {
                                           const EdgeInsets.only(right: 16.0),
                                       child: AspectRatio(
                                         aspectRatio: 1,
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(16),
-                                          child: Image.file(
-                                            File(_imageFile!.path),
-                                            fit: BoxFit.cover,
+                                        child: InkWell(
+                                          onTap: () async {
+                                            try {
+                                              await showImagePicker(context)
+                                                  .then((value) async {
+                                                if (value != null) {
+                                                  final filePath = value.path;
+                                                  setState(() {
+                                                    _filePath = filePath;
+                                                    _imageFile = value;
+                                                  });
+
+                                                  _productDraft = _productDraft
+                                                      ?.copyWith(
+                                                          images: [filePath]);
+                                                  print(
+                                                      'Product: ${_productDraft.toString()}');
+                                                }
+                                              });
+                                            } catch (e) {
+                                              print(e);
+                                            }
+                                          },
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(16),
+                                            child: Image.file(
+                                              File(_imageFile!.path),
+                                              fit: BoxFit.cover,
+                                            ),
                                           ),
                                         ),
                                       ),

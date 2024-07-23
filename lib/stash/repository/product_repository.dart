@@ -6,6 +6,7 @@ import 'package:canjo/stash/model/cannabinoid.dart';
 import 'package:canjo/stash/model/product.dart';
 import 'package:canjo/stash/model/terpene.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mime/mime.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
@@ -135,7 +136,7 @@ class ProductRepository {
     }
   }
 
-  // Fetch images for a specific product
+// Fetch images for a specific product
   Future<List<String>?> fetchProductImages(String productId) async {
     try {
       final response = await _supabaseClient
@@ -143,8 +144,26 @@ class ProductRepository {
           .select('image_url')
           .eq('product_id', productId);
 
-      return response.map((image) => image['image_url'] as String).toList();
+      if (response.isNotEmpty) {
+        final imageUrls = (response as List)
+            .map((image) => image['image_url'] as String)
+            .toList();
+
+        // Generate signed URLs for each image
+        final signedUrls = await Future.wait(imageUrls.map((imagePath) async {
+          final signedUrlResponse = await _supabaseClient.storage
+              .from('product_images')
+              .createSignedUrl(imagePath, 60); // 60 seconds validity
+
+          return signedUrlResponse;
+        }).toList());
+
+        return signedUrls.where((url) => url != null).toList();
+      } else {
+        return [];
+      }
     } catch (e) {
+      print('Exception fetching images: $e');
       return null;
     }
   }
@@ -214,30 +233,58 @@ class ProductRepository {
     }
   }
 
-  // Add images to a product
-  Future<void> addProductImages(String productId, List<XFile> images) async {
+// Add images to a product
+  Future<void> addProductImages(
+      String userId, String productId, List<XFile> images) async {
     try {
-      String? url;
-      // Store in supabase storage
+      final List<Map<String, dynamic>> data = [];
+      Uuid uuid = const Uuid();
+
       for (var i = 0; i < images.length; i++) {
-        Uuid uuid = const Uuid();
         String imageId = uuid.v4();
         File imageFile = File(images[i].path);
         XFile image = images[i];
-        url = await _supabaseClient.storage
-            .from('product_images')
-            .upload('$productId/${image.name}', imageFile);
+
+        // Determine the content type
+        final mimeType =
+            lookupMimeType(imageFile.path) ?? 'application/octet-stream';
+
+        // Upload to Supabase storage with content type
+        final uploadResult =
+            await _supabaseClient.storage.from('product_images').upload(
+                  '$userId/$productId/${imageId}_${image.name}',
+                  imageFile,
+                  fileOptions: FileOptions(
+                    cacheControl: '3600',
+                    upsert: false,
+                    contentType: mimeType,
+                  ),
+                );
+
+        if (uploadResult.isEmpty) {
+          // Handle the error appropriately here
+          scaffoldKey.currentState!
+              .showSnackBar(getErrorSnackBar('Error uploading image!'));
+          throw 'Error uploading image';
+        }
+
+        // Retrieve public URL
+        final String filePath = '$userId/$productId/${imageId}_${image.name}';
+
+        data.add({'product_id': productId, 'image_url': filePath});
       }
 
-      if (url == null) {
-        return;
-      }
+      if (data.isNotEmpty) {
+        // Store in the database
 
-      // Store in database
-      final List<Map<String, dynamic>> data = images
-          .map((image) => {'product_id': productId, 'image_url': url})
-          .toList();
-    } catch (e) {}
+        await _supabaseClient.from('product_images').insert(data);
+      }
+    } catch (e) {
+      scaffoldKey.currentState!
+          .showSnackBar(getErrorSnackBar('Error uploading images!'));
+      // Handle exceptions
+      print('Error uploading images: $e');
+    }
   }
 
   // Remove images from a product

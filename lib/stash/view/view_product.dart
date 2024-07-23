@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:canjo/app/colors.dart';
 import 'package:canjo/app/icons.dart';
 import 'package:canjo/app/system/bottom_nav.dart';
@@ -79,17 +80,27 @@ class _ViewProductPageState extends State<ViewProductPage> {
                     }
                     if (state is ProductDetailsLoaded) {
                       Product product = state.product;
+                      print('Product Images: ${state.images}');
                       return Card(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16.0, vertical: 16.0),
                           child: Column(
                             children: [
-                              if (product.images.isNotNullOrEmpty)
+                              if (state.images.isNotNullOrEmpty)
                                 Padding(
-                                  padding: const EdgeInsets.all(8),
-                                  child: Image.network(
-                                      state.product.images!.first),
+                                  padding: const EdgeInsets.fromLTRB(
+                                      8.0, 8.0, 8.0, 16.0),
+                                  child: AspectRatio(
+                                      aspectRatio: 1,
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        child: CachedNetworkImage(
+                                          imageUrl: state.images.first,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      )),
                                 ),
                               Padding(
                                 padding:

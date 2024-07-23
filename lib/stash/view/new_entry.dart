@@ -158,12 +158,37 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                                             const EdgeInsets.only(right: 16.0),
                                         child: AspectRatio(
                                           aspectRatio: 1,
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(16),
-                                            child: Image.file(
-                                              File(_imageFile!.path),
-                                              fit: BoxFit.cover,
+                                          child: InkWell(
+                                            onTap: () async {
+                                              try {
+                                                await showImagePicker(context)
+                                                    .then((value) async {
+                                                  if (value != null) {
+                                                    final filePath = value.path;
+                                                    setState(() {
+                                                      _filePath = filePath;
+                                                      _imageFile = value;
+                                                    });
+
+                                                    _product =
+                                                        _product.copyWith(
+                                                      images: [filePath],
+                                                    );
+                                                    print(
+                                                        'Product: ${_product.toString()}');
+                                                  }
+                                                });
+                                              } catch (e) {
+                                                print(e);
+                                              }
+                                            },
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
+                                              child: Image.file(
+                                                File(_imageFile!.path),
+                                                fit: BoxFit.cover,
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -548,12 +573,13 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                             ],
                           ),
                           const Gap(size: 16),
-                          const Row(
+                          Row(
                             children: [
                               Expanded(
                                 child: TextField(
                                   textCapitalization: TextCapitalization.words,
-                                  decoration: InputDecoration(
+                                  controller: _dispensaryController,
+                                  decoration: const InputDecoration(
                                     labelText: 'Dispensary',
                                     hintText:
                                         'Green Thumb, The Green Door, etc',
@@ -562,11 +588,12 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                                   ),
                                 ),
                               ),
-                              Gap(size: 16),
+                              const Gap(size: 16),
                               Expanded(
                                 child: TextField(
+                                  controller: _brandController,
                                   textCapitalization: TextCapitalization.words,
-                                  decoration: InputDecoration(
+                                  decoration: const InputDecoration(
                                     labelText: 'Brand',
                                     hintText: 'Cookies, Bloom Farms, etc.',
                                     floatingLabelBehavior:
@@ -784,8 +811,9 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                                           double.tryParse(_costController.text),
                                       weight: null,
                                       unit: _flowerUnit,
-                                      dispensary: _dispensaryController.text,
-                                      brand: _brandController.text,
+                                      dispensary:
+                                          _dispensaryController.value.text,
+                                      brand: _brandController.value.text,
                                       cannabinoids: [
                                         ...requiredCannabinoids ?? [],
                                         ...selectedCannabinoids
