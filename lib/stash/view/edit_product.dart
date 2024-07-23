@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:canjo/app/icons.dart';
 import 'package:canjo/app/snackbars.dart';
 import 'package:canjo/app/system/bottom_nav.dart';
@@ -22,7 +23,8 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class EditProductPage extends StatefulWidget {
   final Product product;
-  const EditProductPage({super.key, required this.product});
+  final String? image;
+  const EditProductPage({super.key, required this.product, this.image});
 
   @override
   State<EditProductPage> createState() => _EditProductPageState();
@@ -142,7 +144,7 @@ class _EditProductPageState extends State<EditProductPage> {
                       children: [
                         Row(
                           children: [
-                            _imageFile != null
+                            _imageFile != null || widget.image != null
                                 ? Flexible(
                                     child: Padding(
                                       padding:
@@ -150,37 +152,41 @@ class _EditProductPageState extends State<EditProductPage> {
                                       child: AspectRatio(
                                         aspectRatio: 1,
                                         child: InkWell(
-                                          onTap: () async {
-                                            try {
-                                              await showImagePicker(context)
-                                                  .then((value) async {
-                                                if (value != null) {
-                                                  final filePath = value.path;
-                                                  setState(() {
-                                                    _filePath = filePath;
-                                                    _imageFile = value;
-                                                  });
+                                            onTap: () async {
+                                              try {
+                                                await showImagePicker(context)
+                                                    .then((value) async {
+                                                  if (value != null) {
+                                                    final filePath = value.path;
+                                                    setState(() {
+                                                      _filePath = filePath;
+                                                      _imageFile = value;
+                                                    });
 
-                                                  _productDraft = _productDraft
-                                                      ?.copyWith(
-                                                          images: [filePath]);
-                                                  print(
-                                                      'Product: ${_productDraft.toString()}');
-                                                }
-                                              });
-                                            } catch (e) {
-                                              print(e);
-                                            }
-                                          },
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(16),
-                                            child: Image.file(
-                                              File(_imageFile!.path),
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        ),
+                                                    _productDraft =
+                                                        _productDraft?.copyWith(
+                                                            images: [filePath]);
+                                                    print(
+                                                        'Product: ${_productDraft.toString()}');
+                                                  }
+                                                });
+                                              } catch (e) {
+                                                print(e);
+                                              }
+                                            },
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              child: _imageFile != null
+                                                  ? Image.file(
+                                                      File(_imageFile!.path),
+                                                      fit: BoxFit.cover,
+                                                    )
+                                                  : CachedNetworkImage(
+                                                      imageUrl: widget.image!,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                            )),
                                       ),
                                     ),
                                   )

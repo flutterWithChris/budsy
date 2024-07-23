@@ -53,8 +53,14 @@ class _ViewProductPageState extends State<ViewProductPage> {
                   child: TextButton.icon(
                     onPressed: () async => await context.push(
                         '/stash/product/${widget.product.id}/edit',
-                        extra:
-                            context.read<ProductDetailsBloc>().state.product),
+                        extra: (
+                          context.read<ProductDetailsBloc>().state.product,
+                          context
+                              .read<ProductDetailsBloc>()
+                              .state
+                              .images
+                              ?.first,
+                        )),
                     label: const Text('Edit'),
                     icon: PhosphorIcon(
                       PhosphorIcons.pencil(),

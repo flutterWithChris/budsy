@@ -88,8 +88,8 @@ GoRouter goRouter = GoRouter(
                     path: 'edit',
                     builder: (context, state) {
                       return EditProductPage(
-                        product: state.extra as Product,
-                      );
+                          product: (state.extra as (Product, String?)).$1,
+                          image: (state.extra as (Product, String?)).$2);
                     })
               ]),
         ]),
