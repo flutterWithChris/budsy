@@ -139,8 +139,9 @@ class _ViewProductPageState extends State<ViewProductPage> {
                                                 ? Icon(
                                                     getIconForCategory(product
                                                             .category ??
-                                                        ProductCategory.other),
+                                                        ProductCategory.other,),
                                                     size: 28.0,
+                                                    color: getContrastingColor(getColorForProductCategory(product.category!)),
                                                   )
                                                 : null,
                                           ),

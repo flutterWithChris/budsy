@@ -33,6 +33,7 @@ class StashBloc extends Bloc<StashEvent, StashState> {
   }
 
   void _onFetchStash(FetchStash event, Emitter<StashState> emit) async {
+    print('Fetching Stash');
     emit(StashLoading());
     try {
       List<Product>? products;
@@ -47,6 +48,7 @@ class StashBloc extends Bloc<StashEvent, StashState> {
         allTerpenes = value[2] as List<Terpene>?;
       });
 
+      print('Products In Bloc ${products}');
       emit(StashLoaded(products ?? []));
     } catch (e) {
       print(e);
@@ -79,6 +81,7 @@ class StashBloc extends Bloc<StashEvent, StashState> {
       emit(ProductAdded(product));
       add(FetchStash(_authBloc.state.user!.id));
     } catch (e) {
+      print(e);
       emit(StashError(e.toString()));
     }
   }
