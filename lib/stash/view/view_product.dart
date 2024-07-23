@@ -56,10 +56,16 @@ class _ViewProductPageState extends State<ViewProductPage> {
                         extra: (
                           context.read<ProductDetailsBloc>().state.product,
                           context
-                              .read<ProductDetailsBloc>()
-                              .state
-                              .images
-                              ?.first,
+                                  .read<ProductDetailsBloc>()
+                                  .state
+                                  .images
+                                  .isNotNullOrEmpty
+                              ? context
+                                  .read<ProductDetailsBloc>()
+                                  .state
+                                  .images!
+                                  .first
+                              : null,
                         )),
                     label: const Text('Edit'),
                     icon: PhosphorIcon(
