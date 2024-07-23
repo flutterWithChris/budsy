@@ -74,6 +74,41 @@ class SettingsPage extends StatelessWidget {
                   await context.read<LoginCubit>().signOut();
                 },
               ),
+
+              // Privacy Policy
+              ListTile(
+                leading: PhosphorIcon(PhosphorIcons.lockSimple()),
+                title: const Text('Privacy Policy'),
+                onTap: () async {
+                  await launchUrlString(privacyPolicyUrl,
+                      mode: LaunchMode.externalApplication);
+                },
+              ),
+              // Terms of Use
+              ListTile(
+                leading: PhosphorIcon(PhosphorIcons.bookOpen()),
+                title: const Text('Terms of Use'),
+                onTap: () async {
+                  await launchUrlString(termsOfUse,
+                      mode: LaunchMode.externalApplication);
+                },
+              ),
+              // Contact Us
+              ListTile(
+                leading: PhosphorIcon(PhosphorIcons.mailbox()),
+                title: const Text('Contact Us'),
+                onTap: () async {
+                  Uri emailLaunchUri = Uri(
+                      scheme: 'mailto',
+                      path: supportEmail,
+                      query: encodeQueryParameters({
+                        'subject': 'Canjo Feedback',
+                        'body': '',
+                      }));
+                  await launchUrlString(emailLaunchUri.toString(),
+                      mode: LaunchMode.externalApplication);
+                },
+              ),
               // TODO: Implement account deletion
               ListTile(
                 leading: PhosphorIcon(PhosphorIcons.trashSimple()),
@@ -109,40 +144,6 @@ class SettingsPage extends StatelessWidget {
                       );
                     },
                   );
-                },
-              ),
-              // Privacy Policy
-              ListTile(
-                leading: PhosphorIcon(PhosphorIcons.lockSimple()),
-                title: const Text('Privacy Policy'),
-                onTap: () async {
-                  await launchUrlString(privacyPolicyUrl,
-                      mode: LaunchMode.externalApplication);
-                },
-              ),
-              // Terms of Use
-              ListTile(
-                leading: PhosphorIcon(PhosphorIcons.bookOpen()),
-                title: const Text('Terms of Use'),
-                onTap: () async {
-                  await launchUrlString(termsOfUse,
-                      mode: LaunchMode.externalApplication);
-                },
-              ),
-              // Contact Us
-              ListTile(
-                leading: PhosphorIcon(PhosphorIcons.mailbox()),
-                title: const Text('Contact Us'),
-                onTap: () async {
-                  Uri emailLaunchUri = Uri(
-                      scheme: 'mailto',
-                      path: supportEmail,
-                      query: encodeQueryParameters({
-                        'subject': 'Canjo Feedback',
-                        'body': '',
-                      }));
-                  await launchUrlString(emailLaunchUri.toString(),
-                      mode: LaunchMode.externalApplication);
                 },
               ),
             ]),
