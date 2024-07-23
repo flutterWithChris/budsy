@@ -682,7 +682,7 @@ class ViewEntrySheet extends StatelessWidget {
         //  }
       },
       child: DraggableScrollableSheet(
-        initialChildSize: 0.6,
+        initialChildSize: 0.618,
         minChildSize: 0.25,
         maxChildSize: 0.9,
         expand: false,
@@ -830,7 +830,7 @@ class ViewEntrySheet extends StatelessWidget {
                             ),
                             const Gap(size: 8.0),
                             Text(
-                              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam',
+                              entry.notes!,
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
                           ],
@@ -868,7 +868,7 @@ class ProductCategorySummary extends StatelessWidget {
               ),
               size: 14.0,
               color: getContrastingColor(
-                Theme.of(context).colorScheme.primaryContainer,
+                getColorForProductCategory(category),
               ),
             ),
           )
