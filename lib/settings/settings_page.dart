@@ -1,11 +1,13 @@
 import 'package:canjo/app/system/bottom_nav.dart';
 import 'package:canjo/auth/bloc/auth_bloc.dart';
+import 'package:canjo/consts.dart';
 import 'package:canjo/login/cubit/login_cubit.dart';
 import 'package:canjo/theme/cubit/theme_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -107,6 +109,40 @@ class SettingsPage extends StatelessWidget {
                       );
                     },
                   );
+                },
+              ),
+              // Privacy Policy
+              ListTile(
+                leading: PhosphorIcon(PhosphorIcons.lockSimple()),
+                title: const Text('Privacy Policy'),
+                onTap: () async {
+                  await launchUrlString(privacyPolicyUrl,
+                      mode: LaunchMode.externalApplication);
+                },
+              ),
+              // Terms of Use
+              ListTile(
+                leading: PhosphorIcon(PhosphorIcons.bookOpen()),
+                title: const Text('Terms of Use'),
+                onTap: () async {
+                  await launchUrlString(termsOfUse,
+                      mode: LaunchMode.externalApplication);
+                },
+              ),
+              // Contact Us
+              ListTile(
+                leading: PhosphorIcon(PhosphorIcons.mailbox()),
+                title: const Text('Contact Us'),
+                onTap: () async {
+                  Uri emailLaunchUri = Uri(
+                      scheme: 'mailto',
+                      path: supportEmail,
+                      query: encodeQueryParameters({
+                        'subject': 'Canjo Feedback',
+                        'body': '',
+                      }));
+                  await launchUrlString(emailLaunchUri.toString(),
+                      mode: LaunchMode.externalApplication);
                 },
               ),
             ]),

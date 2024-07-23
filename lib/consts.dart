@@ -14,6 +14,19 @@ GlobalKey<ScaffoldMessengerState> scaffoldKey =
 // It is used to conditionally enable debug-only features.
 const bool kIsDebug = bool.fromEnvironment('dart.vm.product') == false;
 
+String privacyPolicyUrl =
+    'https://gist.github.com/flutterWithChris/615636c57921f91466e760ea56834092';
+String termsOfUse =
+    'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/';
+String supportEmail = 'christian.vergara531@gmail.com';
+
+String? encodeQueryParameters(Map<String, String> params) {
+  return params.entries
+      .map((MapEntry<String, String> e) =>
+          '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+      .join('&');
+}
+
 List<Terpene> _terpenes = [
   Terpene(
     id: '1',

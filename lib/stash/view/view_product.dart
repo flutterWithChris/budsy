@@ -141,11 +141,14 @@ class _ViewProductPageState extends State<ViewProductPage> {
                                             child: product.images == null ||
                                                     product.images!.isEmpty
                                                 ? Icon(
-                                                    getIconForCategory(product
-                                                            .category ??
-                                                        ProductCategory.other,),
+                                                    getIconForCategory(
+                                                      product.category ??
+                                                          ProductCategory.other,
+                                                    ),
                                                     size: 28.0,
-                                                    color: getContrastingColor(getColorForProductCategory(product.category!)),
+                                                    color: getContrastingColor(
+                                                        getColorForProductCategory(
+                                                            product.category!)),
                                                   )
                                                 : null,
                                           ),
