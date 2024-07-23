@@ -20,10 +20,12 @@ class ProductRepository {
           .from('products')
           .upsert(product.toJson())
           .select();
+      print('Create product response: ${response}');
       Product createdProduct = Product.fromJson(response.first);
-
+      print('Created Product');
       return createdProduct;
     } catch (e) {
+      print(e);
       scaffoldKey.currentState!
           .showSnackBar(getErrorSnackBar('Error creating product!'));
       return null;

@@ -140,27 +140,27 @@ class StashPage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0, vertical: 16.0),
-                      child: Row(
-                        children: [
-                          PhosphorIcon(
-                              PhosphorIcons.leaf(PhosphorIconsStyle.fill),
-                              size: 18),
-                          const SizedBox(width: 8.0),
-                          Text(
-                            'Current',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  // SliverToBoxAdapter(
+                  //   child: Padding(
+                  //     padding: const EdgeInsets.symmetric(
+                  //         horizontal: 16.0, vertical: 16.0),
+                  //     child: Row(
+                  //       children: [
+                  //         PhosphorIcon(
+                  //             PhosphorIcons.leaf(PhosphorIconsStyle.fill),
+                  //             size: 18),
+                  //         const SizedBox(width: 8.0),
+                  //         Text(
+                  //           'Current',
+                  //           style: Theme.of(context)
+                  //               .textTheme
+                  //               .titleMedium
+                  //               ?.copyWith(),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
                   SliverPadding(
                     padding: const EdgeInsets.symmetric(vertical: 0.0),
                     sliver: StashList(stash: state.products),
@@ -279,7 +279,10 @@ class ProductCard extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
-          subtitle: Text(product.type!.name.capitalize),
+          subtitle: 
+          product.dispensary != null || product.type != null 
+          ? Text(product.dispensary ?? product.type!.name.capitalize)
+          : null,
           trailing: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
