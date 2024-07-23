@@ -102,7 +102,7 @@ class _ViewProductPageState extends State<ViewProductPage> {
                               if (state.images.isNotNullOrEmpty)
                                 Padding(
                                   padding: const EdgeInsets.fromLTRB(
-                                      8.0, 8.0, 8.0, 16.0),
+                                      8.0, 8.0, 8.0, 24.0),
                                   child: AspectRatio(
                                       aspectRatio: 1,
                                       child: ClipRRect(
