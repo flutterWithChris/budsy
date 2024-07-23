@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:canjo/auth/bloc/auth_bloc.dart';
 import 'package:canjo/consts.dart';
+import 'package:canjo/journal/cubit/products_cubit.dart';
 import 'package:canjo/stash/model/cannabinoid.dart';
 import 'package:canjo/stash/model/product.dart';
 import 'package:canjo/stash/model/terpene.dart';
@@ -97,6 +98,7 @@ class StashBloc extends Bloc<StashEvent, StashState> {
 
   void _onUpdateProduct(UpdateProduct event, Emitter<StashState> emit) async {
     try {
+      StashState stashState = state;
       emit(StashLoading());
       Product product = await _productRepository.updateProduct(event.product);
       if (event.product.cannabinoids != null) {
@@ -109,15 +111,18 @@ class StashBloc extends Bloc<StashEvent, StashState> {
         await _productRepository.addProductTerpenes(
             product.id!, event.product.terpenes!);
       }
-      if (event.images.isNotEmpty) {
+      if (event.images != null && event.images!.isNotEmpty) {
         await _productRepository.removeProductImages(product.id!);
         await _productRepository.addProductImages(
             Supabase.instance.client.auth.currentUser!.id,
             product.id!,
-            event.images);
+            event.images!);
       }
       emit(ProductUpdated(product));
-      add(FetchStash(_authBloc.state.user!.id));
+      emit(StashLoaded(stashState.products
+              ?.map((e) => e.id == product.id ? product : e)
+              .toList() ??
+          [product]));
     } catch (e) {
       print(e);
 

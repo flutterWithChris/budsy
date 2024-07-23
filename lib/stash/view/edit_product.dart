@@ -14,6 +14,7 @@ import 'package:canjo/stash/model/cannabinoid.dart';
 import 'package:canjo/stash/model/product.dart';
 import 'package:canjo/stash/model/terpene.dart';
 import 'package:canjo/lab_reports/lab_report.dart';
+import 'package:custom_rating_bar/custom_rating_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
@@ -41,6 +42,7 @@ class _EditProductPageState extends State<EditProductPage> {
   final TextEditingController _dispensaryController = TextEditingController();
   final TextEditingController _brandController = TextEditingController();
   FlowerUnit? _flowerUnit;
+  final int _rating = 0;
 
   XFile? _imageFile;
 
@@ -144,132 +146,163 @@ class _EditProductPageState extends State<EditProductPage> {
                       children: [
                         Row(
                           children: [
-                            _imageFile != null || widget.image != null
-                                ? Flexible(
-                                    child: Padding(
-                                      padding:
-                                          const EdgeInsets.only(right: 16.0),
-                                      child: AspectRatio(
-                                        aspectRatio: 1,
-                                        child: InkWell(
-                                            onTap: () async {
-                                              try {
-                                                await showImagePicker(context)
-                                                    .then((value) async {
-                                                  if (value != null) {
-                                                    final filePath = value.path;
-                                                    setState(() {
-                                                      _filePath = filePath;
-                                                      _imageFile = value;
-                                                    });
+                            Flexible(
+                              child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    _imageFile != null || widget.image != null
+                                        ? Flexible(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  right: 16.0),
+                                              child: AspectRatio(
+                                                aspectRatio: 1,
+                                                child: InkWell(
+                                                    onTap: () async {
+                                                      try {
+                                                        await showImagePicker(
+                                                                context)
+                                                            .then(
+                                                                (value) async {
+                                                          if (value != null) {
+                                                            final filePath =
+                                                                value.path;
+                                                            setState(() {
+                                                              _filePath =
+                                                                  filePath;
+                                                              _imageFile =
+                                                                  value;
+                                                            });
 
-                                                    _productDraft =
-                                                        _productDraft?.copyWith(
-                                                            images: [filePath]);
-                                                    print(
-                                                        'Product: ${_productDraft.toString()}');
-                                                  }
-                                                });
-                                              } catch (e) {
-                                                print(e);
-                                              }
-                                            },
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                              child: _imageFile != null
-                                                  ? Image.file(
-                                                      File(_imageFile!.path),
-                                                      fit: BoxFit.cover,
-                                                    )
-                                                  : CachedNetworkImage(
-                                                      imageUrl: widget.image!,
-                                                      fit: BoxFit.cover,
-                                                    ),
-                                            )),
-                                      ),
-                                    ),
-                                  )
-                                : Flexible(
-                                    child: Padding(
-                                      padding:
-                                          const EdgeInsets.only(right: 16.0),
-                                      child: AspectRatio(
-                                        aspectRatio: 1,
-                                        child: Card(
-                                          // decoration: BoxDecoration(
-                                          //   borderRadius: BorderRadius.circular(16),
-                                          //   border: Border.all(
-                                          //     color: Theme.of(context)
-                                          //         .colorScheme
-                                          //         .onSurface,
-                                          //   ),
-                                          // ),
-                                          child: InkWell(
-                                            onTap: () async {
-                                              try {
-                                                await showImagePicker(context)
-                                                    .then((value) async {
-                                                  if (value != null) {
-                                                    final filePath = value.path;
-                                                    setState(() {
-                                                      _filePath = filePath;
-                                                      _imageFile = value;
-                                                    });
-
-                                                    _productDraft =
-                                                        _productDraft?.copyWith(
-                                                      images: [filePath],
-                                                    );
-                                                    print(
-                                                        'Product: ${_productDraft.toString()}');
-                                                  }
-                                                });
-                                              } catch (e) {
-                                                print(e);
-                                              }
-                                            },
-                                            child: Center(
-                                              child: IconButton(
-                                                onPressed: () async {
-                                                  try {
-                                                    await showImagePicker(
-                                                            context)
-                                                        .then((value) async {
-                                                      if (value != null) {
-                                                        final filePath =
-                                                            value.path;
-                                                        setState(() {
-                                                          _filePath = filePath;
-                                                          _imageFile = value;
+                                                            _productDraft =
+                                                                _productDraft
+                                                                    ?.copyWith(
+                                                                        images: [
+                                                                  filePath
+                                                                ]);
+                                                            print(
+                                                                'Product: ${_productDraft.toString()}');
+                                                          }
                                                         });
-
-                                                        _productDraft =
-                                                            _productDraft
-                                                                ?.copyWith(
-                                                          images: [filePath],
-                                                        );
-                                                        print(
-                                                            'Product: ${_productDraft.toString()}');
+                                                      } catch (e) {
+                                                        print(e);
                                                       }
-                                                    });
-                                                  } catch (e) {
-                                                    print(e);
-                                                  }
-                                                },
-                                                icon: PhosphorIcon(
-                                                  PhosphorIcons.imageSquare(
-                                                      PhosphorIconsStyle
-                                                          .duotone),
-                                                  size: 32,
+                                                    },
+                                                    child: ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
+                                                      child: _imageFile != null
+                                                          ? Image.file(
+                                                              File(_imageFile!
+                                                                  .path),
+                                                              fit: BoxFit.cover,
+                                                            )
+                                                          : CachedNetworkImage(
+                                                              imageUrl:
+                                                                  widget.image!,
+                                                              fit: BoxFit.cover,
+                                                            ),
+                                                    )),
+                                              ),
+                                            ),
+                                          )
+                                        : Flexible(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  right: 16.0),
+                                              child: AspectRatio(
+                                                aspectRatio: 1,
+                                                child: Card(
+                                                  // decoration: BoxDecoration(
+                                                  //   borderRadius: BorderRadius.circular(16),
+                                                  //   border: Border.all(
+                                                  //     color: Theme.of(context)
+                                                  //         .colorScheme
+                                                  //         .onSurface,
+                                                  //   ),
+                                                  // ),
+                                                  child: InkWell(
+                                                    onTap: () async {
+                                                      try {
+                                                        await showImagePicker(
+                                                                context)
+                                                            .then(
+                                                                (value) async {
+                                                          if (value != null) {
+                                                            final filePath =
+                                                                value.path;
+                                                            setState(() {
+                                                              _filePath =
+                                                                  filePath;
+                                                              _imageFile =
+                                                                  value;
+                                                            });
+
+                                                            _productDraft =
+                                                                _productDraft
+                                                                    ?.copyWith(
+                                                              images: [
+                                                                filePath
+                                                              ],
+                                                            );
+                                                            print(
+                                                                'Product: ${_productDraft.toString()}');
+                                                          }
+                                                        });
+                                                      } catch (e) {
+                                                        print(e);
+                                                      }
+                                                    },
+                                                    child: Center(
+                                                      child: IconButton(
+                                                        onPressed: () async {
+                                                          try {
+                                                            await showImagePicker(
+                                                                    context)
+                                                                .then(
+                                                                    (value) async {
+                                                              if (value !=
+                                                                  null) {
+                                                                final filePath =
+                                                                    value.path;
+                                                                setState(() {
+                                                                  _filePath =
+                                                                      filePath;
+                                                                  _imageFile =
+                                                                      value;
+                                                                });
+
+                                                                _productDraft =
+                                                                    _productDraft
+                                                                        ?.copyWith(
+                                                                  images: [
+                                                                    filePath
+                                                                  ],
+                                                                );
+                                                                print(
+                                                                    'Product: ${_productDraft.toString()}');
+                                                              }
+                                                            });
+                                                          } catch (e) {
+                                                            print(e);
+                                                          }
+                                                        },
+                                                        icon: PhosphorIcon(
+                                                          PhosphorIcons.imageSquare(
+                                                              PhosphorIconsStyle
+                                                                  .duotone),
+                                                          size: 32,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                                  ]),
+                            ),
                             Flexible(
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
@@ -828,7 +861,8 @@ class _EditProductPageState extends State<EditProductPage> {
                               );
                               context.read<StashBloc>().add(UpdateProduct(
                                   product,
-                                  _imageFile != null ? [_imageFile!] : []));
+                                  images:
+                                      _imageFile != null ? [_imageFile!] : []));
                               // GoRouter.of(context).go('/stash');
                             },
                             icon: PhosphorIcon(

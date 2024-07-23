@@ -24,7 +24,7 @@ class RemoveFromStash extends StashEvent {
 
 class UpdateProduct extends StashEvent {
   final Product product;
-  final List<XFile> images;
+  final List<XFile>? images;
 
-  UpdateProduct(this.product, this.images);
+  UpdateProduct(this.product, {this.images});
 }

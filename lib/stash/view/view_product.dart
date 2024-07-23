@@ -1,8 +1,11 @@
+import 'dart:math';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:canjo/app/colors.dart';
 import 'package:canjo/app/icons.dart';
 import 'package:canjo/app/system/bottom_nav.dart';
 import 'package:canjo/stash/bloc/product_details_bloc.dart';
+import 'package:canjo/stash/bloc/stash_bloc.dart';
 import 'package:canjo/stash/model/cannabinoid.dart';
 import 'package:canjo/stash/model/product.dart';
 import 'package:canjo/stash/model/terpene.dart';
@@ -30,7 +33,8 @@ class ViewProductPage extends StatefulWidget {
 }
 
 class _ViewProductPageState extends State<ViewProductPage> {
-  int? _selectedRating;
+  double? _selectedRating;
+  bool editingRating = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -206,25 +210,93 @@ class _ViewProductPageState extends State<ViewProductPage> {
                                       ),
                                     ),
                                     Expanded(
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
                                         children: [
-                                          RatingBar(
-                                            initialRating:
-                                                product.rating?.toDouble() ??
-                                                    0.0,
-                                            size: 20,
-                                            filledIcon: PhosphorIcons.star(
-                                                PhosphorIconsStyle.fill),
-                                            emptyIcon: PhosphorIcons.star(),
-                                            onRatingChanged: (rating) {
-                                              setState(() {
-                                                _selectedRating =
-                                                    rating.toInt();
-                                              });
-                                            },
-                                          ),
+                                          editingRating == false
+                                              ? IgnorePointer(
+                                                  child: RatingBar(
+                                                    initialRating:
+                                                        _selectedRating ??
+                                                            product.rating
+                                                                ?.toDouble() ??
+                                                            0.0,
+                                                    size: 20,
+                                                    filledIcon:
+                                                        PhosphorIcons.star(
+                                                            PhosphorIconsStyle
+                                                                .fill),
+                                                    emptyIcon:
+                                                        PhosphorIcons.star(),
+                                                    onRatingChanged: (rating) {
+                                                      setState(() {
+                                                        _selectedRating =
+                                                            rating;
+                                                        context
+                                                            .read<StashBloc>()
+                                                            .add(UpdateProduct(
+                                                                product.copyWith(
+                                                                    rating: rating
+                                                                        .toInt())));
+                                                      });
+                                                      editingRating = false;
+                                                    },
+                                                  ),
+                                                )
+                                              : RatingBar(
+                                                  initialRating:
+                                                      _selectedRating ??
+                                                          product.rating
+                                                              ?.toDouble() ??
+                                                          0.0,
+                                                  size: 20,
+                                                  filledIcon:
+                                                      PhosphorIcons.star(
+                                                          PhosphorIconsStyle
+                                                              .fill),
+                                                  emptyIcon:
+                                                      PhosphorIcons.star(),
+                                                  onRatingChanged: (rating) {
+                                                    setState(() {
+                                                      _selectedRating = rating;
+                                                      context
+                                                          .read<StashBloc>()
+                                                          .add(UpdateProduct(state
+                                                              .product
+                                                              .copyWith(
+                                                                  rating: rating
+                                                                      .toInt())));
+                                                      print('Rating: $rating');
+                                                    });
+                                                    editingRating = false;
+                                                  },
+                                                )
+                                                  .animate(
+                                                    onComplete: (controller) =>
+                                                        controller.repeat(),
+                                                  )
+                                                  .shimmer(
+                                                    size: 60,
+                                                    duration: const Duration(
+                                                        seconds: 1,
+                                                        milliseconds: 800),
+                                                    curve: Curves.easeInOutSine,
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .primary,
+                                                  ),
+                                          editingRating == false
+                                              ? TextButton(
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      editingRating = true;
+                                                    });
+                                                  },
+                                                  child:
+                                                      const Text('Set Rating'),
+                                                )
+                                              : const SizedBox.shrink(),
                                         ],
                                       ),
                                     )
