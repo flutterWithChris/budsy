@@ -1,8 +1,11 @@
 import 'package:bloc/bloc.dart';
+import 'package:canjo/app/snackbars.dart';
+import 'package:canjo/consts.dart';
 import 'package:canjo/stash/model/product.dart';
 import 'package:canjo/stash/model/terpene.dart';
 import 'package:canjo/stash/repository/product_repository.dart';
 import 'package:equatable/equatable.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 part 'favorite_terpenes_state.dart';
 
@@ -37,7 +40,16 @@ class FavoriteTerpenesCubit extends Cubit<FavoriteTerpenesState> {
         ..sort((a, b) => favoriteTerpenes[b]!.compareTo(favoriteTerpenes[a]!));
 
       emit(FavoriteTerpenesLoaded(sortedTerpenes.take(3).toList()));
-    } catch (e) {
+    } catch (e, stackTrace) {
+      scaffoldKey.currentState?.showSnackBar(
+        getErrorSnackBar('Failed to load favorite terpenes. Please try again.'),
+      );
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      return null;
+
       emit(FavoriteTerpenesError(e.toString()));
     }
   }

@@ -49,7 +49,7 @@ class StashBloc extends Bloc<StashEvent, StashState> {
         allTerpenes = value[2] as List<Terpene>?;
       });
 
-      print('Products In Bloc ${products}');
+      print('Products In Bloc $products');
       emit(StashLoaded(products ?? []));
     } catch (e) {
       print(e);
@@ -103,7 +103,11 @@ class StashBloc extends Bloc<StashEvent, StashState> {
     try {
       StashState stashState = state;
       emit(StashLoading());
-      Product product = await _productRepository.updateProduct(event.product);
+      Product? product = await _productRepository.updateProduct(event.product);
+      if (product == null) {
+        emit(const StashError('Error updating product'));
+        return;
+      }
       if (event.product.cannabinoids != null) {
         await _productRepository.removeProductCannabinoids(product.id!);
         await _productRepository.addProductCannabinoids(

@@ -35,9 +35,9 @@ class _JournalPageState extends State<JournalPage> {
   bool onboardingShown = false;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        floatingActionButton: const JournalPageFAB(),
-        bottomNavigationBar: const BottomNavBar(),
+    return const Scaffold(
+        floatingActionButton: JournalPageFAB(),
+        bottomNavigationBar: BottomNavBar(),
         body: CustomScrollView(
           slivers: [
             SliverAppBar.medium(
@@ -45,12 +45,12 @@ class _JournalPageState extends State<JournalPage> {
                 'Journal',
               ),
             ),
-            const SliverToBoxAdapter(
+            SliverToBoxAdapter(
               child: SizedBox(
                 height: 4.0,
               ),
             ),
-            const JournalEntryList(),
+            JournalEntryList(),
           ],
         ));
   }
@@ -154,27 +154,25 @@ class _JournalEntryListState extends State<JournalEntryList> {
               ),
               Positioned.fill(
                   child: Container(
-                color: 
-                Theme.of(context).brightness == Brightness.dark
-                ? Colors.black.withOpacity(0.5)
-                : Colors.white.withOpacity(0.5)
-              )),
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.black.withOpacity(0.5)
+                          : Colors.white.withOpacity(0.5))),
               Positioned.fill(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      decoration:  BoxDecoration(
+                      decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         // borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: 
-                            Theme.of(context).brightness == Brightness.dark
-                            ? Colors.black
-                            : Colors.white,
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.black
+                                    : Colors.white,
                             blurRadius: 48,
-                            offset: Offset(0, 8),
+                            offset: const Offset(0, 8),
                           ),
                         ],
                       ),
@@ -185,7 +183,8 @@ class _JournalEntryListState extends State<JournalEntryList> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             PhosphorIcon(
-                              PhosphorIcons.warningCircle(PhosphorIconsStyle.fill),
+                              PhosphorIcons.warningCircle(
+                                  PhosphorIconsStyle.fill),
                               size: 48,
                             ),
                             const Padding(
@@ -196,7 +195,7 @@ class _JournalEntryListState extends State<JournalEntryList> {
                             ),
                             BlocBuilder<StashBloc, StashState>(
                               builder: (context, state) {
-                                if (state is StashError){
+                                if (state is StashError) {
                                   return Text(state.message);
                                 }
                                 if (state is StashLoading) {
