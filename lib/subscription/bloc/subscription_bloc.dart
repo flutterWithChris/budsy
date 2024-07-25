@@ -19,7 +19,9 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
   final LoginCubit _loginCubit;
   StreamSubscription? _loginStateStream;
   CustomerInfo? customerInfo;
-  SubscriptionBloc({required SubscriptionRepository subscriptionRepository, required LoginCubit loginCubit})
+  SubscriptionBloc(
+      {required SubscriptionRepository subscriptionRepository,
+      required LoginCubit loginCubit})
       : _subscriptionRepository = subscriptionRepository,
         _loginCubit = loginCubit,
         super(SubscriptionLoading()) {
@@ -30,7 +32,6 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
     on<PurchaseSubscription>(_onPurchaseSubscription);
     on<ShowPaywall>(_onShowPaywall);
 
-   
     _loginStateStream = _loginCubit.stream.listen((state) {
       if (state is LoginSuccess) {
         add(SubscriptionLogin(state.user.id));
@@ -49,19 +50,8 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
     try {
       emit(SubscriptionLoading());
       await _subscriptionRepository.initPlatformState(event.userId);
-      customerInfo = await _subscriptionRepository.getCustomerInfo();
-      Offerings? offerings = await _subscriptionRepository.getOfferings();
-      if (offerings != null) {
-        print(offerings.current);
-      } else {
-        emit(const SubscriptionError('Failed to get offerings'));
-      }
 
-      emit(SubscriptionLoaded(
-          packages: offerings!.current!.availablePackages,
-          customerInfo: customerInfo));
-      // print(
-      //     'RevenueCat SDK initialized. Monthly Package: ${package.toString()}');
+      emit(const SubscriptionLoaded());
     } catch (e) {
       print(e);
       emit(const SubscriptionError('Failed to init SDK'));
