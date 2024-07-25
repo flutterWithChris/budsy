@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:canjo/app/router.dart';
 import 'package:canjo/auth/repository/auth_repository.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
 part 'auth_event.dart';
@@ -23,6 +24,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthState.authenticated(
           event.state!.session!.user,
         ));
+        SentryUser user = SentryUser(
+            id: event.state!.session!.user.id,
+            email: event.state!.session!.user.email);
+        await Sentry.configureScope((scope) async => await scope.setUser(user));
         goRouter.refresh();
       } else {
         emit(const AuthState.unauthenticated());
