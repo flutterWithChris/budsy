@@ -1,4 +1,7 @@
+import 'package:canjo/login/cubit/login_cubit.dart';
+import 'package:canjo/subscription/bloc/subscription_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
@@ -29,6 +32,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
             context.go('/');
             break;
           case 2:
+            if (context.read<SubscriptionBloc>().state is SubscriptionInitial)
+            {
+              context.read<SubscriptionBloc>().add(SubscriptionInit(context.read<LoginCubit>().state.user?.id));
+            }
             context.go('/trends');
           case 3:
             context.go('/settings');

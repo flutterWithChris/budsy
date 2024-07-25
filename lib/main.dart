@@ -38,10 +38,10 @@ void main() async {
       stackTrace: details.stack,
     );
   };
-  // if (kIsDebug) {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   await prefs.setBool('onboardingComplete', false);
-  // }
+  if (kIsDebug) {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('onboardingComplete', false);
+  }
   await SentryFlutter.init(
     (options) {
       options.dsn = dotenv.env['SENTRY_DSN'];
@@ -118,13 +118,14 @@ class MyApp extends StatelessWidget {
               productRepository: context.read<ProductRepository>(),
             )..loadFavoriteTerpenes(context.read<StashBloc>().state.products!),
           ),
-          BlocProvider(
+          BlocProvider( 
             lazy: false,
             create: (context) => SubscriptionBloc(
                 authBloc: context.read<AuthBloc>(),
                 subscriptionRepository: context.read<SubscriptionRepository>(),
-                loginCubit: context.read<LoginCubit>())
-              ..add(SubscriptionInit(context.read<AuthBloc>().state.user?.id)),
+                loginCubit: context.read<LoginCubit>())..add(SubscriptionInit(
+                  context.read<AuthBloc>().state.user?.id
+                )),
           ),
           BlocProvider(
             lazy: false,

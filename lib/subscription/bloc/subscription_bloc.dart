@@ -28,7 +28,7 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
       : _subscriptionRepository = subscriptionRepository,
         _loginCubit = loginCubit,
         _authBloc = authBloc,
-        super(SubscriptionLoading()) {
+        super(SubscriptionInitial()) {
     on<SubscriptionInit>(_onSubscriptionInit);
     on<SubscriptionLogin>(_onSubscriptionLogin);
     on<SubscriptionLogout>(_onSubscriptionLogout);
@@ -36,14 +36,12 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
     on<PurchaseSubscription>(_onPurchaseSubscription);
     on<ShowPaywall>(_onShowPaywall);
 
-    _loginStateStream = _authBloc.stream.listen((state) {
-      if (state.status == AuthStatus.authenticated) {
-        print('SubscriptionBloc: AuthStatus.authenticated');
-        add(SubscriptionLogin(state.user!.id));
+    _loginStateStream = loginCubit.stream.listen((loginState) {
+      if (loginState is LoginSuccess) {
+       add(SubscriptionLogin(loginState.user.id));
       }
     });
 
-    // Listen to customer info update
     _subscriptionRepository.setListenCustomerInfoFunction((customerInfo) {
       add(SubscriptionCustomerInfoUpdate(customerInfo));
     });
@@ -55,8 +53,11 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
     try {
       emit(SubscriptionLoading());
       await _subscriptionRepository.initPlatformState(event.userId);
+      // await _subscriptionRepository.login(event.userId);
+      CustomerInfo? customerInfo =
+          await _subscriptionRepository.getCustomerInfo();
 
-      emit(const SubscriptionLoaded());
+      emit(SubscriptionLoaded(customerInfo: customerInfo));
     } catch (e) {
       print(e);
       emit(const SubscriptionError('Failed to init SDK'));
