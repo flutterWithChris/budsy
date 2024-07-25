@@ -45,7 +45,7 @@ void main() async {
   await SentryFlutter.init(
     (options) {
       options.dsn = dotenv.env['SENTRY_DSN'];
-      options.debug = kIsDebug;
+      // options.debug = kIsDebug;
       options.tracesSampleRate = 1.0;
       options.profilesSampleRate = 1.0;
     },
@@ -121,6 +121,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(
             lazy: false,
             create: (context) => SubscriptionBloc(
+                authBloc: context.read<AuthBloc>(),
                 subscriptionRepository: context.read<SubscriptionRepository>(),
                 loginCubit: context.read<LoginCubit>())
               ..add(SubscriptionInit(context.read<AuthBloc>().state.user?.id)),

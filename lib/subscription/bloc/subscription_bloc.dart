@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:canjo/app/snackbars.dart';
+import 'package:canjo/auth/bloc/auth_bloc.dart';
 import 'package:canjo/consts.dart';
 import 'package:canjo/login/cubit/login_cubit.dart';
 import 'package:canjo/subscription/subscription_repository.dart';
@@ -17,13 +18,16 @@ part 'subscription_state.dart';
 class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
   final SubscriptionRepository _subscriptionRepository;
   final LoginCubit _loginCubit;
+  final AuthBloc _authBloc;
   StreamSubscription? _loginStateStream;
   CustomerInfo? customerInfo;
   SubscriptionBloc(
       {required SubscriptionRepository subscriptionRepository,
-      required LoginCubit loginCubit})
+      required LoginCubit loginCubit,
+      required AuthBloc authBloc})
       : _subscriptionRepository = subscriptionRepository,
         _loginCubit = loginCubit,
+        _authBloc = authBloc,
         super(SubscriptionLoading()) {
     on<SubscriptionInit>(_onSubscriptionInit);
     on<SubscriptionLogin>(_onSubscriptionLogin);
@@ -32,9 +36,10 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
     on<PurchaseSubscription>(_onPurchaseSubscription);
     on<ShowPaywall>(_onShowPaywall);
 
-    _loginStateStream = _loginCubit.stream.listen((state) {
-      if (state is LoginSuccess) {
-        add(SubscriptionLogin(state.user.id));
+    _loginStateStream = _authBloc.stream.listen((state) {
+      if (state.status == AuthStatus.authenticated) {
+        print('SubscriptionBloc: AuthStatus.authenticated');
+        add(SubscriptionLogin(state.user!.id));
       }
     });
 
@@ -138,6 +143,7 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
   void _onShowPaywall(
       ShowPaywall event, Emitter<SubscriptionState> emit) async {
     try {
+      SubscriptionState oldState = state;
       emit(SubscriptionLoading());
       final paywallResult =
           await RevenueCatUI.presentPaywall(displayCloseButton: true);
@@ -159,7 +165,7 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
           customerInfo: updatedInfo,
         ));
       } else if (paywallResult == PaywallResult.cancelled) {
-        emit(SubscriptionLoaded(customerInfo: customerInfo));
+        emit(SubscriptionLoaded(customerInfo: oldState.customerInfo));
       } else {
         scaffoldKey.currentState!.showSnackBar(
           getErrorSnackBar('Failed to purchase subscription'),
