@@ -38,10 +38,10 @@ void main() async {
       stackTrace: details.stack,
     );
   };
-  if (kIsDebug) {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('onboardingComplete', false);
-  }
+  // if (kIsDebug) {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   await prefs.setBool('onboardingComplete', false);
+  // }
   await SentryFlutter.init(
     (options) {
       options.dsn = dotenv.env['SENTRY_DSN'];
