@@ -1,6 +1,9 @@
+import 'package:canjo/app/snackbars.dart';
+import 'package:canjo/consts.dart';
 import 'package:canjo/journal/model/feeling.dart';
 import 'package:canjo/journal/model/journal_entry.dart';
 import 'package:canjo/stash/model/product.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class JournalRepository {
@@ -63,8 +66,14 @@ class JournalRepository {
       await Future.wait(entryFutures);
 
       return entries;
-    } catch (e) {
-      print(e);
+    } catch (e, stackTrace) {
+      scaffoldKey.currentState?.showSnackBar(
+        getErrorSnackBar('Failed to fetch entries. Please try again.'),
+      );
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       return null;
     }
   }
@@ -80,8 +89,14 @@ class JournalRepository {
           .select();
 
       return JournalEntry.fromJson(response.first);
-    } catch (e) {
-      print(e);
+    } catch (e, stackTrace) {
+      scaffoldKey.currentState?.showSnackBar(
+        getErrorSnackBar('Failed to add entry. Please try again.'),
+      );
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       return null;
     }
   }
@@ -98,19 +113,30 @@ class JournalRepository {
           .select();
       JournalEntry responseEntry = JournalEntry.fromJson(response.first);
       return responseEntry;
-    } catch (e) {
-      print(e);
+    } catch (e, stackTrace) {
+      scaffoldKey.currentState?.showSnackBar(
+        getErrorSnackBar('Failed to update entry. Please try again.'),
+      );
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       return null;
     }
-    return null;
   }
 
   // Delete a journal entry
   Future<void> deleteEntry(String entryId) async {
     try {
       await client.from('journal_entries').delete().eq('id', entryId);
-    } catch (e) {
-      print(e);
+    } catch (e, stackTrace) {
+      scaffoldKey.currentState?.showSnackBar(
+        getErrorSnackBar('Failed to delete entry. Please try again.'),
+      );
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -123,8 +149,14 @@ class JournalRepository {
         'product_id': productId,
         'user_id': userId,
       });
-    } catch (e) {
-      print(e);
+    } catch (e, stackTrace) {
+      scaffoldKey.currentState?.showSnackBar(
+        getErrorSnackBar('Failed to add products. Please try again.'),
+      );
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -136,8 +168,14 @@ class JournalRepository {
           .delete()
           .eq('entry_id', entryId)
           .eq('user_id', userId);
-    } catch (e) {
-      print(e);
+    } catch (e, stackTrace) {
+      scaffoldKey.currentState?.showSnackBar(
+        getErrorSnackBar('Failed to remove products. Please try again.'),
+      );
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -150,8 +188,14 @@ class JournalRepository {
         'feeling_id': feelingId,
         'user_id': userId,
       });
-    } catch (e) {
-      print(e);
+    } catch (e, stackTrace) {
+      scaffoldKey.currentState?.showSnackBar(
+        getErrorSnackBar('Failed to add feelings. Please try again.'),
+      );
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -163,8 +207,14 @@ class JournalRepository {
           .delete()
           .eq('entry_id', entryId)
           .eq('user_id', userId);
-    } catch (e) {
-      print(e);
+    } catch (e, stackTrace) {
+      scaffoldKey.currentState?.showSnackBar(
+        getErrorSnackBar('Failed to remove feelings. Please try again.'),
+      );
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
     }
   }
 }

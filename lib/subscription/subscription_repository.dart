@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:canjo/app/snackbars.dart';
 import 'package:canjo/consts.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 class SubscriptionRepository {
   Future<void> initPlatformState(String? userId) async {
@@ -22,7 +24,14 @@ class SubscriptionRepository {
       userId != null
           ? await Purchases.configure(configuration..appUserID = userId)
           : await Purchases.configure(configuration);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      scaffoldKey.currentState?.showSnackBar(
+        getErrorSnackBar('Failed to configure Purchases. Please try again.'),
+      );
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       print(e);
     }
   }
@@ -30,8 +39,14 @@ class SubscriptionRepository {
   Future<void> login(String userId) async {
     try {
       await Purchases.logIn(userId);
-    } catch (e) {
-      print(e);
+    } catch (e, stackTrace) {
+      scaffoldKey.currentState?.showSnackBar(
+        getErrorSnackBar('Failed to login. Please try again.'),
+      );
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -39,8 +54,14 @@ class SubscriptionRepository {
   Future<void> logout() async {
     try {
       await Purchases.logOut();
-    } catch (e) {
-      print(e);
+    } catch (e, stackTrace) {
+      scaffoldKey.currentState?.showSnackBar(
+        getErrorSnackBar('Failed to logout. Please try again.'),
+      );
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -49,8 +70,14 @@ class SubscriptionRepository {
       final customerInfo = await Purchases.getCustomerInfo();
       print(customerInfo);
       return customerInfo;
-    } catch (e) {
-      print(e);
+    } catch (e, stackTrace) {
+      scaffoldKey.currentState?.showSnackBar(
+        getErrorSnackBar('Failed to get customer info. Please try again.'),
+      );
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       return null;
     }
   }
@@ -72,28 +99,37 @@ class SubscriptionRepository {
       } else {
         return null;
       }
-    } catch (e) {
-      print(e);
+    } catch (e, stackTrace) {
+      scaffoldKey.currentState?.showSnackBar(
+        getErrorSnackBar('Failed to get offerings. Please try again.'),
+      );
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       return null;
     }
   }
 
   // Get Products from offerings
-  List<Package> getAvailablePackages(Offerings offerings) {
+  Future<List<Package>?> getAvailablePackages(Offerings offerings) async {
     try {
       if (offerings.current != null) {
         return offerings.current!.availablePackages;
       } else {
         return [];
       }
-    } catch (e) {
-      print(e);
-      return [];
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      return null;
     }
   }
 
   // Access the monthly product
-  Package? getMonthlyProduct(Offerings offerings) {
+  Future<Package?> getMonthlyProduct(Offerings offerings) async {
     try {
       if (offerings.current != null && offerings.current!.monthly != null) {
         final monthly = offerings.current!.monthly;
@@ -101,10 +137,13 @@ class SubscriptionRepository {
       } else {
         return null;
       }
-    } catch (e) {
-      print(e);
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      return null;
     }
-    return null;
   }
 
   // Purchase product
@@ -120,15 +159,18 @@ class SubscriptionRepository {
   }
 
   // Check if customer has active entitlement
-  bool hasActiveEntitlement(CustomerInfo customerInfo) {
+  Future<bool> hasActiveEntitlement(CustomerInfo customerInfo) async {
     try {
       if (customerInfo.entitlements.active.isNotEmpty) {
         return true;
       } else {
         return false;
       }
-    } catch (e) {
-      print(e);
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       return false;
     }
   }

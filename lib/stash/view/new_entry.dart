@@ -8,9 +8,7 @@ import 'package:canjo/stash/bloc/stash_bloc.dart';
 import 'package:canjo/stash/model/cannabinoid.dart';
 import 'package:canjo/stash/model/product.dart';
 import 'package:canjo/stash/model/terpene.dart';
-import 'package:canjo/lab_reports/lab_report.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:go_router/go_router.dart';
@@ -26,7 +24,6 @@ class NewEntryScreen extends StatefulWidget {
 
 class _NewEntryScreenState extends State<NewEntryScreen> {
   String? _filePath;
-  LabReport? labReport;
   final bool _isProcessing = false;
   IconData _selectedCategoryIcon =
       PhosphorIcons.plant(PhosphorIconsStyle.duotone);

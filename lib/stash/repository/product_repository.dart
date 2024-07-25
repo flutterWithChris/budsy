@@ -7,6 +7,7 @@ import 'package:canjo/stash/model/product.dart';
 import 'package:canjo/stash/model/terpene.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
@@ -20,14 +21,17 @@ class ProductRepository {
           .from('products')
           .upsert(product.toJson())
           .select();
-      print('Create product response: ${response}');
+      print('Create product response: $response');
       Product createdProduct = Product.fromJson(response.first);
       print('Created Product');
       return createdProduct;
-    } catch (e) {
-      print(e);
+    } catch (e, stackTrace) {
       scaffoldKey.currentState!
           .showSnackBar(getErrorSnackBar('Error creating product!'));
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       return null;
     }
   }
@@ -41,13 +45,19 @@ class ProductRepository {
           .eq('user_id', userId);
 
       return response.map((product) => Product.fromJson(product)).toList();
-    } catch (e) {
+    } catch (e, stackTrace) {
+      scaffoldKey.currentState!
+          .showSnackBar(getErrorSnackBar('Error fetching products!'));
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       return null;
     }
   }
 
   // Update a product
-  Future<Product> updateProduct(Product product) async {
+  Future<Product?> updateProduct(Product product) async {
     try {
       final response = await _supabaseClient
           .from('products')
@@ -56,8 +66,14 @@ class ProductRepository {
           .select();
 
       return Product.fromJson(response.first);
-    } catch (e) {
-      return product;
+    } catch (e, stackTrace) {
+      scaffoldKey.currentState!
+          .showSnackBar(getErrorSnackBar('Error updating product!'));
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      return null;
     }
   }
 
@@ -65,9 +81,14 @@ class ProductRepository {
   Future<void> deleteProduct(String productId) async {
     try {
       await _supabaseClient.from('products').delete().eq('id', productId);
-    } catch (e) {
+    } catch (e, stackTrace) {
       scaffoldKey.currentState!
           .showSnackBar(getErrorSnackBar('Error deleting product!'));
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      return;
     }
   }
 
@@ -80,9 +101,13 @@ class ProductRepository {
           .eq('id', productId);
 
       return Product.fromJson(response.first);
-    } catch (e) {
+    } catch (e, stackTrace) {
       scaffoldKey.currentState!
           .showSnackBar(getErrorSnackBar('Error fetching product!'));
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       return null;
     }
   }
@@ -102,7 +127,13 @@ class ProductRepository {
           .toList();
 
       return cannabinoids;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      scaffoldKey.currentState!
+          .showSnackBar(getErrorSnackBar('Error fetching cannabinoids!'));
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       return null;
     }
   }
@@ -114,7 +145,13 @@ class ProductRepository {
           .from('product_cannabinoids')
           .delete()
           .eq('product_id', productId);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      scaffoldKey.currentState!
+          .showSnackBar(getErrorSnackBar('Error removing cannabinoids!'));
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       return;
     }
   }
@@ -133,7 +170,13 @@ class ProductRepository {
           .toList();
 
       return terpenes;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      scaffoldKey.currentState!
+          .showSnackBar(getErrorSnackBar('Error fetching terpenes!'));
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       return null;
     }
   }
@@ -164,8 +207,13 @@ class ProductRepository {
       } else {
         return [];
       }
-    } catch (e) {
-      print('Exception fetching images: $e');
+    } catch (e, stackTrace) {
+      scaffoldKey.currentState!
+          .showSnackBar(getErrorSnackBar('Error fetching images!'));
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       return null;
     }
   }
@@ -178,7 +226,13 @@ class ProductRepository {
       return response
           .map((cannabinoid) => Cannabinoid.fromJson(cannabinoid))
           .toList();
-    } catch (e) {
+    } catch (e, stackTrace) {
+      scaffoldKey.currentState!
+          .showSnackBar(getErrorSnackBar('Error fetching cannabinoids!'));
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       return null;
     }
   }
@@ -189,7 +243,13 @@ class ProductRepository {
       final response = await _supabaseClient.from('terpenes').select('*');
 
       return response.map((terpene) => Terpene.fromJson(terpene)).toList();
-    } catch (e) {
+    } catch (e, stackTrace) {
+      scaffoldKey.currentState!
+          .showSnackBar(getErrorSnackBar('Error fetching terpenes!'));
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       return null;
     }
   }
@@ -197,30 +257,49 @@ class ProductRepository {
   // Add cannabinoids to a product
   Future<void> addProductCannabinoids(
       String productId, List<Cannabinoid> cannabinoids) async {
-    final List<Map<String, dynamic>> data = cannabinoids
-        .map((cannabinoid) => {
-              'product_id': productId,
-              'cannabinoid_id': cannabinoid.id,
-              'amount': cannabinoid.amount
-            })
-        .toList();
+    try {
+      final List<Map<String, dynamic>> data = cannabinoids
+          .map((cannabinoid) => {
+                'product_id': productId,
+                'cannabinoid_id': cannabinoid.id,
+                'amount': cannabinoid.amount
+              })
+          .toList();
 
-    await _supabaseClient.from('product_cannabinoids').upsert(data);
+      await _supabaseClient.from('product_cannabinoids').upsert(data);
+    } catch (e, stackTrace) {
+      scaffoldKey.currentState!
+          .showSnackBar(getErrorSnackBar('Error adding cannabinoids!'));
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+    }
   }
 
   // Add terpenes to a product
 
   Future<void> addProductTerpenes(
       String productId, List<Terpene> terpenes) async {
-    final List<Map<String, dynamic>> data = terpenes
-        .map((terpene) => {
-              'product_id': productId,
-              'terpene_id': terpene.id,
-              'amount': terpene.amount
-            })
-        .toList();
+    try {
+      final List<Map<String, dynamic>> data = terpenes
+          .map((terpene) => {
+                'product_id': productId,
+                'terpene_id': terpene.id,
+                'amount': terpene.amount
+              })
+          .toList();
 
-    await _supabaseClient.from('product_terpenes').upsert(data);
+      await _supabaseClient.from('product_terpenes').upsert(data);
+    } catch (e, stackTrace) {
+      scaffoldKey.currentState!
+          .showSnackBar(getErrorSnackBar('Error adding terpenes!'));
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
+      return;
+    }
   }
 
   // Remove terpenes from a product
@@ -230,7 +309,13 @@ class ProductRepository {
           .from('product_terpenes')
           .delete()
           .eq('product_id', productId);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      scaffoldKey.currentState!
+          .showSnackBar(getErrorSnackBar('Error removing terpenes!'));
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       return;
     }
   }
@@ -281,11 +366,13 @@ class ProductRepository {
 
         await _supabaseClient.from('product_images').insert(data);
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
       scaffoldKey.currentState!
-          .showSnackBar(getErrorSnackBar('Error uploading images!'));
-      // Handle exceptions
-      print('Error uploading images: $e');
+          .showSnackBar(getErrorSnackBar('Error adding images!'));
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -296,7 +383,13 @@ class ProductRepository {
           .from('product_images')
           .delete()
           .eq('product_id', productId);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      scaffoldKey.currentState!
+          .showSnackBar(getErrorSnackBar('Error removing images!'));
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace,
+      );
       return;
     }
   }

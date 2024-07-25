@@ -27,8 +27,13 @@ class LoginCubit extends Cubit<LoginState> {
 
   Future<void> _signInWithGoogle() async {
     try {
-      supabase.AuthResponse authResponse =
+      supabase.AuthResponse? authResponse =
           await _authRepository.signInWithGoogle();
+
+      if (authResponse == null) {
+        emit(LoginFailed());
+        return;
+      }
 
       if (authResponse.user == null) {
         emit(LoginFailed());
@@ -45,15 +50,15 @@ class LoginCubit extends Cubit<LoginState> {
 
   Future<void> _signInWithApple() async {
     try {
-      supabase.AuthResponse authResponse =
+      supabase.AuthResponse? authResponse =
           await _authRepository.signInWithApple();
 
-      if (authResponse.user == null) {
+      if (authResponse?.user == null) {
         emit(LoginFailed());
         return;
       }
 
-      await _subscriptionRepository.login(authResponse.user!.id);
+      await _subscriptionRepository.login(authResponse!.user!.id);
 
       emit(LoginSuccess(authResponse.user!));
     } catch (e) {

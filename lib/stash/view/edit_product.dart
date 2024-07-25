@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -13,8 +12,6 @@ import 'package:canjo/stash/bloc/stash_bloc.dart';
 import 'package:canjo/stash/model/cannabinoid.dart';
 import 'package:canjo/stash/model/product.dart';
 import 'package:canjo/stash/model/terpene.dart';
-import 'package:canjo/lab_reports/lab_report.dart';
-import 'package:custom_rating_bar/custom_rating_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
@@ -33,7 +30,6 @@ class EditProductPage extends StatefulWidget {
 
 class _EditProductPageState extends State<EditProductPage> {
   String? _filePath;
-  LabReport? labReport;
   final bool _isProcessing = false;
   IconData? _selectedCategoryIcon;
   IconData? _selectedTypeIcon;
@@ -701,9 +697,7 @@ class _EditProductPageState extends State<EditProductPage> {
                           ),
                           label: const Text('Add Terpene'),
                         ),
-                        _isProcessing
-                            ? const CircularProgressIndicator.adaptive()
-                            : Text(labReport?.toString() ?? ''),
+
                         FilledButton.icon(
                           style: FilledButton.styleFrom(
                               backgroundColor: Colors.red),

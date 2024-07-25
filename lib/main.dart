@@ -21,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -31,11 +32,26 @@ void main() async {
     url: dotenv.env['SUPABASE_URL']!,
     anonKey: dotenv.env['SUPABASE_PUBLIC_KEY']!,
   );
-  if (kIsDebug) {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('onboardingComplete', false);
-  }
-  runApp(const MyApp());
+  FlutterError.onError = (FlutterErrorDetails details) async {
+    await Sentry.captureException(
+      details.exception,
+      stackTrace: details.stack,
+    );
+  };
+  // if (kIsDebug) {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   await prefs.setBool('onboardingComplete', false);
+  // }
+  await SentryFlutter.init(
+    (options) {
+      options.dsn = dotenv.env['SENTRY_DSN'];
+      options.debug = kIsDebug;
+      options.tracesSampleRate = 1.0;
+      options.profilesSampleRate = 1.0;
+    },
+    appRunner: () => runApp(const MyApp()),
+  );
+  // runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
