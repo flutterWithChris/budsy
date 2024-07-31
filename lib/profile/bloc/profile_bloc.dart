@@ -28,20 +28,19 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         _loginCubit = loginCubit,
         super(ProfileInitial()) {
     _authBlocSubscription = _authBloc.stream.listen((authState) {
-      if (authState.status == AuthStatus.authenticated &&
-          state is ProfileLoading == false) {
-        add(LoadProfile());
+      if (authState.status == AuthStatus.authenticated) {
+        add(CreateProfile(
+          user: User(
+            id: authState.user!.id,
+            email: authState.user!.email,
+          ),
+        ));
       }
     });
 
     _loginCubitSubscription = _loginCubit.stream.listen((loginState) {
       if (loginState is LoginSuccess) {
-        add(CreateProfile(
-          user: User(
-            id: loginState.user.id,
-            email: loginState.user.email,
-          ),
-        ));
+        add(LoadProfile());
       }
     });
 
