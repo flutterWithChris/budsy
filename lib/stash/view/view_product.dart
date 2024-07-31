@@ -1,12 +1,9 @@
-import 'dart:math';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:canjo/app/colors.dart';
 import 'package:canjo/app/icons.dart';
 import 'package:canjo/app/system/bottom_nav.dart';
 import 'package:canjo/stash/bloc/product_details_bloc.dart';
 import 'package:canjo/stash/bloc/stash_bloc.dart';
-import 'package:canjo/stash/model/cannabinoid.dart';
 import 'package:canjo/stash/model/product.dart';
 import 'package:canjo/stash/model/terpene.dart';
 import 'package:canjo/stash/widgets/cannabinoid_chart.dart';
@@ -19,7 +16,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:list_ext/list_ext.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -96,7 +92,6 @@ class _ViewProductPageState extends State<ViewProductPage> {
                     }
                     if (state is ProductDetailsLoaded) {
                       Product product = state.product;
-                      print('Product Images: ${state.images}');
                       return Card(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
@@ -271,7 +266,6 @@ class _ViewProductPageState extends State<ViewProductPage> {
                                                               .copyWith(
                                                                   rating: rating
                                                                       .toInt())));
-                                                      print('Rating: $rating');
                                                     });
                                                     editingRating = false;
                                                   },

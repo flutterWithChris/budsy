@@ -32,7 +32,6 @@ class SubscriptionRepository {
         e,
         stackTrace: stackTrace,
       );
-      print(e);
     }
   }
 
@@ -68,7 +67,6 @@ class SubscriptionRepository {
   Future<CustomerInfo?> getCustomerInfo() async {
     try {
       final customerInfo = await Purchases.getCustomerInfo();
-      print(customerInfo);
       return customerInfo;
     } catch (e, stackTrace) {
       scaffoldKey.currentState?.showSnackBar(
@@ -92,7 +90,6 @@ class SubscriptionRepository {
   Future<Offerings?> getOfferings() async {
     try {
       final offerings = await Purchases.getOfferings();
-      print(offerings);
       if (offerings.current != null &&
           offerings.current!.availablePackages.isNotEmpty) {
         return offerings;
@@ -150,10 +147,8 @@ class SubscriptionRepository {
   Future<CustomerInfo?> purchasePackage(Package package) async {
     try {
       CustomerInfo purchaserInfo = await Purchases.purchasePackage(package);
-      print(purchaserInfo);
       return purchaserInfo;
     } catch (e) {
-      print(e);
       return null;
     }
   }

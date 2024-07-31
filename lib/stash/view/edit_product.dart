@@ -60,36 +60,9 @@ class _EditProductPageState extends State<EditProductPage> {
     _brandController.text = widget.product.brand ?? '';
     _flowerUnit = widget.product.unit;
     _selectedCategoryIcon = getIconForCategory(widget.product.category!);
-    if (widget.product.type != null) {
-      // _selectedTypeIcon = getIconForFlowerType(widget.product.type!);
-    }
 
     super.initState();
   }
-
-  // void _addCannabinoid() {
-  //   setState(() {
-  //     if (selectedCannabinoids.length + 2 >= cannabinoids.length) {
-  //       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-  //         content: Text('You have already added all available cannabinoids'),
-  //       ));
-  //       return;
-  //     }
-  //     selectedCannabinoids.add(cannabinoids[selectedCannabinoids.length + 2]);
-  //   });
-  // }
-
-  // void _updateCannabinoid(Cannabinoid cannabinoid, double value) {
-  //   setState(() {
-  //     selectedCannabinoids.remove(cannabinoid);
-  //   });
-  // }
-
-  // void _removeCannabinoid(Cannabinoid cannabinoid) {
-  //   setState(() {
-  //     selectedCannabinoids.remove(cannabinoid);
-  //   });
-  // }
 
   void _addTerpene() {
     setState(() {
@@ -105,19 +78,6 @@ class _EditProductPageState extends State<EditProductPage> {
           })
           .toList()
           .first);
-    });
-  }
-
-  void _updateTerpene(Terpene terpene, double value) {
-    setState(() {
-      selectedTerpenes.removeWhere((element) => element.name == terpene.name);
-      selectedTerpenes.add(terpene);
-    });
-  }
-
-  void _removeTerpene(String terpene) {
-    setState(() {
-      selectedTerpenes.removeWhere((element) => element.name == terpene);
     });
   }
 
@@ -176,13 +136,9 @@ class _EditProductPageState extends State<EditProductPage> {
                                                                         images: [
                                                                   filePath
                                                                 ]);
-                                                            print(
-                                                                'Product: ${_productDraft.toString()}');
                                                           }
                                                         });
-                                                      } catch (e) {
-                                                        print(e);
-                                                      }
+                                                      } catch (e) {}
                                                     },
                                                     child: ClipRRect(
                                                       borderRadius:
@@ -242,13 +198,9 @@ class _EditProductPageState extends State<EditProductPage> {
                                                                 filePath
                                                               ],
                                                             );
-                                                            print(
-                                                                'Product: ${_productDraft.toString()}');
                                                           }
                                                         });
-                                                      } catch (e) {
-                                                        print(e);
-                                                      }
+                                                      } catch (e) {}
                                                     },
                                                     child: Center(
                                                       child: IconButton(
@@ -276,13 +228,9 @@ class _EditProductPageState extends State<EditProductPage> {
                                                                     filePath
                                                                   ],
                                                                 );
-                                                                print(
-                                                                    'Product: ${_productDraft.toString()}');
                                                               }
                                                             });
-                                                          } catch (e) {
-                                                            print(e);
-                                                          }
+                                                          } catch (e) {}
                                                         },
                                                         icon: PhosphorIcon(
                                                           PhosphorIcons.imageSquare(
@@ -357,8 +305,7 @@ class _EditProductPageState extends State<EditProductPage> {
                                         if (value != null) {
                                           _productDraft = _productDraft
                                               ?.copyWith(category: value);
-                                          print(
-                                              'Product: ${_productDraft.toString()}');
+
                                           switch (value) {
                                             case ProductCategory.flower:
                                               _selectedCategoryIcon =
@@ -452,8 +399,7 @@ class _EditProductPageState extends State<EditProductPage> {
                                         if (value != null) {
                                           _productDraft = _productDraft
                                               ?.copyWith(type: value);
-                                          print(
-                                              'Product: ${_productDraft.toString()}');
+
                                           switch (value) {
                                             case FlowerType.sativa:
                                               _selectedTypeIcon =
@@ -719,7 +665,9 @@ class _EditProductPageState extends State<EditProductPage> {
                                   actions: [
                                     TextButton(
                                       onPressed: () {
-                                        context.pop();
+                                        if (context.mounted) {
+                                          context.pop();
+                                        }
                                       },
                                       child: const Text('Cancel'),
                                     ),
@@ -829,7 +777,9 @@ class _EditProductPageState extends State<EditProductPage> {
                                 .add(FetchProductDetails(widget.product));
                             await Future.delayed(
                                 const Duration(milliseconds: 400));
-                            context.pop();
+                            if (context.mounted) {
+                              context.pop();
+                            }
                           }
                         },
                         builder: (context, state) {
@@ -892,7 +842,6 @@ class _EditProductPageState extends State<EditProductPage> {
                       final ImagePicker imagePicker = ImagePicker();
                       final XFile? image = await imagePicker.pickImage(
                           source: ImageSource.camera);
-                      print(image);
                       if (image != null) {
                         final filePath = image.path;
                         setState(() {
@@ -901,7 +850,9 @@ class _EditProductPageState extends State<EditProductPage> {
                         });
 
                         // await _sendFileToApi(filePath);
-                        context.pop();
+                        if (context.mounted) {
+                          context.pop();
+                        }
                       } else {
                         // User canceled the picker
                         setState(() {
@@ -917,7 +868,6 @@ class _EditProductPageState extends State<EditProductPage> {
                       final ImagePicker imagePicker = ImagePicker();
                       final XFile? image = await imagePicker.pickImage(
                           source: ImageSource.gallery);
-                      print(image);
                       if (image != null) {
                         final filePath = image.path;
                         setState(() {
@@ -966,7 +916,6 @@ class _TerpeneSelectionFieldsState extends State<TerpeneSelectionFields> {
   void initState() {
     _valueController.text = widget.terpene.amount.toString();
     _nameController.text = widget.terpene.name!;
-    // TODO: implement initState
     super.initState();
   }
 
@@ -1045,8 +994,6 @@ class _TerpeneSelectionFieldsState extends State<TerpeneSelectionFields> {
                     // Update terpene value
                     amount: terpeneValue,
                   ));
-                  print(
-                      'Selected Terpenes: ${widget.selectedTerpenes.toString()}');
                 });
               },
               decoration: const InputDecoration(
@@ -1097,7 +1044,6 @@ class _CannabinoidTextFieldsState extends State<CannabinoidTextFields> {
   final TextEditingController _valueController = TextEditingController();
   @override
   void initState() {
-    // TODO: implement initState
     _nameController.text = widget.cannabinoid.name!;
     _valueController.text = widget.cannabinoid.amount.toString();
     super.initState();
@@ -1168,8 +1114,6 @@ class _CannabinoidTextFieldsState extends State<CannabinoidTextFields> {
                   selectedCannabinoids.add(cannabinoid.copyWith(
                     amount: double.tryParse(value),
                   ));
-                  print(
-                      'Selected Cannabinoids: ${selectedCannabinoids.toString()}');
                 });
               },
               decoration: const InputDecoration(

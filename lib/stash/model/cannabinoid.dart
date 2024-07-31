@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class Cannabinoid {
   final String? id;
   final String? name;

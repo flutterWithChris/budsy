@@ -19,6 +19,7 @@ class AuthRepository {
       /// Web Client ID that you registered with Google Cloud.
       String? webClientId = dotenv.env['GOOGLE_WEB_OAUTH_CLIENT_ID'];
 
+      // ignore: unused_local_variable
       String? androidClientId = dotenv.env['GOOGLE_ANDROID_OAUTH_CLIENT_ID'];
 
       ///

@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:canjo/app/snackbars.dart';
-import 'package:canjo/app/system/bottom_nav.dart';
 import 'package:canjo/login/cubit/login_cubit.dart';
 import 'package:canjo/onboarding/onboarding_page.dart';
 import 'package:canjo/subscription/bloc/subscription_bloc.dart';
@@ -50,14 +49,12 @@ class _LoginPageState extends State<LoginPage> {
           return BlocListener<LoginCubit, LoginState>(
             listener: (context, state) {
               if (state is LoginFailed) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  getErrorSnackBar('Error logging in!')
-                );
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(getErrorSnackBar('Error logging in!'));
               }
               if (state is LoginSuccess) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  getSuccessSnackBar('Logged In')
-                );
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(getSuccessSnackBar('Logged In'));
               }
             },
             child: Scaffold(
@@ -105,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
                                             color:
                                                 Theme.of(context).primaryColor,
                                             size: 20.0),
-                                        Gap(size: 8),
+                                        const Gap(size: 8),
                                         const Text('Loging In...')
                                       ]),
                                 );
@@ -142,7 +139,7 @@ class _LoginPageState extends State<LoginPage> {
                                             color:
                                                 Theme.of(context).primaryColor,
                                             size: 20.0),
-                                        Gap(size: 8),
+                                        const Gap(size: 8),
                                         const Text('Loging In...')
                                       ]),
                                 );
@@ -151,7 +148,8 @@ class _LoginPageState extends State<LoginPage> {
                                 onPressed: () async => await context
                                     .read<LoginCubit>()
                                     .signInWithApple(),
-                                icon: PhosphorIcon(PhosphorIcons.appleLogo(PhosphorIconsStyle.fill)),
+                                icon: PhosphorIcon(PhosphorIcons.appleLogo(
+                                    PhosphorIconsStyle.fill)),
                                 label: const Text('Sign in with Apple'),
                               );
                             },

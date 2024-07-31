@@ -21,9 +21,7 @@ class ProductRepository {
           .from('products')
           .upsert(product.toJson())
           .select();
-      print('Create product response: $response');
       Product createdProduct = Product.fromJson(response.first);
-      print('Created Product');
       return createdProduct;
     } catch (e, stackTrace) {
       scaffoldKey.currentState!

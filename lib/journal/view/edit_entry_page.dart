@@ -2,12 +2,10 @@ import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:canjo/app/colors.dart';
 import 'package:canjo/app/icons.dart';
 import 'package:canjo/app/snackbars.dart';
-import 'package:canjo/app/system/bottom_nav.dart';
 import 'package:canjo/journal/bloc/journal_bloc.dart';
 import 'package:canjo/journal/cubit/feelings_cubit.dart';
 import 'package:canjo/journal/model/feeling.dart';
 import 'package:canjo/stash/bloc/stash_bloc.dart';
-import 'package:canjo/stash/mock/mock_products.dart';
 import 'package:canjo/journal/model/journal_entry.dart';
 import 'package:canjo/stash/model/product.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
@@ -16,7 +14,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-import 'package:uuid/uuid.dart';
 
 class EditEntryPage extends StatefulWidget {
   final JournalEntry journalEntry;
@@ -38,8 +35,6 @@ class _EditEntryPageState extends State<EditEntryPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
-
     // selectedFeelings = widget.journalEntry.feelings ?? [];
     // selectedProducts = widget.journalEntry.products ?? [];
     notesController.text = widget.journalEntry.notes ?? '';
@@ -111,7 +106,6 @@ class _EditEntryPageState extends State<EditEntryPage> {
                         return CustomDropdown<Product>.multiSelectSearch(
                           hintText: 'Add Product(s)',
                           initialItems: selectedProducts,
-                          // TODO: Replace with actual products
                           items: state.products,
                           overlayHeight:
                               MediaQuery.sizeOf(context).height * 0.4,
@@ -172,6 +166,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                               (context, item, isSelected, onItemSelect) {
                             return Row(
                               children: [
+                                // ignore: avoid_unnecessary_containers
                                 Container(
                                   child: InkWell(
                                     onTap: () {
@@ -218,7 +213,6 @@ class _EditEntryPageState extends State<EditEntryPage> {
                         );
                       }
                       if (state is StashLoaded && state.products.isEmpty) {
-                        // TODO: Add a button to add your first product
                         return FilledButton(
                           onPressed: () {
                             context.go('/stash/add');
@@ -256,7 +250,9 @@ class _EditEntryPageState extends State<EditEntryPage> {
                           Theme.of(context).colorScheme.primaryContainer,
                     ),
                   );
-                  context.pop();
+                  if (context.mounted) {
+                    context.pop();
+                  }
                 }
               },
               builder: (context, state) {
@@ -485,7 +481,6 @@ class _EditEntryPageState extends State<EditEntryPage> {
                                         products: selectedProducts,
                                         type: EntryType.feeling,
                                       );
-                                  
 
                                       context.read<JournalBloc>().add(
                                           UpdateJournalEntry(updatedEntry));
@@ -543,7 +538,9 @@ class _EditEntryPageState extends State<EditEntryPage> {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(getSuccessSnackBar(
                                                 'Entry deleted'));
-                                        context.pop();
+                                        if (context.mounted) {
+                                          context.pop();
+                                        }
                                       }
                                     },
                                     builder: (context, state) {
@@ -591,7 +588,9 @@ class _EditEntryPageState extends State<EditEntryPage> {
                             if (value == true) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                   getSuccessSnackBar('Entry deleted'));
-                              context.pop();
+                              if (context.mounted) {
+                                context.pop();
+                              }
                             }
                           });
                         },

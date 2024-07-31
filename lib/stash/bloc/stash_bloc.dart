@@ -1,7 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:canjo/auth/bloc/auth_bloc.dart';
-import 'package:canjo/consts.dart';
-import 'package:canjo/journal/cubit/products_cubit.dart';
 import 'package:canjo/stash/model/cannabinoid.dart';
 import 'package:canjo/stash/model/product.dart';
 import 'package:canjo/stash/model/terpene.dart';
@@ -34,7 +32,6 @@ class StashBloc extends Bloc<StashEvent, StashState> {
   }
 
   void _onFetchStash(FetchStash event, Emitter<StashState> emit) async {
-    print('Fetching Stash');
     emit(StashLoading());
     try {
       List<Product>? products;
@@ -49,10 +46,8 @@ class StashBloc extends Bloc<StashEvent, StashState> {
         allTerpenes = value[2] as List<Terpene>?;
       });
 
-      print('Products In Bloc $products');
       emit(StashLoaded(products ?? []));
     } catch (e) {
-      print(e);
       emit(StashError(e.toString()));
     }
   }
@@ -82,7 +77,6 @@ class StashBloc extends Bloc<StashEvent, StashState> {
       emit(ProductAdded(product));
       add(FetchStash(_authBloc.state.user!.id));
     } catch (e) {
-      print(e);
       emit(StashError(e.toString()));
     }
   }
@@ -131,8 +125,6 @@ class StashBloc extends Bloc<StashEvent, StashState> {
               .toList() ??
           [product]));
     } catch (e) {
-      print(e);
-
       emit(StashError(e.toString()));
     }
   }

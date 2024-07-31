@@ -1,14 +1,7 @@
-import 'package:animated_custom_dropdown/custom_dropdown.dart';
-import 'package:canjo/app/colors.dart';
-import 'package:canjo/app/icons.dart';
-import 'package:canjo/journal/bloc/journal_bloc.dart';
-import 'package:canjo/journal/cubit/feelings_cubit.dart';
 import 'package:canjo/journal/model/feeling.dart';
 import 'package:canjo/journal/model/journal_entry.dart';
 import 'package:canjo/stash/model/product.dart';
-import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
@@ -26,8 +19,6 @@ class _AddFeelingPageState extends State<AddFeelingPage> {
   int intensity = 5;
   @override
   Widget build(BuildContext context) {
-    PhosphorIconData icon = PhosphorIcons.warning();
-
     return Padding(
       padding:
           EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),

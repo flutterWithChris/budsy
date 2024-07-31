@@ -2,12 +2,10 @@ import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:canjo/app/colors.dart';
 import 'package:canjo/app/icons.dart';
 import 'package:canjo/app/snackbars.dart';
-import 'package:canjo/app/system/bottom_nav.dart';
 import 'package:canjo/journal/bloc/journal_bloc.dart';
 import 'package:canjo/journal/cubit/feelings_cubit.dart';
 import 'package:canjo/journal/model/feeling.dart';
 import 'package:canjo/stash/bloc/stash_bloc.dart';
-import 'package:canjo/stash/mock/mock_products.dart';
 import 'package:canjo/journal/model/journal_entry.dart';
 import 'package:canjo/stash/model/product.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
@@ -15,7 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-import 'package:uuid/uuid.dart';
 
 class AddEntryPage extends StatefulWidget {
   const AddEntryPage({super.key});
@@ -95,16 +92,21 @@ class _AddEntryPageState extends State<AddEntryPage> {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Icon(
-                                            getIconForCategory(
-                                                item.category!),
-                                            size: 16,
-                                            color: getContrastingColor(getColorForProductCategory(item.category!)),),
+                                          getIconForCategory(item.category!),
+                                          size: 16,
+                                          color: getContrastingColor(
+                                              getColorForProductCategory(
+                                                  item.category!)),
+                                        ),
                                         const SizedBox(width: 8),
                                         Text(
                                           item.name!,
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(color: getContrastingColor(getColorForProductCategory(item.category!))),
+                                          style: TextStyle(
+                                              color: getContrastingColor(
+                                                  getColorForProductCategory(
+                                                      item.category!))),
                                         ),
                                       ],
                                     ),
@@ -135,6 +137,7 @@ class _AddEntryPageState extends State<AddEntryPage> {
                               (context, item, isSelected, onItemSelect) {
                             return Row(
                               children: [
+                                // ignore: avoid_unnecessary_containers
                                 Container(
                                   child: InkWell(
                                     onTap: () {
@@ -181,7 +184,6 @@ class _AddEntryPageState extends State<AddEntryPage> {
                         );
                       }
                       if (state is StashLoaded && state.products.isEmpty) {
-                        // TODO: Add a button to add your first product
                         return FilledButton(
                           onPressed: () {
                             context.go('/stash/add');
@@ -219,7 +221,9 @@ class _AddEntryPageState extends State<AddEntryPage> {
                           Theme.of(context).colorScheme.primaryContainer,
                     ),
                   );
-                  context.pop();
+                  if (context.mounted) {
+                    context.pop();
+                  }
                 }
               },
               builder: (context, state) {
@@ -295,30 +299,30 @@ class _AddEntryPageState extends State<AddEntryPage> {
                                     for (var feeling in selectedFeelings)
                                       Chip(
                                         color: WidgetStatePropertyAll(
-                                        getColorForFeeling(feeling)),
+                                            getColorForFeeling(feeling)),
                                         visualDensity: VisualDensity.compact,
                                         label: Text(
-                                      feeling.name!.capitalize,
-                                      style: TextStyle(
-                                        color: getContrastingColor(
-                                          getColorForFeeling(feeling),
-                                        ),
-                                      ),
-                                             ),
-                                             avatar: feeling.icon != null &&
-                                            feeling.icon!.isNotEmpty
-                                        ? PhosphorIcon(
-                                            getIconForFeeling(feeling),
-                                            size: 16,
+                                          feeling.name!.capitalize,
+                                          style: TextStyle(
                                             color: getContrastingColor(
-                                                getColorForFeeling(
-                                                    feeling)),
-                                          )
-                                        : null,
-                                                                              side: BorderSide.none,
-                                                                              backgroundColor:
-                                        getColorForFeeling(feeling),
-                                                                            ),
+                                              getColorForFeeling(feeling),
+                                            ),
+                                          ),
+                                        ),
+                                        avatar: feeling.icon != null &&
+                                                feeling.icon!.isNotEmpty
+                                            ? PhosphorIcon(
+                                                getIconForFeeling(feeling),
+                                                size: 16,
+                                                color: getContrastingColor(
+                                                    getColorForFeeling(
+                                                        feeling)),
+                                              )
+                                            : null,
+                                        side: BorderSide.none,
+                                        backgroundColor:
+                                            getColorForFeeling(feeling),
+                                      ),
                                   ],
                                 );
                               },
@@ -345,6 +349,7 @@ class _AddEntryPageState extends State<AddEntryPage> {
                                   (context, feeling, isSelected, onItemSelect) {
                                 return Row(
                                   children: [
+                                    // ignore: avoid_unnecessary_containers
                                     Container(
                                       child: InkWell(
                                         onTap: () {
@@ -407,7 +412,8 @@ class _AddEntryPageState extends State<AddEntryPage> {
                         controller: notesController,
                         textCapitalization: TextCapitalization.sentences,
                         textInputAction: TextInputAction.done,
-                        onTapOutside: (event) => FocusScope.of(context).unfocus(),
+                        onTapOutside: (event) =>
+                            FocusScope.of(context).unfocus(),
                         decoration: InputDecoration(
                           labelText: 'Notes',
                           hintText: 'Add notes',
@@ -436,26 +442,28 @@ class _AddEntryPageState extends State<AddEntryPage> {
                                   child: FilledButton(
                                     onPressed: () {
                                       if (selectedFeelings.isEmpty) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
                                           getErrorSnackBar(
                                               'Please select at least one feeling'),
                                         );
                                       }
                                       if (selectedProducts.isEmpty) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                            getErrorSnackBar(
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(getErrorSnackBar(
                                                 'Please select at least one product'));
                                       }
-                                  
+
                                       if (selectedFeelings.isEmpty ||
                                           selectedProducts.isEmpty) {
                                         return;
                                       }
-                                  
+
                                       JournalEntry entry = JournalEntry(
                                         feelings: selectedFeelings,
                                         products: selectedProducts,
-                                        notes: notesController.value.text.isNotEmpty
+                                        notes: notesController
+                                                .value.text.isNotEmpty
                                             ? notesController.value.text
                                             : null,
                                         type: EntryType.feeling,

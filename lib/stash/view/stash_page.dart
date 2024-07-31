@@ -43,7 +43,7 @@ class StashPage extends StatelessWidget {
             if (state.products.isEmpty) {
               return CustomScrollView(
                 slivers: [
-                  SliverAppBar.medium(
+                  const SliverAppBar.medium(
                     title: Text(
                       'Stash',
                     ),
@@ -67,23 +67,23 @@ class StashPage extends StatelessWidget {
                         ),
                         Positioned.fill(
                             child: Container(
-                          color: 
-                          Theme.of(context).brightness == Brightness.dark
-                          ? Colors.black.withOpacity(0.5)
-                          : Colors.white54
-                        )),
+                                color: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.black.withOpacity(0.5)
+                                    : Colors.white54)),
                         Positioned(
                           child: Container(
-                            decoration:  BoxDecoration(
+                            decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               // borderRadius: BorderRadius.circular(16),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Theme.of(context).brightness == Brightness.dark
-                                  ? Colors.black
-                                  : Colors.white,
+                                  color: Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.black
+                                      : Colors.white,
                                   blurRadius: 48,
-                                  offset: Offset(0, 8),
+                                  offset: const Offset(0, 8),
                                 ),
                               ],
                             ),
@@ -268,21 +268,23 @@ class ProductCard extends StatelessWidget {
         },
         child: ListTile(
           leading: IconButton.filledTonal(
-            
             onPressed: () {},
             style: IconButton.styleFrom(
                 backgroundColor: getColorForProductCategory(product.category!)),
-            icon: PhosphorIcon(getIconForCategory(product.category!), color: getContrastingColor(getColorForProductCategory(product.category!)),),
+            icon: PhosphorIcon(
+              getIconForCategory(product.category!),
+              color: getContrastingColor(
+                  getColorForProductCategory(product.category!)),
+            ),
           ),
           title: Text(
             product.name!,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
-          subtitle: 
-          product.dispensary != null || product.type != null 
-          ? Text(product.dispensary ?? product.type!.name.capitalize)
-          : null,
+          subtitle: product.dispensary != null || product.type != null
+              ? Text(product.dispensary ?? product.type!.name.capitalize)
+              : null,
           trailing: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,

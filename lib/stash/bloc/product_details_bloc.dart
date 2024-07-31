@@ -4,7 +4,6 @@ import 'package:canjo/stash/model/product.dart';
 import 'package:canjo/stash/model/terpene.dart';
 import 'package:canjo/stash/repository/product_repository.dart';
 import 'package:equatable/equatable.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:meta/meta.dart';
 
 part 'product_details_event.dart';
@@ -37,7 +36,6 @@ class ProductDetailsBloc
           await _productRepository.fetchTerpenes(productId) ?? [];
       List<String> images =
           await _productRepository.fetchProductImages(productId) ?? [];
-      print('Images: $images');
       emit(ProductDetailsLoaded(
           product: product,
           images: images,

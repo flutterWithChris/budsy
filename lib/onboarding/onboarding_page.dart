@@ -1,7 +1,4 @@
-import 'package:canjo/subscription/bloc/subscription_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -130,8 +127,9 @@ class OnboardingPage extends StatelessWidget {
                                   Flexible(
                                     child: Text(
                                         'Find out what you like & why you like it.',
-                                        style:
-                                            Theme.of(context).textTheme.bodyMedium),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium),
                                   ),
                                 ],
                               ),
@@ -153,7 +151,11 @@ class OnboardingPage extends StatelessWidget {
                                   await SharedPreferences.getInstance();
                               await prefs
                                   .setBool('onboardingComplete', true)
-                                  .then((value) async => context.pop());
+                                  .then((value) async {
+                                if (context.mounted) {
+                                  context.pop();
+                                }
+                              });
                             },
                             child: const Text('Continue'),
                           ),

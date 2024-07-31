@@ -1,11 +1,7 @@
 import 'package:canjo/journal/model/feeling.dart';
-import 'package:canjo/stash/model/cannabinoid.dart';
-import 'package:canjo/journal/model/journal_entry.dart';
-import 'package:canjo/stash/model/product.dart';
 import 'package:canjo/stash/model/terpene.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 GlobalKey<ScaffoldMessengerState> scaffoldKey =
     GlobalKey<ScaffoldMessengerState>();
