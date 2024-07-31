@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:canjo/journal/model/feeling.dart';
 import 'package:canjo/journal/model/journal_entry.dart';
 import 'package:canjo/journal/repository/journal_repository.dart';
 import 'package:equatable/equatable.dart';

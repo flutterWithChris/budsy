@@ -1,6 +1,5 @@
 import 'package:canjo/journal/model/feeling.dart';
 import 'package:canjo/stash/model/cannabinoid.dart';
-import 'package:canjo/journal/model/journal_entry.dart';
 import 'package:canjo/stash/model/product.dart';
 import 'package:canjo/stash/model/terpene.dart';
 import 'package:color_hex/class/hex_to_color.dart';

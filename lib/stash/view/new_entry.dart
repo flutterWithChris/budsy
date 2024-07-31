@@ -67,36 +67,6 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
     super.initState();
   }
 
-  void _addCannabinoid() {
-    setState(() {
-      if (selectedCannabinoids.length >=
-          context.read<StashBloc>().allCannabinoids!.length) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('You have already added all available cannabinoids'),
-        ));
-        return;
-      }
-      selectedCannabinoids.add(context
-          .read<StashBloc>()
-          .allCannabinoids!
-          .where((cannabinoid) => !selectedCannabinoids.contains(cannabinoid))
-          .toList()
-          .first);
-    });
-  }
-
-  // void _updateCannabinoid(Cannabinoid cannabinoid, double value) {
-  //   setState(() {
-  //     selectedCannabinoids.remove(cannabinoid);
-  //   });
-  // }
-
-  // void _removeCannabinoid(Cannabinoid cannabinoid) {
-  //   setState(() {
-  //     selectedCannabinoids.remove(cannabinoid);
-  //   });
-  // }
-
   void _addTerpene() {
     setState(() {
       if (selectedTerpenes.length >= terpenes.length) {
@@ -111,19 +81,6 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
           })
           .toList()
           .first);
-    });
-  }
-
-  void _updateTerpene(Terpene terpene, double value) {
-    setState(() {
-      selectedTerpenes.removeWhere((element) => element.name == terpene.name);
-      selectedTerpenes.add(terpene);
-    });
-  }
-
-  void _removeTerpene(String terpene) {
-    setState(() {
-      selectedTerpenes.removeWhere((element) => element.name == terpene);
     });
   }
 
@@ -171,13 +128,9 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                                                         _product.copyWith(
                                                       images: [filePath],
                                                     );
-                                                    print(
-                                                        'Product: ${_product.toString()}');
                                                   }
                                                 });
-                                              } catch (e) {
-                                                print(e);
-                                              }
+                                              } catch (e) {}
                                             },
                                             child: ClipRRect(
                                               borderRadius:
@@ -223,13 +176,9 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                                                           _product.copyWith(
                                                         images: [filePath],
                                                       );
-                                                      print(
-                                                          'Product: ${_product.toString()}');
                                                     }
                                                   });
-                                                } catch (e) {
-                                                  print(e);
-                                                }
+                                                } catch (e) {}
                                               },
                                               child: Center(
                                                 child: IconButton(
@@ -251,13 +200,9 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                                                               _product.copyWith(
                                                             images: [filePath],
                                                           );
-                                                          print(
-                                                              'Product: ${_product.toString()}');
                                                         }
                                                       });
-                                                    } catch (e) {
-                                                      print(e);
-                                                    }
+                                                    } catch (e) {}
                                                   },
                                                   icon: PhosphorIcon(
                                                     PhosphorIcons.imageSquare(
@@ -340,8 +285,7 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                                           if (value != null) {
                                             _product = _product.copyWith(
                                                 category: value);
-                                            print(
-                                                'Product: ${_product.toString()}');
+
                                             switch (value) {
                                               case ProductCategory.flower:
                                                 _selectedCategoryIcon =
@@ -437,8 +381,7 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                                           if (value != null) {
                                             _product =
                                                 _product.copyWith(type: value);
-                                            print(
-                                                'Product: ${_product.toString()}');
+
                                             switch (value) {
                                               case FlowerType.sativa:
                                                 _selectedTypeIcon =
@@ -774,18 +717,18 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                                           'Error adding product: ${state.message}'),
                                     ),
                                   );
-                                  await Future.delayed(
-                                      const Duration(seconds: 2));
-                                  context.pop();
+                                  if (context.mounted) {
+                                    context.pop();
+                                  }
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       content: Text('Product added to stash'),
                                     ),
                                   );
-                                  await Future.delayed(
-                                      const Duration(seconds: 2));
-                                  context.pop();
+                                  if (context.mounted) {
+                                    context.pop();
+                                  }
                                 }
                               },
                               builder: (context, state) {
@@ -861,7 +804,6 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                       final ImagePicker imagePicker = ImagePicker();
                       final XFile? image = await imagePicker.pickImage(
                           source: ImageSource.camera);
-                      print(image);
                       if (image != null) {
                         final filePath = image.path;
                         setState(() {
@@ -870,7 +812,9 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                         });
 
                         // await _sendFileToApi(filePath);
-                        context.pop();
+                        if (context.mounted) {
+                          context.pop();
+                        }
                       } else {
                         // User canceled the picker
                         setState(() {
@@ -886,7 +830,6 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                       final ImagePicker imagePicker = ImagePicker();
                       final XFile? image = await imagePicker.pickImage(
                           source: ImageSource.gallery);
-                      print(image);
                       if (image != null) {
                         final filePath = image.path;
                         setState(() {

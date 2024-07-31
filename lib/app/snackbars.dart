@@ -20,12 +20,11 @@ SnackBar getErrorSnackBar(String message, {Widget? action}) {
       children: [
         const Icon(Icons.error, color: Colors.white, size: 18),
         const Gap(size: 8),
-        Text(message ?? 'An error occurred',
-            style: const TextStyle(color: Colors.white)),
+        Text(message, style: const TextStyle(color: Colors.white)),
         if (action != null)
           Row(
             children: [
-              action ?? Container(),
+              action,
             ],
           ),
       ],

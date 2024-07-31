@@ -1,7 +1,5 @@
 import 'package:canjo/consts.dart';
-import 'package:canjo/stash/model/cannabinoid.dart';
 import 'package:canjo/stash/model/product.dart';
-import 'package:canjo/stash/model/terpene.dart';
 
 List<Product> mockProducts = [
   Product(

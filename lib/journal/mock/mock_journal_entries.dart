@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:canjo/consts.dart';
 import 'package:canjo/journal/mock/mock_feelings.dart';
 import 'package:canjo/stash/mock/mock_products.dart';
 import 'package:canjo/journal/model/journal_entry.dart';

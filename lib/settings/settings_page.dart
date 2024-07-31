@@ -1,5 +1,4 @@
 import 'package:canjo/app/system/bottom_nav.dart';
-import 'package:canjo/auth/bloc/auth_bloc.dart';
 import 'package:canjo/consts.dart';
 import 'package:canjo/login/cubit/login_cubit.dart';
 import 'package:canjo/theme/cubit/theme_cubit.dart';
@@ -31,7 +30,6 @@ class SettingsPage extends StatelessWidget {
                         .titleMedium
                         ?.copyWith(fontWeight: FontWeight.bold)),
               ),
-              // TODO: Make brightness change work
               ListTile(
                   leading: PhosphorIcon(PhosphorIcons.lightbulb()),
                   title: const Text('Brightness'),
@@ -57,7 +55,6 @@ class SettingsPage extends StatelessWidget {
                       );
                     },
                   )),
-              // TODO: Implement issue reporting
               // ListTile(
               //   leading: const Icon(Icons.bug_report),
               //   title: const Text('Have an issue?'),
@@ -65,7 +62,6 @@ class SettingsPage extends StatelessWidget {
               //     // Report issue
               //   },
               // ),
-              // TODO: Implement logout
               ListTile(
                 leading: PhosphorIcon(PhosphorIcons.signOut()),
                 title: const Text('Logout'),
@@ -135,7 +131,9 @@ class SettingsPage extends StatelessWidget {
                             onPressed: () async {
                               // Delete account
                               await context.read<LoginCubit>().deleteAccount();
-                              context.pop();
+                              if (context.mounted) {
+                                context.pop();
+                              }
                             },
                             child: const Text('Delete',
                                 style: TextStyle(color: Colors.white)),

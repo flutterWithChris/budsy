@@ -22,7 +22,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
@@ -118,14 +117,13 @@ class MyApp extends StatelessWidget {
               productRepository: context.read<ProductRepository>(),
             )..loadFavoriteTerpenes(context.read<StashBloc>().state.products!),
           ),
-          BlocProvider( 
+          BlocProvider(
             lazy: false,
             create: (context) => SubscriptionBloc(
                 authBloc: context.read<AuthBloc>(),
                 subscriptionRepository: context.read<SubscriptionRepository>(),
-                loginCubit: context.read<LoginCubit>())..add(SubscriptionInit(
-                  context.read<AuthBloc>().state.user?.id
-                )),
+                loginCubit: context.read<LoginCubit>())
+              ..add(SubscriptionInit(context.read<AuthBloc>().state.user?.id)),
           ),
           BlocProvider(
             lazy: false,

@@ -7,19 +7,14 @@ import 'package:canjo/journal/bloc/journal_bloc.dart';
 import 'package:canjo/journal/mock/mock_journal_entries.dart';
 import 'package:canjo/journal/model/feeling.dart';
 import 'package:canjo/journal/model/journal_entry.dart';
-import 'package:canjo/onboarding/onboarding_page.dart';
 import 'package:canjo/stash/bloc/stash_bloc.dart';
 import 'package:canjo/stash/model/product.dart';
-import 'package:canjo/journal/view/add_feeling_page.dart';
-import 'package:canjo/journal/view/add_entry_page.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:flutter_gutter/flutter_gutter.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:list_ext/list_ext.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
@@ -66,7 +61,6 @@ class JournalPageFAB extends StatefulWidget {
 }
 
 class _JournalPageFABState extends State<JournalPageFAB> {
-  final _fabKey = GlobalKey<ExpandableFabState>();
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<JournalBloc, JournalState>(
@@ -314,7 +308,6 @@ class _EntryListTileState extends State<EntryListTile>
                               getSuccessSnackBar('Entry updated'));
                           context.pop();
                         }
-                        // TODO: implement listener
                       },
                       child: ViewEntrySheet(
                         entry: widget.journalEntry,
@@ -476,7 +469,6 @@ class _SessionListTileState extends State<SessionListTile>
     JournalEntry journalEntry = widget.journalEntry;
     List<Product> product = journalEntry.products!;
     String productSummaryString = composeProductSummaryString(product);
-    print('Product Summary String: $productSummaryString');
     List<ProductCategory> productCategories = [];
     // Add product categories to list if they don't already exist
     for (Product product in journalEntry.products!) {
@@ -665,14 +657,15 @@ class ViewEntrySheet extends StatelessWidget {
         productCategories.add(product.category!);
       }
     }
-    String categorySummaryString =
-        composeCategorySummaryString(entry.products!);
+
     return BlocListener<JournalBloc, JournalState>(
       listener: (context, state) {
         if (state is JournalEntryDeleted) {
           ScaffoldMessenger.of(context)
               .showSnackBar(getSuccessSnackBar('Entry deleted'));
-          context.pop();
+          if (context.mounted) {
+            context.pop();
+          }
         }
         //  if (state is JournalEntryUpdated){
         //     ScaffoldMessenger.of(context).showSnackBar(getSuccessSnackBar('Entry updated'));
